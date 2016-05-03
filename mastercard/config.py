@@ -28,6 +28,9 @@
 """
 Config File for MasterCard APIs Core SDK
 """
+
+from constants import Constants
+
 class Config(object):
     """
     Configurable options for MasterCard APIs Core SDK
@@ -37,11 +40,6 @@ class Config(object):
     debug           = False
     authentication  = None
     localhost       = False
-
-    VERSION                 = "1.0.0"
-    API_BASE_LOCALHOST_URL  = "https://localhost:8080"
-    API_BASE_LIVE_URL       = "https://api.mastercard.com"
-    API_BASE_SANDBOX_URL    = "https://sandbox.api.mastercard.com"
 
     def __init__(self):
         pass
@@ -64,11 +62,11 @@ class Config(object):
 
     @classmethod
     def setLocal(cls,local):
-        cls.local = local
+        cls.localhost = local
 
     @classmethod
     def isLocal(cls):
-        return cls.local
+        return cls.localhost
 
     @classmethod
     def setAuthentication(cls,authentication):
@@ -81,8 +79,8 @@ class Config(object):
     @classmethod
     def getAPIBaseURL(cls):
         if cls.localhost:
-            return cls.API_BASE_LOCALHOST_URL
+            return Constants.API_BASE_LOCALHOST_URL
         elif cls.sandbox:
-            return cls.API_BASE_SANDBOX_URL
+            return Constants.API_BASE_SANDBOX_URL
         else:
-            return cls.API_BASE_LIVE_URL
+            return Constants.API_BASE_LIVE_URL
