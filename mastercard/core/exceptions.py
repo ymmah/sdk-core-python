@@ -106,9 +106,13 @@ class APIConnectionException(APIException):
     """
     Exception raised when there are communication problems contacting the API.
     """
-    def __init__(self,error_data=None):
-        #Call the base class constructor with status code 500
-        super(APIConnectionException, self).__init__(None,500,error_data)
+    def __init__(self,message=None,status=None,error_data=None):
+
+        if status is None:
+            status = 500
+
+        #Call the base class constructor
+        super(APIConnectionException, self).__init__(message,status,error_data)
 
 
 
@@ -120,9 +124,13 @@ class AuthenticationException(APIException):
     """
     Exception raised where there are problems authenticating a request.
     """
-    def __init__(self,error_data=None):
-        #Call the base class constructor with status code 401
-        super(AuthenticationException, self).__init__(None,401,error_data)
+    def __init__(self,message=None,status=None,error_data=None):
+
+        if status is None:
+            status = 401
+
+        #Call the base class constructor
+        super(AuthenticationException, self).__init__(message,status,error_data)
 
 
 ################################################################################
@@ -133,10 +141,13 @@ class InvalidRequestException(APIException):
     """
     Exception raised when the API request contains errors.
     """
-    def __init__(self,error_data=None):
+    def __init__(self,message=None,status=None,error_data=None):
+
+        if status is None:
+            status = 400
 
         #Call the base class constructor
-        super(InvalidRequestException, self).__init__(None,400,error_data)
+        super(InvalidRequestException, self).__init__(message,status,error_data)
 
         self._field_errors = []
 
@@ -196,9 +207,12 @@ class NotAllowedException(APIException):
     """
     Exception when a request was not allowed.
     """
-    def __init__(self,error_data=None):
-        #Call the base class constructor with status code 403
-        super(NotAllowedException, self).__init__(None,403,error_data)
+    def __init__(message=None,status=None,error_data=None):
+
+        if status is None:
+            status = 403
+        #Call the base class constructor
+        super(NotAllowedException, self).__init__(message,status,error_data)
 
 ################################################################################
 # ObjectNotFoundException
@@ -208,9 +222,12 @@ class ObjectNotFoundException(APIException):
     """
     Exception when a requested object cannot be found.
     """
-    def __init__(self,error_data=None):
-        #Call the base class constructor with status code 404
-        super(ObjectNotFoundException, self).__init__(None,404,error_data)
+    def __init__(self,message=None,status=None,error_data=None):
+
+        if status is None:
+            status = 404
+        #Call the base class constructor
+        super(ObjectNotFoundException, self).__init__(message,status,error_data)
 
 
 ################################################################################
@@ -221,9 +238,12 @@ class SystemException(APIException):
     """
     Exception when there was a system error processing a request.
     """
-    def __init__(self,error_data=None):
-        #Call the base class constructor with status code 500
-        super(ObjectNotFoundException, self).__init__(None,500,error_data)
+    def __init__(self,message=None,status=None,error_data=None):
+
+        if status is None:
+            status = 500
+        #Call the base class constructor
+        super(ObjectNotFoundException, self).__init__(message,status,error_data)
 
 
 ################################################################################
