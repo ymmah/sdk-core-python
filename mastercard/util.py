@@ -1,4 +1,8 @@
 import re
+import urllib
+import urlparse
+import hashlib
+import base64
 
 def validateURL(url):
     urlRegex = re.compile(
@@ -12,3 +16,34 @@ def validateURL(url):
     if urlRegex.match(url):
         return True
     return False
+
+def normalizeParams(url,params):
+
+    #parse the url
+    parse = urlparse.urlparse(url)
+
+    #Get the query list
+    qs_dict = urlparse.parse_qsl(parse.query)
+    #convert the list to dict
+    qs_dict = dict(qs_dict)
+    #Combine the two dictionaries
+    if params is None:
+        combined_dict = qs_dict
+    else:
+        combined_dict = qs_dict.copy()
+        combined_dict.update(params)
+
+    return "&".join([urllib.quote(key)+"="+urllib.quote(str(value)) for key,value in sorted(combined_dict.items())])
+
+def normalizeUrl(url):
+    parse = urlparse.urlparse(url)
+    return "{}://{}{}".format(parse.scheme,parse.netloc,parse.path)
+
+def uriRfc3986Encode(value):
+    return urllib.quote_plus(value)
+
+def sha1Encode(text):
+    return hashlib.sha1(str(text)).digest()
+
+def base64Encode(text):
+    return base64.b64encode(text)
