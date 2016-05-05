@@ -1,9 +1,9 @@
 from requests import Request, Session
 from config import Config
 from constants import Constants
-from security.authentication import Authentication
-from core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
-import util as util
+from mastercard.security.authentication import Authentication
+from mastercard.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
+import mastercard.core.util as util
 import json
 
 
@@ -46,6 +46,7 @@ class APIController(object):
         """
         Check the pre-conditions before execute can be called
         """
+
         if Config.getAuthentication() is None or not isinstance(Config.getAuthentication(),Authentication):
             raise  APIException("No or incorrect authentication has been configured")
 
@@ -151,10 +152,10 @@ class APIController(object):
 
         #Make the request
         sess = Session()
-
         response = sess.send(prepreq)
 
-        return self.handleResponse(response,response.content.decode('utf-8'))
+        content = response.content.decode('utf-8')
+        return self.handleResponse(response,content)
 
 
     def handleResponse(self,response,content):

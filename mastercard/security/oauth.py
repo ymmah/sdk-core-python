@@ -2,8 +2,8 @@ from authentication import Authentication
 import collections
 import time
 from random import randint
-import mastercard.util as util
-from mastercard.config import Config
+import mastercard.core.util as util
+from mastercard.core.config import Config
 from OpenSSL import crypto
 
 class OAuthAuthentication(Authentication):

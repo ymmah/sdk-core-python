@@ -1,5 +1,5 @@
 import unittest
-import mastercard.util as util
+import mastercard.core.util as util
 
 class UtilTests(unittest.TestCase):
 
