@@ -2,8 +2,8 @@ from authentication import Authentication
 import collections
 import time
 from random import randint
-import util
-from config import Config
+import mastercard.util as util
+from mastercard.config import Config
 from OpenSSL import crypto
 
 class OAuthAuthentication(Authentication):
@@ -119,9 +119,9 @@ class OAuthParameters(object):
         return self.baseParameters
 
 class OAuthUtil(object):
-"""
-Utilities class for OAuth related functions
-"""
+    """
+    Utilities class for OAuth related functions
+    """
     @staticmethod
     def getTimestamp():
         """
