@@ -1,17 +1,16 @@
 import unittest
-from mastercard.controller import APIController
-from mastercard.config import Config
-from mastercard.security.oauth import OAuthAuthentication
-from mastercard.constants import Constants
+from mastercard.core.controller import APIController
+from mastercard.core.config import Config
+from mastercard.security.oauth import OAuthAuthentication, Authentication
+from mastercard.core.constants import Constants
 from mastercard.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
 import json
-from mock import Mock
-
+from mock import Mock, patch
 
 class APIControllerBaseTest(unittest.TestCase):
 
     def setUp(self):
-        auth = OAuthAuthentication("clientId", "privateKey", "alias", "password")
+        auth = OAuthAuthentication("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d", "./prod_key.p12", "alias", "password")
         Config.setAuthentication(auth)
         self.controller = APIController()
 
@@ -166,6 +165,44 @@ class APIControllerTests(APIControllerBaseTest):
         #replace the url back
         Constants.API_BASE_LOCALHOST_URL = temp
         Config.setLocal(False)
+
+    def test_execute(self):
+
+
+
+        inputMap = {
+
+            "Content-Type":"application/json",
+            "a":1,
+            "b":"naman aggarwal %20",
+            "id":3
+        }
+
+        headerList = ["Content-Type"]
+
+        action = "list"
+        resourcePath = "/user/{a}"
+
+        with patch('mastercard.core.controller.Config') as mock_config:
+            #Set Authentication to None
+            mock_config.getAuthentication.return_value = None
+
+            with self.assertRaises(APIException):
+                content = self.controller.execute(action,resourcePath,headerList,inputMap)
+
+            #Set Authentication to some other object
+            mock_config.getAuthentication.return_value = "stringobject"
+
+            with self.assertRaises(APIException):
+                content = self.controller.execute(action,resourcePath,headerList,inputMap)
+
+
+        with patch('mastercard.core.controller.Session') as mock_session:
+            response = Mock()
+            response.content = "Some Content"
+            response.status_code = 200
+            mock_session().send.return_value =response
+            content = self.controller.execute(action,resourcePath,headerList,inputMap)
 
 
     def test_handleResponse(self):
