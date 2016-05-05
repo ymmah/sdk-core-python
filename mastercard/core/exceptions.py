@@ -243,7 +243,7 @@ class SystemException(APIException):
         if status is None:
             status = 500
         #Call the base class constructor
-        super(ObjectNotFoundException, self).__init__(message,status,error_data)
+        super(SystemException, self).__init__(message,status,error_data)
 
 
 ################################################################################
