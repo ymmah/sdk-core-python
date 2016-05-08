@@ -1,10 +1,8 @@
-from authentication import Authentication
-import collections
-import time
-from random import randint
+from mastercard.security.authentication import Authentication
 import mastercard.core.util as util
 from mastercard.core.config import Config
 from OpenSSL import crypto
+import mastercard.security.util as SecurityUtil
 
 class OAuthAuthentication(Authentication):
     """
@@ -27,21 +25,37 @@ class OAuthAuthentication(Authentication):
         """
         Generates the OAuth header for the request, adds the header to the request and returns the request object
         """
-        oauth_key = self.__getOAuthKey(uri,request.method,request.data)
+        oauth_key = self.getOAuthKey(uri,request.method,request.data)
         request.headers[OAuthParameters.AUTHORIZATION] = oauth_key
         return request
 
+    def getOAuthBaseParameters(self,clientId,url, method, body):
 
-    def __getOAuthKey(self,uri,method,body):
+        oAuthParameters = OAuthParameters()
+        oAuthParameters.setOAuthConsumerKey(clientId)
+        oAuthParameters.setOAuthNonce(SecurityUtil.getNonce())
+        oAuthParameters.setOAuthTimestamp(SecurityUtil.getTimestamp())
+        oAuthParameters.setOAuthSignatureMethod("RSA-SHA1")
+        if body != "":
+            encodedHash = util.base64Encode(util.sha1Encode(body))
+            oAuthParameters.setOAuthBodyHash(encodedHash)
+
+        return oAuthParameters
+
+    @staticmethod
+    def getBaseString(url, method, oAuthParams):
+        return "{}&{}&{}".format(util.uriRfc3986Encode(method.upper()),util.uriRfc3986Encode(util.normalizeUrl(url)),util.uriRfc3986Encode(util.normalizeParams(url, oAuthParams)))
+
+    def getOAuthKey(self,uri,method,body):
 
         #Get all the base parameters such as nonce and timestamp
-        oAuthBaseParameters = OAuthUtil.getOAuthBaseParameters(self._clientId,uri,method,body)
+        oAuthBaseParameters = self.getOAuthBaseParameters(self._clientId,uri,method,body)
 
         #Get the base string
-        baseString = OAuthUtil.getBaseString(uri, method, oAuthBaseParameters.getBaseParametersDict())
+        baseString = OAuthAuthentication.getBaseString(uri, method, oAuthBaseParameters.getBaseParametersDict())
 
         #Sign the base string using the private key
-        signature = self.__signMessage(baseString)
+        signature = self.signMessage(baseString)
 
         #Set the signature in the Base parameters
         oAuthBaseParameters.setOAuthSignature(signature)
@@ -57,17 +71,13 @@ class OAuthAuthentication(Authentication):
 
 
 
-    def __signMessage(self,message):
+    def signMessage(self,message):
         """
             Signs the message using the private key with sha1 as digest
         """
         p12 = crypto.load_pkcs12(file(self._privateKey, 'rb').read(), self._password)
         privateKey = p12.get_privatekey()
         return util.base64Encode(crypto.sign(privateKey,message,'sha1'))
-
-
-
-
 
 
 class OAuthParameters(object):
@@ -90,6 +100,7 @@ class OAuthParameters(object):
     OAUTH_VERIFIER_KEY = "oauth_verifier"
     REALM_KEY = "realm"
     XOAUTH_REQUESTOR_ID_KEY = "xoauth_requestor_id"
+    OAUTH_VERSION = "oauth_version"
 
     def __init__(self):
         self.baseParameters = {}
@@ -115,44 +126,8 @@ class OAuthParameters(object):
     def setOAuthBodyHash(self,bodyHash):
         self.put(OAuthParameters.OAUTH_BODY_HASH_KEY, bodyHash)
 
+    def setOAuthVersion(self,version):
+        self.put(OAuthParameters.OAUTH_VERSION, version)
+
     def getBaseParametersDict(self):
         return self.baseParameters
-
-class OAuthUtil(object):
-    """
-    Utilities class for OAuth related functions
-    """
-    @staticmethod
-    def getTimestamp():
-        """
-        Returns the UTC timestamp (seconds passed since epoch)
-        """
-        return int(time.time())
-
-    @staticmethod
-    def getNonce(length = 16):
-        """
-        Returns a random string of length=@length
-        """
-        characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        charlen    = len(characters)
-        return "".join([characters[randint(0,charlen-1)] for i in range(0,length)])
-
-    @staticmethod
-    def getBaseString(url, method, oAuthParams):
-        return "{}&{}&{}".format(util.uriRfc3986Encode(method.upper()),util.uriRfc3986Encode(util.normalizeUrl(url)),util.uriRfc3986Encode(util.normalizeParams(url, oAuthParams)))
-
-
-    @staticmethod
-    def getOAuthBaseParameters(clientId,url, method, body):
-
-        oAuthParameters = OAuthParameters()
-        oAuthParameters.setOAuthConsumerKey(clientId)
-        oAuthParameters.setOAuthNonce(OAuthUtil.getNonce())
-        oAuthParameters.setOAuthTimestamp(OAuthUtil.getTimestamp())
-        oAuthParameters.setOAuthSignatureMethod("RSA-SHA1")
-        if body != "":
-            encodedHash = util.base64Encode(util.sha1Encode(body))
-            oAuthParameters.setOAuthBodyHash(encodedHash)
-
-        return oAuthParameters
