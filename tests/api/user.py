@@ -2,8 +2,7 @@ from mastercard.core.model import BaseObject
 
 
 class User(BaseObject):
-
-
+    
     def getResourcePath(self,action):
 
         action = action.upper()

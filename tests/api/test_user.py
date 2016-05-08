@@ -1,7 +1,7 @@
 import unittest
 from mastercard.core.config import Config
 from mastercard.core.model import BaseMap
-from user import User
+from .user import User
 from mastercard.security.oauth import OAuthAuthentication
 
 

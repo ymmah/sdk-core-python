@@ -9,7 +9,7 @@ import os
 class OAuthTest(unittest.TestCase):
 
     def setUp(self):
-        keyFile = os.path.dirname(os.path.realpath(__file__))+"/MCOpenAPI.p12"
+        keyFile = os.path.dirname(os.path.realpath(__file__))+"/../resources/MCOpenAPI.p12"
         self.auth = OAuthAuthentication("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", keyFile, "mckp", "mcapi")
         Config.setAuthentication(self.auth)
 
