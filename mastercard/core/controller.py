@@ -1,10 +1,11 @@
 from requests import Request, Session
-from config import Config
-from constants import Constants
+from mastercard.core.config import Config
+from mastercard.core.constants import Constants
 from mastercard.security.authentication import Authentication
 from mastercard.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
 import mastercard.core.util as util
 import json
+from ast import literal_eval
 
 
 class APIController(object):
@@ -154,15 +155,21 @@ class APIController(object):
         sess = Session()
         response = sess.send(prepreq)
 
-        content = response.content.decode('utf-8')
+        content = response.content.decode("utf-8")
         return self.handleResponse(response,content)
 
 
     def handleResponse(self,response,content):
         status = response.status_code
-
         if 200 <= status <= 299:
-            return content if content else ""
+
+            if content:
+                try:
+                    return json.loads(str(content))
+                except ValueError:
+                    return content
+            else:
+                 return ""
         elif 300 <= status <= 399:
             raise InvalidRequestException("Unexpected response code returned from the API causing redirect",status,content)
         elif status == 400:
