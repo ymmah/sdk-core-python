@@ -6,7 +6,7 @@ def getTimestamp():
     """
     Returns the UTC timestamp (seconds passed since epoch)
     """
-    return int(time.time())
+    return str(int(time.time()))
 
 def getNonce(length = 16):
     """
