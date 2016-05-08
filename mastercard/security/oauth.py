@@ -75,9 +75,15 @@ class OAuthAuthentication(Authentication):
         """
             Signs the message using the private key with sha1 as digest
         """
-        p12 = crypto.load_pkcs12(file(self._privateKey, 'rb').read(), self._password)
-        privateKey = p12.get_privatekey()
-        return util.base64Encode(crypto.sign(privateKey,message,'sha1'))
+        privateKeyFile = open(self._privateKey, 'rb')
+        try:
+            p12 = crypto.load_pkcs12(privateKeyFile.read(), self._password.encode("utf-8"))
+            privateKey = p12.get_privatekey()
+            sign = crypto.sign(privateKey,message.encode("utf-8"),'sha1')
+            privateKeyFile.close()
+            return util.base64Encode(sign)
+        except:
+            privateKeyFile.close()
 
 
 class OAuthParameters(object):
@@ -106,7 +112,7 @@ class OAuthParameters(object):
         self.baseParameters = {}
 
     def put(self,key, value):
-        self.baseParameters[key] =  value
+        self.baseParameters[key] = value
 
     def setOAuthConsumerKey(self,consumerKey):
         self.put(OAuthParameters.OAUTH_CONSUMER_KEY, consumerKey)
