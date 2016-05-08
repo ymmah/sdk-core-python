@@ -47,8 +47,8 @@ def normalizeParams(url,params):
     else:
         combined_dict = qs_dict.copy()
         combined_dict.update(params)
-
-    return "&".join([quote(key)+"="+quote(value) for key,value in sorted(combined_dict.items())])
+    #,quote(value if isinstance(value,bytes) else str(value)) -- This part means that for bytes we pass as it is else we convert to string
+    return "&".join(['%s=%s' % (quote(key),quote(value if isinstance(value,bytes) else str(value))) for key,value in sorted(combined_dict.items())])
 
 def normalizeUrl(url):
     """
