@@ -143,7 +143,7 @@ class APIController(object):
         request = self.getRequestObject(fullURL,action,inputMap)
 
         #Add headers
-        for key, value in headers.iteritems():
+        for key, value in headers.items():
             request.headers[key] = value
 
         #Sign the request
@@ -154,8 +154,8 @@ class APIController(object):
         #Make the request
         sess = Session()
         response = sess.send(prepreq)
-
-        content = response.content.decode("utf-8")
+        sess.close()
+        content = response.content
         return self.handleResponse(response,content)
 
 
@@ -165,7 +165,11 @@ class APIController(object):
 
             if content:
                 try:
-                    return json.loads(str(content))
+                    if isinstance(content,bytes):
+                        content = content.decode("utf-8")
+                    elif isinstance(content,dict):
+                        return content
+                    return json.loads(content)
                 except ValueError:
                     return content
             else:
