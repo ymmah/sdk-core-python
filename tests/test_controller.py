@@ -5,7 +5,11 @@ from mastercard.security.oauth import OAuthAuthentication, Authentication
 from mastercard.core.constants import Constants
 from mastercard.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
 import json
-from mock import Mock, patch
+
+try:
+    from mock import Mock, patch
+except ImportError:
+    from unittest.mock import Mock, patch
 
 class APIControllerBaseTest(unittest.TestCase):
 
@@ -22,13 +26,13 @@ class APIControllerTests(APIControllerBaseTest):
     def test_removeForwareSlashFromTail(self):
 
         #Url with /
-        self.assertEquals(self.controller.removeForwardSlashFromTail("http://localhost:8080/"),"http://localhost:8080")
+        self.assertEqual(self.controller.removeForwardSlashFromTail("http://localhost:8080/"),"http://localhost:8080")
 
         #Url with parameters and /
-        self.assertEquals(self.controller.removeForwardSlashFromTail("http://localhost:8080/?nam=1&an=1/"),"http://localhost:8080/?nam=1&an=1")
+        self.assertEqual(self.controller.removeForwardSlashFromTail("http://localhost:8080/?nam=1&an=1/"),"http://localhost:8080/?nam=1&an=1")
 
         #Url without /
-        self.assertEquals(self.controller.removeForwardSlashFromTail("http://localhost:8080"),"http://localhost:8080")
+        self.assertEqual(self.controller.removeForwardSlashFromTail("http://localhost:8080"),"http://localhost:8080")
 
 
     def test_getURL(self):
@@ -44,8 +48,8 @@ class APIControllerTests(APIControllerBaseTest):
         url = self.controller.getURL(APIController.ACTION_CREATE, "/fraud/{api}/v{version}/account-inquiry", inputMap)
 
         #Normal URL
-        self.assertEquals(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry")
-        self.assertEquals(3,len(inputMap))
+        self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry")
+        self.assertEqual(3,len(inputMap))
 
         inputMap = {
             'api' : 'lostandstolen',
@@ -57,8 +61,8 @@ class APIControllerTests(APIControllerBaseTest):
 
         #URL with trailing /
         url = self.controller.getURL(APIController.ACTION_CREATE, "/fraud/{api}/v{version}/account-inquiry/", inputMap)
-        self.assertEquals(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry")
-        self.assertEquals(3,len(inputMap))
+        self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry")
+        self.assertEqual(3,len(inputMap))
 
         inputMap = {
             'api' : 'lostandstolen',
@@ -69,8 +73,8 @@ class APIControllerTests(APIControllerBaseTest):
 
         #URL with id and action delete
         url = self.controller.getURL(APIController.ACTION_DELETE, "/fraud/{api}/v{version}/account-inquiry/{id}", inputMap)
-        self.assertEquals(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry/1")
-        self.assertEquals(1,len(inputMap))
+        self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry/1")
+        self.assertEqual(1,len(inputMap))
 
 
         inputMap = {
@@ -82,8 +86,8 @@ class APIControllerTests(APIControllerBaseTest):
 
         #URL with id in inputMap but not in url
         url = self.controller.getURL(APIController.ACTION_DELETE, "/fraud/{api}/v{version}/account-inquiry", inputMap)
-        self.assertEquals(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry/1")
-        self.assertEquals(1,len(inputMap))
+        self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry/1")
+        self.assertEqual(1,len(inputMap))
 
         inputMap = {
             'api' : 'lostandstolen',
@@ -94,8 +98,8 @@ class APIControllerTests(APIControllerBaseTest):
 
         #URL with id in inputMap but not in url and method create
         url = self.controller.getURL(APIController.ACTION_CREATE, "/fraud/{api}/v{version}/account-inquiry", inputMap)
-        self.assertEquals(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry")
-        self.assertEquals(2,len(inputMap))
+        self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry")
+        self.assertEqual(2,len(inputMap))
 
         #Now that the key api and version are not there in map
         #This should raise a key error
@@ -105,16 +109,16 @@ class APIControllerTests(APIControllerBaseTest):
 
     def test_getMethod(self):
 
-        self.assertEquals(self.controller.getMethod(APIController.ACTION_CREATE),APIController.HTTP_METHOD_POST)
-        self.assertEquals(self.controller.getMethod(APIController.ACTION_DELETE),APIController.HTTP_METHOD_DELETE)
-        self.assertEquals(self.controller.getMethod(APIController.ACTION_UPDATE),APIController.HTTP_METHOD_PUT)
-        self.assertEquals(self.controller.getMethod(APIController.ACTION_READ),APIController.HTTP_METHOD_GET)
-        self.assertEquals(self.controller.getMethod(APIController.ACTION_LIST),APIController.HTTP_METHOD_GET)
-        self.assertEquals(self.controller.getMethod(APIController.ACTION_QUERY),APIController.HTTP_METHOD_GET)
+        self.assertEqual(self.controller.getMethod(APIController.ACTION_CREATE),APIController.HTTP_METHOD_POST)
+        self.assertEqual(self.controller.getMethod(APIController.ACTION_DELETE),APIController.HTTP_METHOD_DELETE)
+        self.assertEqual(self.controller.getMethod(APIController.ACTION_UPDATE),APIController.HTTP_METHOD_PUT)
+        self.assertEqual(self.controller.getMethod(APIController.ACTION_READ),APIController.HTTP_METHOD_GET)
+        self.assertEqual(self.controller.getMethod(APIController.ACTION_LIST),APIController.HTTP_METHOD_GET)
+        self.assertEqual(self.controller.getMethod(APIController.ACTION_QUERY),APIController.HTTP_METHOD_GET)
         #Should work even if case does not match
-        self.assertEquals(self.controller.getMethod(APIController.ACTION_UPDATE.lower()),APIController.HTTP_METHOD_PUT)
+        self.assertEqual(self.controller.getMethod(APIController.ACTION_UPDATE.lower()),APIController.HTTP_METHOD_PUT)
         #Returns none for not matching string
-        self.assertEquals(self.controller.getMethod("SomeString"),None)
+        self.assertEqual(self.controller.getMethod("SomeString"),None)
 
 
     def test_getRequestObject(self):
@@ -137,10 +141,10 @@ class APIControllerTests(APIControllerBaseTest):
         #Create Request with inputMap
         request = self.controller.getRequestObject(url,APIController.ACTION_CREATE,inputMap)
 
-        self.assertEquals(request.params,{APIController.KEY_FORMAT:APIController.JSON})
-        self.assertEquals(json.loads(request.data),inputMap)
-        self.assertEquals(request.headers,defaultHeaders)
-        self.assertEquals(request.url,url)
+        self.assertEqual(request.params,{APIController.KEY_FORMAT:APIController.JSON})
+        self.assertEqual(json.loads(request.data),inputMap)
+        self.assertEqual(request.headers,defaultHeaders)
+        self.assertEqual(request.url,url)
 
 
         #List Request with inputMap
@@ -148,10 +152,10 @@ class APIControllerTests(APIControllerBaseTest):
 
         inputMap[APIController.KEY_FORMAT] = APIController.JSON
 
-        self.assertEquals(request.params,inputMap)
-        self.assertEquals(request.data,[])
-        self.assertEquals(request.headers,defaultHeaders)
-        self.assertEquals(request.url,url)
+        self.assertEqual(request.params,inputMap)
+        self.assertEqual(request.data,[])
+        self.assertEqual(request.headers,defaultHeaders)
+        self.assertEqual(request.url,url)
 
 
     def test_controllerConstructor(self):
@@ -211,10 +215,10 @@ class APIControllerTests(APIControllerBaseTest):
         response.status_code = 200
 
         content = self.controller.handleResponse(response,None)
-        self.assertEquals(content,"")
+        self.assertEqual(content,"")
 
         content = self.controller.handleResponse(response,{"a" :1})
-        self.assertEquals(content,{"a" :1})
+        self.assertEqual(content,{"a" :1})
 
         response.status_code = 301
         with self.assertRaises(InvalidRequestException):
