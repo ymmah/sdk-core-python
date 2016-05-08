@@ -5,9 +5,14 @@ Utility file having common functions for MasterCard Core SDK
 
 import re
 import urllib
-import urlparse
 import hashlib
 import base64
+
+
+try:
+    import urlparse #Python 2.x
+except ImportError: #Python 3
+    from urllib.parse import urlparse
 
 def validateURL(url):
     """
