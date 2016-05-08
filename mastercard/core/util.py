@@ -4,16 +4,15 @@ Utility file having common functions for MasterCard Core SDK
 """
 
 import re
-import urllib
 import hashlib
 import base64
 
 
 try:
-    import urlparse #Python 2.x
+    from urlparse import urlparse, parse_qsl #Python 2.x
+    from urllib import quote,quote_plus
 except ImportError: #Python 3
-    from urllib.parse import urlparse
-
+    from urllib.parse import urlparse, quote, quote_plus, parse_qsl
 def validateURL(url):
     """
     Validates that the given string is a valid URL
@@ -36,10 +35,10 @@ def normalizeParams(url,params):
     All the query string parameters are lexicographically sorted
     """
     #parse the url
-    parse = urlparse.urlparse(url)
+    parse = urlparse(url)
 
     #Get the query list
-    qs_dict = urlparse.parse_qsl(parse.query)
+    qs_dict = parse_qsl(parse.query)
     #convert the list to dict
     qs_dict = dict(qs_dict)
     #Combine the two dictionaries
@@ -49,31 +48,32 @@ def normalizeParams(url,params):
         combined_dict = qs_dict.copy()
         combined_dict.update(params)
 
-    return "&".join([urllib.quote(key)+"="+urllib.quote(str(value)) for key,value in sorted(combined_dict.items())])
+    return "&".join([quote(key)+"="+quote(value) for key,value in sorted(combined_dict.items())])
 
 def normalizeUrl(url):
     """
     Removes the query parameters from the URL
     """
-    parse = urlparse.urlparse(url)
+    parse = urlparse(url)
     return "{}://{}{}".format(parse.scheme,parse.netloc,parse.path)
 
 def uriRfc3986Encode(value):
     """
     RFC 3986 encodes the value
     """
-    return urllib.quote_plus(value)
+    return quote_plus(value)
 
 def sha1Encode(text):
     """
     Returns the digest of SHA-1 of the text
     """
-    return hashlib.sha1(str(text)).digest()
+    return hashlib.sha1(str(text).encode('utf-8')).digest()
 
 def base64Encode(text):
     """
     Base64 encodes the given input
     """
+    #text = text.encode('ascii')
     return base64.b64encode(text)
 
 def subMap(inputMap,keyList):
@@ -105,9 +105,6 @@ def getReplacedPath(path,inputMap):
             path = path.replace("{"+match+"}",str(inputMap[match]))
             del inputMap[match]
         except KeyError as k:
-            raise KeyError("path parameter: "+k.message+" expected but not found in input map")
+            raise KeyError("path parameter: "+match+" expected but not found in input map")
 
     return path
-
-
-    return "http://localhost:8080/{var1}/car".format({"var1":"1"})
