@@ -1,8 +1,16 @@
 import re
+from mastercard.core.controller import APIController
+
+################################################################################
+# BaseMap
+################################################################################
 
 class BaseMap(object):
 
+    KEY_LIST = "list"
+
     def __init__(self):
+
         self.__properties = {}
         self.parentWithSquareBracket = re.compile("\[(.*)\]")
 
@@ -230,18 +238,13 @@ class BaseMap(object):
 
         #If given object is a list then the created map should have a key called list first
         if isinstance(map,list):
-            initialKey = "list"
+            initialKey = BaseMap.KEY_LIST
 
         #Iterate over the object and keeps on adding the items to the properties object
         self.__iterateItemsAndAdd(map,initialKey)
 
         return self.__properties
 
-    def printObj(self):
-        """
-        Prints the internal map object
-        """
-        print self.__properties
 
     def containsKey(self,key):
         """
@@ -250,3 +253,90 @@ class BaseMap(object):
         if self.get(key) is not None:
             return True
         return False
+
+
+################################################################################
+# BaseObject
+################################################################################
+
+
+class BaseObject(BaseMap):
+
+
+    def __init__(self,baseMap = None):
+
+        #Call the base class constructor
+        super(BaseObject, self).__init__()
+
+        if baseMap is not None:
+            self.setAll(baseMap.getObject())
+
+    def getResourcePath(self,action):
+        raise NotImplementedError("Child class must define getResourcePath method to use this class")
+
+    def getHeaderParams(self,action):
+        raise NotImplementedError("Child class must define getHeaderParams method to use this class")
+
+    @classmethod
+    def read(cls,inputObject,criteria = None):
+
+        if criteria is not None:
+
+            if isinstance(criteria,BaseMap):
+                inputObject.setAll(criteria.getObject())
+            else:
+                inputObject.setAll(criteria)
+
+        return cls.__execute(APIController.ACTION_READ,inputObject)
+
+    @classmethod
+    def listObject(cls,inputObject):
+        return cls.__execute(APIController.ACTION_LIST,inputObject)
+
+    @classmethod
+    def createObject(cls,inputObject):
+        return cls.__execute(APIController.ACTION_CREATE,inputObject)
+
+    @classmethod
+    def queryObject(cls,inputObject):
+        return cls.__execute(APIController.ACTION_QUERY,inputObject)
+
+    @classmethod
+    def deleteObject(cls,inputObject):
+        return cls.__execute(APIController.ACTION_DELETE,inputObject)
+
+    @classmethod
+    def updateObject(cls,inputObject):
+        return cls.__execute(APIController.ACTION_UPDATE,inputObject)
+
+    @classmethod
+    def __execute(cls,action,inputObject):
+
+        controller = APIController()
+        response   = controller.execute(action,inputObject.getResourcePath(action),inputObject.getHeaderParams(action),inputObject.getObject())
+        returnObjClass = inputObject.__class__
+
+        if action == APIController.ACTION_LIST:
+            returnObj = []
+
+            if BaseMap.KEY_LIST in response:
+                response = response[BaseMap.KEY_LIST]
+
+            if isinstance(response,dict):
+                for key, value in response.iteritems():
+                    baseMap  = BaseMap()
+                    baseMap.setAll(value)
+                    returnObj.append(returnObjClass(baseMap))
+
+            elif isinstance(response,list):
+                for value in response:
+                    baseMap  = BaseMap()
+                    baseMap.setAll(value)
+                    returnObj.append(returnObjClass(baseMap))
+
+            return returnObj
+
+        else:
+            baseMap  = BaseMap()
+            baseMap.setAll(response)
+            return returnObjClass(baseMap)
