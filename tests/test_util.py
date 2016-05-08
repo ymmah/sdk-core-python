@@ -31,30 +31,30 @@ class UtilTests(unittest.TestCase):
     def test_base64encode(self):
 
         #string
-        self.assertEquals(util.base64Encode("mastercard"),"bWFzdGVyY2FyZA==")
+        self.assertEqual(util.base64Encode(b"mastercard"),b"bWFzdGVyY2FyZA==")
 
         #string
-        self.assertEquals(util.base64Encode("naman"),"bmFtYW4=")
+        self.assertEqual(util.base64Encode(b"naman"),b"bmFtYW4=")
 
         #string with special characters
-        self.assertEquals(util.base64Encode("naman@3476@$%%^*%&^#mastercard"),"bmFtYW5AMzQ3NkAkJSVeKiUmXiNtYXN0ZXJjYXJk")
+        self.assertEqual(util.base64Encode(b"naman@3476@$%%^*%&^#mastercard"),b"bmFtYW5AMzQ3NkAkJSVeKiUmXiNtYXN0ZXJjYXJk")
 
         #blank
-        self.assertEquals(util.base64Encode(""),"")
+        self.assertEqual(util.base64Encode(b""),b"")
 
     def test_sha1encode(self):
 
         #string
-        self.assertEquals(util.sha1Encode("mastercard"),"\xc1\x9e3\xe7\xa9\xf2iZ\xda_?3E\xab%\xb9\xb2%\xd6e")
+        self.assertEqual(util.sha1Encode("mastercard"),b"\xc1\x9e3\xe7\xa9\xf2iZ\xda_?3E\xab%\xb9\xb2%\xd6e")
 
         #string
-        self.assertEquals(util.sha1Encode("naman"),"\xac\x94|)\xa0.db\xda\x10\x91Z\xab\xa8k\xdds)`\x84")
+        self.assertEqual(util.sha1Encode("naman"),b"\xac\x94|)\xa0.db\xda\x10\x91Z\xab\xa8k\xdds)`\x84")
 
         #string with special characters
-        self.assertEquals(util.sha1Encode("naman@3476@$%%^*%&^#mastercard"),"\xcf\xc4\x01\"\xd9\xea\x06\xf9\xd0\xe5\xf3$\xaaH\xd5A|\'r\xfe")
+        self.assertEqual(util.sha1Encode("naman@3476@$%%^*%&^#mastercard"),b"\xcf\xc4\x01\"\xd9\xea\x06\xf9\xd0\xe5\xf3$\xaaH\xd5A|\'r\xfe")
 
         #blank
-        self.assertEquals(util.sha1Encode(""),"\xda9\xa3\xee^kK\r2U\xbf\xef\x95`\x18\x90\xaf\xd8\x07\t")
+        self.assertEqual(util.sha1Encode(""),b"\xda9\xa3\xee^kK\r2U\xbf\xef\x95`\x18\x90\xaf\xd8\x07\t")
 
 
     def test_getReplacedPath(self):
@@ -71,8 +71,8 @@ class UtilTests(unittest.TestCase):
 
         res = util.getReplacedPath(path,inputMap)
 
-        self.assertEquals(res,"http://localhost:8080/1/2/3/car")
-        self.assertEquals(len(inputMap),2)
+        self.assertEqual(res,"http://localhost:8080/1/2/3/car")
+        self.assertEqual(len(inputMap),2)
 
         #Since now map does not have Key one this should raise KeyError
         with self.assertRaises(KeyError):
@@ -93,14 +93,27 @@ class UtilTests(unittest.TestCase):
 
         subMap = util.subMap(inputMap,keyList)
 
-        self.assertEquals(len(subMap),3)
-        self.assertEquals(subMap['one'],1)
-        self.assertEquals(subMap['three'],"3")
-        self.assertEquals(subMap['five'],5)
+        self.assertEqual(len(subMap),3)
+        self.assertEqual(subMap['one'],1)
+        self.assertEqual(subMap['three'],"3")
+        self.assertEqual(subMap['five'],5)
 
-        self.assertEquals(len(inputMap),2)
-        self.assertEquals(inputMap['two'],2)
-        self.assertEquals(inputMap['four'],4)
+        self.assertEqual(len(inputMap),2)
+        self.assertEqual(inputMap['two'],2)
+        self.assertEqual(inputMap['four'],4)
+
+    def test_getNormaliedParams(self):
+
+        url = "http://www.naman.com/abc?c=1&d=2&a=3"
+        params = {
+            "m":2,
+            "b":3,
+            "k":"5"
+        }
+
+        nurl = util.normalizeParams(url,params)
+
+        self.assertEqual(nurl,"a=3&b=3&c=1&d=2&k=5&m=2")
 
 
 if __name__ == '__main__':
