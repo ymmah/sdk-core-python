@@ -304,7 +304,7 @@ class BaseObject(BaseMap):
         raise NotImplementedError("Child class must define getHeaderParams method to use this class")
 
     @classmethod
-    def read(cls,inputObject,criteria = None):
+    def readObject(cls,inputObject,criteria = None):
 
         if criteria is not None:
 
