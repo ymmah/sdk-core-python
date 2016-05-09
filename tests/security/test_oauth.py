@@ -29,13 +29,13 @@ from mastercard.security.oauth import OAuthAuthentication, OAuthParameters
 from mastercard.core.config import Config
 import mastercard.security.util as SecurityUtil
 import mastercard.core.util as Util
-import os
+from os.path import dirname, realpath, join
 
 
 class OAuthTest(unittest.TestCase):
 
     def setUp(self):
-        keyFile = os.path.dirname(os.path.realpath(__file__))+"/../resources/MCOpenAPI.p12"
+        keyFile = join(dirname(dirname(realpath(__file__))),"resources","MCOpenAPI.p12")
         self.auth = OAuthAuthentication("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", keyFile, "mckp", "mcapi")
         Config.setAuthentication(self.auth)
 
