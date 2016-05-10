@@ -34,7 +34,7 @@ setup(name='sdk-core-python',
       author_email='naman.aggarwal@mastercard.com',
       url='https://www.developer.mastercard.com',
       license='BSD',
-      packages=['mastercard'],
+      packages=['mastercard','tests'],
       classifiers=[
         'Intended Audience :: Developers',
         'Natural Language :: English',
