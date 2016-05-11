@@ -31,6 +31,7 @@ from mastercard.security.oauth import OAuthAuthentication, Authentication
 from mastercard.core.constants import Constants
 from mastercard.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
 import json
+from os.path import dirname, realpath, join
 
 try:
     from mock import Mock, patch
@@ -40,7 +41,8 @@ except ImportError:
 class APIControllerBaseTest(unittest.TestCase):
 
     def setUp(self):
-        auth = OAuthAuthentication("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d", "./prod_key.p12", "alias", "password")
+        keyFile = join(dirname(dirname(realpath(__file__))),"resources","prod_key.p12")
+        auth = OAuthAuthentication("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d",keyFile, "alias", "password")
         Config.setAuthentication(auth)
         self.controller = APIController()
 

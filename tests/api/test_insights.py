@@ -29,16 +29,17 @@ from mastercard.core.config import Config
 from mastercard.core.model import BaseMap
 from .insights import Insights
 from mastercard.security.oauth import OAuthAuthentication
-
+from os.path import dirname, realpath, join
 
 class InsightsTest(unittest.TestCase):
 
 
     def setUp(self):
-        auth = OAuthAuthentication("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d", "./prod_key.p12", "alias", "password")
+        keyFile = join(dirname(dirname(realpath(__file__))),"resources","prod_key.p12")
+        auth = OAuthAuthentication("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d", keyFile, "alias", "password")
         Config.setAuthentication(auth)
 
-    @unittest.skip("Check Key")
+
     def test_Example_Insights(self):
 
         mapObj = BaseMap()
