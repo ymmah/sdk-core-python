@@ -124,7 +124,6 @@ class APIController(object):
 
         #Create the request object
         request = Request()
-
         #set the request parameters
         request.method = method
         request.url    = url
@@ -176,12 +175,12 @@ class APIController(object):
         #This should add the authorization header in the request
         Config.getAuthentication().signRequest(fullURL,request)
         prepreq = request.prepare()
-
         #Make the request
         sess = Session()
         response = sess.send(prepreq)
         sess.close()
         content = response.content
+
         return self.handleResponse(response,content)
 
 
@@ -190,19 +189,19 @@ class APIController(object):
         Handles the exception and response
         """
         status = response.status_code
-        if 200 <= status <= 299:
+        if content:
+            try:
+                if isinstance(content,bytes):
+                    content = content.decode("utf-8")
+                content= json.loads(content)
+            except (ValueError, TypeError):
+                pass
 
-            if content:
-                try:
-                    if isinstance(content,bytes):
-                        content = content.decode("utf-8")
-                    elif isinstance(content,dict):
-                        return content
-                    return json.loads(content)
-                except ValueError:
-                    return content
-            else:
-                 return ""
+        else:
+             content= ""
+
+        if 200 <= status <= 299:
+            return content
         elif 300 <= status <= 399:
             raise InvalidRequestException("Unexpected response code returned from the API causing redirect",status,content)
         elif status == 400:
