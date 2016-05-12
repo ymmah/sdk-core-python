@@ -24,7 +24,7 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-from mastercard.security.authentication import Authentication
+from mastercard.security import Authentication
 import mastercard.core.util as util
 from mastercard.core.config import Config
 from OpenSSL import crypto

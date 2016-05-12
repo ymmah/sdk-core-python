@@ -27,7 +27,7 @@
 from requests import Request, Session
 from mastercard.core.config import Config
 from mastercard.core.constants import Constants
-from mastercard.security.authentication import Authentication
+from mastercard.security import Authentication
 from mastercard.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
 import mastercard.core.util as util
 import json
