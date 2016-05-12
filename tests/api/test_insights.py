@@ -27,7 +27,7 @@
 import unittest
 from mastercard.core.config import Config
 from mastercard.core.model import BaseMap
-from .insights import Insights
+from insights import Insights
 from mastercard.security.oauth import OAuthAuthentication
 from os.path import dirname, realpath, join
 
