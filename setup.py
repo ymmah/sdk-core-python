@@ -26,7 +26,11 @@
 
 from distutils.core import setup
 
-setup(name='sdk-core-python',
+INSTALL_REQUIRES = []
+INSTALL_REQUIRES.append('requests')
+INSTALL_REQUIRES.append('pyOpenSSL')
+
+setup(name='mastercard-core',
       version='1.0.0',
       description='MasterCard API Python Core SDK',
       long_description='MasterCard API Python Core SDK',
@@ -48,4 +52,6 @@ setup(name='sdk-core-python',
         'Programming Language :: Python :: 3.4',
         'Topic :: Software Development :: Libraries :: Python Modules'
         ],
+        tests_require=['mock'],
+        install_requires=INSTALL_REQUIRES
 )
