@@ -316,7 +316,7 @@ class BaseObject(BaseMap):
         return cls.__execute(APIController.ACTION_READ,inputObject)
 
     @classmethod
-    def listObject(cls,inputObject):
+    def listObjects(cls,inputObject):
         return cls.__execute(APIController.ACTION_LIST,inputObject)
 
     @classmethod
