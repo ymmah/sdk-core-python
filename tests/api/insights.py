@@ -31,7 +31,7 @@ class Insights(BaseObject):
     def getResourcePath(self,action):
 
         if action.upper() == "QUERY":
-            return "/sectorinsights/v1/sectins.svc/parameters"
+            return "/sectorinsights/v1/sectins.svc/insights"
 
         raise Exception("Invalid action "+str(action))
 
