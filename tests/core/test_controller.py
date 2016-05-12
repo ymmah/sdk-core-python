@@ -26,9 +26,9 @@
 #
 import unittest
 from mastercard.core.controller import APIController
-from mastercard.core.config import Config
+from mastercard.core import Config
 from mastercard.security.oauth import OAuthAuthentication, Authentication
-from mastercard.core.constants import Constants
+from mastercard.core import Constants
 from mastercard.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
 import json
 from os.path import dirname, realpath, join

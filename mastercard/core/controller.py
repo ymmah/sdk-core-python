@@ -25,8 +25,8 @@
 # SUCH DAMAGE.
 #
 from requests import Request, Session
-from mastercard.core.config import Config
-from mastercard.core.constants import Constants
+from mastercard.core import Config
+from mastercard.core import Constants
 from mastercard.security import Authentication
 from mastercard.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
 import mastercard.core.util as util

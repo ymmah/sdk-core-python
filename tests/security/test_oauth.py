@@ -26,7 +26,7 @@
 #
 import unittest
 from mastercard.security.oauth import OAuthAuthentication, OAuthParameters
-from mastercard.core.config import Config
+from mastercard.core import Config
 import mastercard.security.util as SecurityUtil
 import mastercard.core.util as Util
 from os.path import dirname, realpath, join

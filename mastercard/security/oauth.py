@@ -26,7 +26,7 @@
 #
 from mastercard.security import Authentication
 import mastercard.core.util as util
-from mastercard.core.config import Config
+from mastercard.core import Config
 from OpenSSL import crypto
 import mastercard.security.util as SecurityUtil
 import collections

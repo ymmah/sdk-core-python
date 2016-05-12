@@ -29,7 +29,7 @@
 Config File for MasterCard APIs Core SDK
 """
 
-from mastercard.core.constants import Constants
+from mastercard.core import Constants
 
 class Config(object):
     """

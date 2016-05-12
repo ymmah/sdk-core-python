@@ -25,7 +25,7 @@
 # SUCH DAMAGE.
 #
 import unittest
-from mastercard.core.config import Config
+from mastercard.core import Config
 from mastercard.core.model import BaseMap
 from insights import Insights
 from mastercard.security.oauth import OAuthAuthentication
