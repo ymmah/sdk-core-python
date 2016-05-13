@@ -69,8 +69,7 @@ class OAuthAuthentication(Authentication):
 
         return oAuthParameters
 
-    @staticmethod
-    def getBaseString(url, method,params, oAuthParams):
+    def getBaseString(self,url, method,params, oAuthParams):
         #Merge the query string parameters
         mergeParams = params.copy()
         mergeParams.update(oAuthParams)
@@ -80,7 +79,7 @@ class OAuthAuthentication(Authentication):
         #Get all the base parameters such as nonce and timestamp
         oAuthBaseParameters = self.getOAuthBaseParameters(self._clientId,url,method,body)
         #Get the base string
-        baseString = OAuthAuthentication.getBaseString(url, method, params,oAuthBaseParameters.getBaseParametersDict())
+        baseString = self.getBaseString(url, method, params,oAuthBaseParameters.getBaseParametersDict())
         #Sign the base string using the private key
         signature = self.signMessage(baseString)
 

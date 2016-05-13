@@ -71,7 +71,7 @@ class OAuthTest(unittest.TestCase):
         encodedHash = Util.base64Encode(Util.sha1Encode(body))
         oAuthParameters.setOAuthBodyHash(encodedHash)
 
-        baseString = OAuthAuthentication.getBaseString(url, method,params, oAuthParameters.getBaseParametersDict());
+        baseString = self.auth.getBaseString(url, method,params, oAuthParameters.getBaseParametersDict());
         self.assertEqual(baseString,'POST&https%3A%2F%2Fsandbox.api.mastercard.com%2Ffraud%2Fmerchant%2Fv1%2Ftermination-inquiry&Format%3DXML%26PageLength%3D10%26PageOffset%3D0%26oauth_body_hash%3DWhqqH%252BTU95VgZMItpdq78BWb4cE%253D%26oauth_consumer_key%3Dxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx%26oauth_nonce%3D1111111111111111111%26oauth_signature_method%3DRSA-SHA1%26oauth_timestamp%3D1111111111%26oauth_version%3D1.0')
 
     def test_signMessage(self):
