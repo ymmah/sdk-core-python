@@ -56,14 +56,14 @@ class OAuthAuthentication(Authentication):
         request.headers[OAuthParameters.AUTHORIZATION] = oauth_key
         return request
 
-    def getOAuthBaseParameters(self,clientId,url, method, body):
+    def getOAuthBaseParameters(self,url, method, body):
         oAuthParameters = OAuthParameters()
-        oAuthParameters.setOAuthConsumerKey(clientId)
+        oAuthParameters.setOAuthConsumerKey(self._clientId)
         oAuthParameters.setOAuthNonce(SecurityUtil.getNonce())
         oAuthParameters.setOAuthTimestamp(SecurityUtil.getTimestamp())
         oAuthParameters.setOAuthSignatureMethod("RSA-SHA1")
         oAuthParameters.setOAuthVersion("1.0")
-        if body != "":
+        if body is not None:
             encodedHash = util.base64Encode(util.sha1Encode(body))
             oAuthParameters.setOAuthBodyHash(encodedHash)
 
@@ -77,7 +77,7 @@ class OAuthAuthentication(Authentication):
 
     def getOAuthKey(self,url,method,body,params):
         #Get all the base parameters such as nonce and timestamp
-        oAuthBaseParameters = self.getOAuthBaseParameters(self._clientId,url,method,body)
+        oAuthBaseParameters = self.getOAuthBaseParameters(url,method,body)
         #Get the base string
         baseString = self.getBaseString(url, method, params,oAuthBaseParameters.getBaseParametersDict())
         #Sign the base string using the private key
