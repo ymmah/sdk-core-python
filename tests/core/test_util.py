@@ -134,12 +134,24 @@ class UtilTests(unittest.TestCase):
         params = {
             "m":2,
             "b":3,
-            "k":"5"
+            "k":"5+8"
         }
 
         nurl = util.normalizeParams(url,params)
 
-        self.assertEqual(nurl,"a=3&b=3&c=1&d=2&k=5&m=2")
+        self.assertEqual(nurl,"a=3&b=3&c=1&d=2&k=5%2B8&m=2")
+
+
+    def test_uriRfc3986Encode(self):
+
+        encode = util.uriRfc3986Encode("Formal=XML")
+        self.assertEqual("Formal%3DXML",encode)
+
+        encode = util.uriRfc3986Encode("WhqqH+TU95VgZMItpdq78BWb4cE=")
+        self.assertEqual("WhqqH%2BTU95VgZMItpdq78BWb4cE%3D",encode)
+
+        encode = util.uriRfc3986Encode("WhqqH+TU95VgZMItpdq78BWb4cE=&o")
+        self.assertEqual("WhqqH%2BTU95VgZMItpdq78BWb4cE%3D%26o",encode)
 
 
 if __name__ == '__main__':
