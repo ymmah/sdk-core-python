@@ -42,7 +42,7 @@ class BaseMap(object):
 
     def _moveInList(self,key,match):
         """
-        Moves in the subMap, key is of type for eg key[1] and match matches [1]
+        Moves in the subMap, if key is of type for eg key[1] and match matches [1]
         Raises exception if either key is not in map or map.key is not a list or map.key[1] does not exist
         """
 
