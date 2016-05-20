@@ -25,7 +25,7 @@
 # SUCH DAMAGE.
 #
 import re
-from mastercard.core.controller import APIController
+from mastercardapicore.core.controller import APIController
 
 ################################################################################
 # BaseMap

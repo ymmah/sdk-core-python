@@ -25,10 +25,10 @@
 # SUCH DAMAGE.
 #
 import unittest
-from mastercard.security.oauth import OAuthAuthentication, OAuthParameters
-from mastercard.core import Config
-import mastercard.security.util as SecurityUtil
-import mastercard.core.util as Util
+from mastercardapicore.security.oauth import OAuthAuthentication, OAuthParameters
+from mastercardapicore.core import Config
+import mastercardapicore.security.util as SecurityUtil
+import mastercardapicore.core.util as Util
 from os.path import dirname, realpath, join
 
 

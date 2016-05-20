@@ -24,7 +24,7 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-from mastercard.core.model import BaseObject
+from mastercardapicore.core.model import BaseObject
 
 
 class User(BaseObject):

@@ -30,7 +30,7 @@ INSTALL_REQUIRES = []
 INSTALL_REQUIRES.append('requests')
 INSTALL_REQUIRES.append('pyOpenSSL')
 
-setup(name='mastercard-core',
+setup(name='mastercardapicore',
       version='1.0.0',
       description='MasterCard API Python Core SDK',
       long_description='MasterCard API Python Core SDK',
@@ -38,7 +38,7 @@ setup(name='mastercard-core',
       author_email='naman.aggarwal@mastercard.com',
       url='https://www.developer.mastercard.com',
       license='BSD',
-      packages=['mastercard','tests'],
+      packages=['mastercardapicore','tests'],
       classifiers=[
         'Intended Audience :: Developers',
         'Natural Language :: English',

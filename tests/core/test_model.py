@@ -25,7 +25,7 @@
 # SUCH DAMAGE.
 #
 import unittest
-from mastercard.core.model import BaseMap
+from mastercardapicore.core.model import BaseMap
 
 class BaseMapTest(unittest.TestCase):
 

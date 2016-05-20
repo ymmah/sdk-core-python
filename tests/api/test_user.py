@@ -25,10 +25,10 @@
 # SUCH DAMAGE.
 #
 import unittest
-from mastercard.core import Config
-from mastercard.core.model import BaseMap
+from mastercardapicore.core import Config
+from mastercardapicore.core.model import BaseMap
 from user import User
-from mastercard.security.oauth import OAuthAuthentication
+from mastercardapicore.security.oauth import OAuthAuthentication
 from os.path import dirname, realpath, join
 
 class UserTest(unittest.TestCase):

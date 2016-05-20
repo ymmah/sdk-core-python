@@ -25,14 +25,12 @@
 # SUCH DAMAGE.
 #
 from requests import Request, Session
-from mastercard.core import Config
-from mastercard.core import Constants
-from mastercard.security import Authentication
-from mastercard.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
-import mastercard.core.util as util
+from mastercardapicore.core import Config
+from mastercardapicore.core import Constants
+from mastercardapicore.security import Authentication
+from mastercardapicore.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
+import mastercardapicore.core.util as util
 import json
-from ast import literal_eval
-
 
 class APIController(object):
 

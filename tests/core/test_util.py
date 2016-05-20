@@ -25,7 +25,7 @@
 # SUCH DAMAGE.
 #
 import unittest
-import mastercard.core.util as util
+import mastercardapicore.core.util as util
 
 class UtilTests(unittest.TestCase):
 

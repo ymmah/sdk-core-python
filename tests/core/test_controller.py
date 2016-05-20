@@ -25,11 +25,11 @@
 # SUCH DAMAGE.
 #
 import unittest
-from mastercard.core.controller import APIController
-from mastercard.core import Config
-from mastercard.security.oauth import OAuthAuthentication, Authentication
-from mastercard.core import Constants
-from mastercard.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
+from mastercardapicore.core.controller import APIController
+from mastercardapicore.core import Config
+from mastercardapicore.security.oauth import OAuthAuthentication, Authentication
+from mastercardapicore.core import Constants
+from mastercardapicore.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
 import json
 from os.path import dirname, realpath, join
 
@@ -215,7 +215,7 @@ class APIControllerTests(APIControllerBaseTest):
         action = "list"
         resourcePath = "/user/{a}"
 
-        with patch('mastercard.core.controller.Config') as mock_config:
+        with patch('mastercardapicore.core.controller.Config') as mock_config:
             #Set Authentication to None
             mock_config.getAuthentication.return_value = None
 
@@ -229,7 +229,7 @@ class APIControllerTests(APIControllerBaseTest):
                 content = self.controller.execute(action,resourcePath,headerList,inputMap)
 
 
-        with patch('mastercard.core.controller.Session') as mock_session:
+        with patch('mastercardapicore.core.controller.Session') as mock_session:
             response = Mock()
             response.content = "Some Content"
             response.status_code = 200
