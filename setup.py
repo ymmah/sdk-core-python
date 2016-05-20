@@ -52,6 +52,6 @@ setup(name='mastercardapicore',
         'Programming Language :: Python :: 3.4',
         'Topic :: Software Development :: Libraries :: Python Modules'
         ],
-        tests_require=['mock'],
+        tests_require=['mock','nose','coverage'],
         install_requires=INSTALL_REQUIRES
 )

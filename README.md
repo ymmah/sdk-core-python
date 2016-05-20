@@ -2,4 +2,12 @@ This is the MasterCard OpenAPI Python Core SDK
 
 # Run Tests
 
-python -m unittest discover tests
+### Normal Tests
+
+`python -m unittest discover tests`
+or
+`nosetests`
+
+### With coverage
+
+`nosetests --with-coverage --cover-package=mastercardapicore`
