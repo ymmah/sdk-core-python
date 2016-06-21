@@ -177,7 +177,10 @@ class APIController(object):
         ##Log the request parameters if Debug is on
         if Config.isDebug():
             print "------ Request ----"
-            print " "
+            print ""
+            print "URL"
+            print prepreq.url
+            print ""
             print "Headers"
             print prepreq.headers
             print ""
@@ -194,7 +197,7 @@ class APIController(object):
         ##Log the response parameters if Debug is on
         if Config.isDebug():
             print "------ Response ----"
-            print " "
+            print ""
             print "Status Code"
             print response.status_code
             print ""
