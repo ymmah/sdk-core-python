@@ -41,7 +41,7 @@ class UserTest(unittest.TestCase):
         Config.setLocal(True)
 
     @unittest.skip("This test needs a sample nodejs server")
-    def test_Example_User(self):
+    def test_example_User(self):
 
         obj = {
           "website" : "hildegard.org",

@@ -57,10 +57,15 @@ class APIController(object):
     JSON             = "JSON"
 
 
-    def __init__(self):
+    def __init__(self,version=None):
 
         #Set the parameters
         self.baseURL = Config.getAPIBaseURL()
+
+        if not version is None:
+            self.version = version
+        else:
+            self.version = Constants.VERSION
 
         #Verify if the URL is correct
         if not util.validateURL(self.baseURL):
@@ -127,7 +132,7 @@ class APIController(object):
         request.url    = url
         request.headers[APIController.KEY_ACCEPT]       = APIController.APPLICATION_JSON
         request.headers[APIController.KEY_CONTENT_TYPE] = APIController.APPLICATION_JSON
-        request.headers[APIController.KEY_USER_AGENT]   = APIController.PYTHON_SDK+"/"+Constants.VERSION
+        request.headers[APIController.KEY_USER_AGENT]   = APIController.PYTHON_SDK+"/"+self.version
 
         #Add inputMap to params if action in read,delete,list,query
         if action in [APIController.ACTION_READ,APIController.ACTION_DELETE,APIController.ACTION_LIST,APIController.ACTION_QUERY]:
@@ -173,10 +178,41 @@ class APIController(object):
         #This should add the authorization header in the request
         Config.getAuthentication().signRequest(fullURL,request)
         prepreq = request.prepare()
+
+        ##Log the request parameters if Debug is on
+        if Config.isDebug():
+            print "------ Request ----"
+            print ""
+            print "URL"
+            print prepreq.url
+            print ""
+            print "Headers"
+            print prepreq.headers
+            print ""
+            print "Body"
+            print prepreq.body
+            print " "
+
+
         #Make the request
         sess = Session()
         response = sess.send(prepreq)
         sess.close()
+
+        ##Log the response parameters if Debug is on
+        if Config.isDebug():
+            print "------ Response ----"
+            print ""
+            print "Status Code"
+            print response.status_code
+            print ""
+            print "Headers"
+            print response.headers
+            print ""
+            print "Body"
+            print response.content
+            print " "
+
         content = response.content
 
         return self.handleResponse(response,content)

@@ -24,7 +24,7 @@
 # SUCH DAMAGE.
 #
 
-from distutils.core import setup
+from setuptools import setup
 
 INSTALL_REQUIRES = []
 INSTALL_REQUIRES.append('requests')
@@ -37,7 +37,7 @@ setup(name='mastercardapicore',
       author='Naman Aggarwal',
       author_email='naman.aggarwal@mastercard.com',
       url='https://www.developer.mastercard.com',
-      license='BSD',
+      license='BSD2',
       packages=['mastercardapicore','tests'],
       classifiers=[
         'Intended Audience :: Developers',
