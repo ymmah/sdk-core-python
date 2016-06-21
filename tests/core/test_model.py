@@ -29,12 +29,12 @@ from mastercardapicore.core.model import BaseMap
 
 class BaseMapTest(unittest.TestCase):
 
-    def testConstructor(self):
+    def test_constructor(self):
 
         baseMapObj = BaseMap()
         self.assertEqual(baseMapObj.getObject(),{})
 
-    def testSimpleSet(self):
+    def test_simpleSet(self):
 
         baseMapObj = BaseMap()
         baseMapObj.set("user",122132)
@@ -48,7 +48,7 @@ class BaseMapTest(unittest.TestCase):
         baseMapObj.set("name","atul")
         self.assertEqual(baseMapObj.getObject(),{'user':122132,'name':'atul'})
 
-    def testNestedSet(self):
+    def test_nestedSet(self):
 
         baseMapObj = BaseMap()
 
@@ -63,7 +63,7 @@ class BaseMapTest(unittest.TestCase):
 
 
 
-    def testNestedSetWithList(self):
+    def test_nestedSetWithList(self):
 
         baseMapObj = BaseMap()
 
@@ -80,7 +80,7 @@ class BaseMapTest(unittest.TestCase):
         self.assertEqual(baseMapObj.getObject(),{'user':{'name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]}})
 
 
-    def testSetInvalidAction(self):
+    def test_setInvalidAction(self):
 
         baseMapObj = BaseMap()
 
@@ -95,7 +95,7 @@ class BaseMapTest(unittest.TestCase):
 
 
 
-    def testGet(self):
+    def test_get(self):
 
         baseMapObj = BaseMap()
 
@@ -128,7 +128,7 @@ class BaseMapTest(unittest.TestCase):
 
 
 
-    def testSetAll(self):
+    def test_setAll(self):
 
         baseMapObj = BaseMap()
 

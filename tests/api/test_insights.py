@@ -40,7 +40,7 @@ class InsightsTest(unittest.TestCase):
         Config.setAuthentication(auth)
 
 
-    def test_Example_Insights(self):
+    def test_example_Insights(self):
 
         mapObj = BaseMap()
 
