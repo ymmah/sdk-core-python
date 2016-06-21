@@ -173,10 +173,38 @@ class APIController(object):
         #This should add the authorization header in the request
         Config.getAuthentication().signRequest(fullURL,request)
         prepreq = request.prepare()
+
+        ##Log the request parameters if Debug is on
+        if Config.isDebug():
+            print "------ Request ----"
+            print " "
+            print "Headers"
+            print prepreq.headers
+            print ""
+            print "Body"
+            print prepreq.body
+            print " "
+
+
         #Make the request
         sess = Session()
         response = sess.send(prepreq)
         sess.close()
+
+        ##Log the response parameters if Debug is on
+        if Config.isDebug():
+            print "------ Response ----"
+            print " "
+            print "Status Code"
+            print response.status_code
+            print ""
+            print "Headers"
+            print response.headers
+            print ""
+            print "Body"
+            print response.content
+            print " "
+
         content = response.content
 
         return self.handleResponse(response,content)
