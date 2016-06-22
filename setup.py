@@ -24,7 +24,7 @@
 # SUCH DAMAGE.
 #
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 INSTALL_REQUIRES = []
 INSTALL_REQUIRES.append('requests')
@@ -38,7 +38,7 @@ setup(name='mastercardapicore',
       author_email='naman.aggarwal@mastercard.com',
       url='https://www.developer.mastercard.com',
       license='BSD2',
-      packages=['mastercardapicore','tests'],
+      packages=find_packages(),
       classifiers=[
         'Intended Audience :: Developers',
         'Natural Language :: English',
@@ -52,6 +52,6 @@ setup(name='mastercardapicore',
         'Programming Language :: Python :: 3.4',
         'Topic :: Software Development :: Libraries :: Python Modules'
         ],
-        tests_require=['mock','nose','coverage'],
+        tests_require=['mock','nose','coverage','urllib3'],
         install_requires=INSTALL_REQUIRES
 )
