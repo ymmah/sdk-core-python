@@ -35,7 +35,7 @@ from os.path import dirname, realpath, join
 class OAuthTest(unittest.TestCase):
 
     def setUp(self):
-        keyFile = join(dirname(dirname(realpath(__file__))),"resources","MCOpenAPI.p12")
+        keyFile = join(dirname(dirname(realpath(__file__))),"resources","mcapi_sandbox_key.p12")
         self.auth = OAuthAuthentication("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", keyFile, "mckp", "mcapi")
         Config.setAuthentication(self.auth)
 

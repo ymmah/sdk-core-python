@@ -43,6 +43,11 @@ class Insights(BaseObject):
 
         raise Exception("Invalid action "+str(action))
 
+    @classmethod
+    def getApiVersion(self):
+
+        return "1.1.1"
+
     @staticmethod
     def query(criteria):
 

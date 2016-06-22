@@ -1,7 +1,7 @@
 This is the MasterCard OpenAPI Python Core SDK
 
 
-# Dependecy Install
+# Dependency Install
 
 `brew install python`
 `brew link --overwrite python`

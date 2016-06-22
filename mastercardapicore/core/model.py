@@ -304,6 +304,10 @@ class BaseObject(BaseMap):
         raise NotImplementedError("Child class must define getHeaderParams method to use this class")
 
     @classmethod
+    def getApiVersion(self):
+        raise NotImplementedError("Child class must define getApiVersion method to use this class")
+
+    @classmethod
     def readObject(cls,inputObject,criteria = None):
 
         if criteria is not None:
@@ -338,7 +342,7 @@ class BaseObject(BaseMap):
     @classmethod
     def __execute(cls,action,inputObject):
 
-        controller = APIController()
+        controller = APIController(cls.getApiVersion())
         response   = controller.execute(action,inputObject.getResourcePath(action),inputObject.getHeaderParams(action),inputObject.getObject())
         returnObjClass = inputObject.__class__
 
