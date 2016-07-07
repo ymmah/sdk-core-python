@@ -303,6 +303,9 @@ class BaseObject(BaseMap):
     def getHeaderParams(self,action):
         raise NotImplementedError("Child class must define getHeaderParams method to use this class")
 
+    def getQueryParams(self,action):
+        raise NotImplementedError("Child class must define getQueryParams method to use this class")
+
     @classmethod
     def getApiVersion(self):
         raise NotImplementedError("Child class must define getApiVersion method to use this class")
@@ -343,7 +346,7 @@ class BaseObject(BaseMap):
     def __execute(cls,action,inputObject):
 
         controller = APIController(cls.getApiVersion())
-        response   = controller.execute(action,inputObject.getResourcePath(action),inputObject.getHeaderParams(action),inputObject.getObject())
+        response   = controller.execute(action,inputObject.getResourcePath(action),inputObject.getHeaderParams(action),inputObject.getQueryParams(action),inputObject.getObject())
         returnObjClass = inputObject.__class__
 
         if action == APIController.ACTION_LIST:

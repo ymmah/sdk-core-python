@@ -113,7 +113,7 @@ class APIController(object):
 
         return fullURL
 
-    def getRequestObject(self,url,action,inputMap):
+    def getRequestObject(self,url,action,queryMap,inputMap):
         """
         Gets the Request Object with URL and
         """
@@ -143,6 +143,9 @@ class APIController(object):
         #Set the query parameter Format as JSON
         request.params[APIController.KEY_FORMAT] = APIController.JSON
 
+        #Add the query in queryMap
+        request.params.update(queryMap)
+
         return request
 
 
@@ -159,7 +162,7 @@ class APIController(object):
 
         return actions.get(action.upper(),None)
 
-    def execute(self,action,resourcePath,headerList,inputMap):
+    def execute(self,action,resourcePath,headerList,queryList,inputMap):
 
         #Check preconditions for execute
         self.__check()
@@ -167,8 +170,11 @@ class APIController(object):
         #Separate the headers from the inputMap
         headers = util.subMap(inputMap,headerList)
 
+        #Separate the query from the inputMap
+        queryMap  = util.subMap(inputMap,queryList)
+
         fullURL = self.getURL(action,resourcePath,inputMap)
-        request = self.getRequestObject(fullURL,action,inputMap)
+        request = self.getRequestObject(fullURL,action,queryMap,inputMap)
 
         #Add headers
         for key, value in headers.items():
