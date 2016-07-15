@@ -26,7 +26,7 @@
 #
 import unittest
 from mastercardapicore.core import Config
-from mastercardapicore.core.model import BaseMap
+from mastercardapicore.core.model import RequestMap
 from insights import Insights
 from mastercardapicore.security.oauth import OAuthAuthentication
 from os.path import dirname, realpath, join
@@ -42,7 +42,7 @@ class InsightsTest(unittest.TestCase):
 
     def test_example_Insights(self):
 
-        mapObj = BaseMap()
+        mapObj = RequestMap()
 
         mapObj.set("Period","")
         mapObj.set("CurrentRow","1")

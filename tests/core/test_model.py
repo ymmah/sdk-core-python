@@ -25,124 +25,124 @@
 # SUCH DAMAGE.
 #
 import unittest
-from mastercardapicore.core.model import BaseMap
+from mastercardapicore.core.model import RequestMap
 
-class BaseMapTest(unittest.TestCase):
+class RequestMapTest(unittest.TestCase):
 
     def test_constructor(self):
 
-        baseMapObj = BaseMap()
-        self.assertEqual(baseMapObj.getObject(),{})
+        requestMapObj = RequestMap()
+        self.assertEqual(requestMapObj.getObject(),{})
 
     def test_simpleSet(self):
 
-        baseMapObj = BaseMap()
-        baseMapObj.set("user",122132)
+        requestMapObj = RequestMap()
+        requestMapObj.set("user",122132)
 
-        self.assertEqual(baseMapObj.getObject(),{'user':122132})
+        self.assertEqual(requestMapObj.getObject(),{'user':122132})
 
-        baseMapObj.set("name","naman")
-        self.assertEqual(baseMapObj.getObject(),{'user':122132,'name':'naman'})
+        requestMapObj.set("name","naman")
+        self.assertEqual(requestMapObj.getObject(),{'user':122132,'name':'naman'})
 
         #Override the value
-        baseMapObj.set("name","atul")
-        self.assertEqual(baseMapObj.getObject(),{'user':122132,'name':'atul'})
+        requestMapObj.set("name","atul")
+        self.assertEqual(requestMapObj.getObject(),{'user':122132,'name':'atul'})
 
     def test_nestedSet(self):
 
-        baseMapObj = BaseMap()
+        requestMapObj = RequestMap()
 
-        baseMapObj.set("user.name.first","Naman")
-        self.assertEqual(baseMapObj.getObject(),{'user':{'name':{'first':'Naman'}}})
+        requestMapObj.set("user.name.first","Naman")
+        self.assertEqual(requestMapObj.getObject(),{'user':{'name':{'first':'Naman'}}})
 
-        baseMapObj.set("user.name.last.middle","Kumar")
-        self.assertEqual(baseMapObj.getObject(),{'user':{'name':{'first':'Naman','last':{'middle':'Kumar'}}}})
+        requestMapObj.set("user.name.last.middle","Kumar")
+        self.assertEqual(requestMapObj.getObject(),{'user':{'name':{'first':'Naman','last':{'middle':'Kumar'}}}})
 
-        baseMapObj.set("user.name.last.last","Aggarwal")
-        self.assertEqual(baseMapObj.getObject(),{'user':{'name':{'first':'Naman','last':{'middle':'Kumar','last':'Aggarwal'}}}})
+        requestMapObj.set("user.name.last.last","Aggarwal")
+        self.assertEqual(requestMapObj.getObject(),{'user':{'name':{'first':'Naman','last':{'middle':'Kumar','last':'Aggarwal'}}}})
 
 
 
     def test_nestedSetWithList(self):
 
-        baseMapObj = BaseMap()
+        requestMapObj = RequestMap()
 
-        baseMapObj.set("user.name[0]","Naman")
-        self.assertEqual(baseMapObj.getObject(),{'user':{'name':['Naman']}})
+        requestMapObj.set("user.name[0]","Naman")
+        self.assertEqual(requestMapObj.getObject(),{'user':{'name':['Naman']}})
 
-        baseMapObj.set("user.name[1]","Kumar")
-        self.assertEqual(baseMapObj.getObject(),{'user':{'name':['Naman','Kumar']}})
+        requestMapObj.set("user.name[1]","Kumar")
+        self.assertEqual(requestMapObj.getObject(),{'user':{'name':['Naman','Kumar']}})
 
-        baseMapObj.set("user.name[2]","Aggarwal")
-        self.assertEqual(baseMapObj.getObject(),{'user':{'name':['Naman','Kumar','Aggarwal']}})
+        requestMapObj.set("user.name[2]","Aggarwal")
+        self.assertEqual(requestMapObj.getObject(),{'user':{'name':['Naman','Kumar','Aggarwal']}})
 
-        baseMapObj.set("user.name[3].class.id",1233)
-        self.assertEqual(baseMapObj.getObject(),{'user':{'name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]}})
+        requestMapObj.set("user.name[3].class.id",1233)
+        self.assertEqual(requestMapObj.getObject(),{'user':{'name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]}})
 
 
     def test_setInvalidAction(self):
 
-        baseMapObj = BaseMap()
+        requestMapObj = RequestMap()
 
-        baseMapObj.set("user.name[0]","Naman")
-        baseMapObj.set("user.name[1]","Kumar")
-        baseMapObj.set("user.name[2]","Aggarwal")
+        requestMapObj.set("user.name[0]","Naman")
+        requestMapObj.set("user.name[1]","Kumar")
+        requestMapObj.set("user.name[2]","Aggarwal")
 
         with self.assertRaises(TypeError):
-            baseMapObj.set("user.name.class.id",1233)
+            requestMapObj.set("user.name.class.id",1233)
 
-        self.assertEqual(baseMapObj.getObject(),{'user':{'name':['Naman','Kumar','Aggarwal']}})
+        self.assertEqual(requestMapObj.getObject(),{'user':{'name':['Naman','Kumar','Aggarwal']}})
 
 
 
     def test_get(self):
 
-        baseMapObj = BaseMap()
+        requestMapObj = RequestMap()
 
-        baseMapObj.set("user.name[0]","Naman")
-        baseMapObj.set("user.name[1]","Kumar")
-        baseMapObj.set("user.name[2]","Aggarwal")
-        baseMapObj.set("user.name[3].class.id",1233)
-        baseMapObj.set("employee[0].name","atul")
-        baseMapObj.set("employee[1].name","sumit")
+        requestMapObj.set("user.name[0]","Naman")
+        requestMapObj.set("user.name[1]","Kumar")
+        requestMapObj.set("user.name[2]","Aggarwal")
+        requestMapObj.set("user.name[3].class.id",1233)
+        requestMapObj.set("employee[0].name","atul")
+        requestMapObj.set("employee[1].name","sumit")
 
-        self.assertEqual(baseMapObj.get("user"),{'name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]})
-        self.assertEqual(baseMapObj.get("user.name"),['Naman','Kumar','Aggarwal',{'class':{'id':1233}}])
-        self.assertEqual(baseMapObj.get("user.name[3]"),{'class':{'id':1233}})
-        self.assertEqual(baseMapObj.get("user.name[3].class"),{'id':1233})
-        self.assertEqual(baseMapObj.get("user.name[3].class.id"),1233)
+        self.assertEqual(requestMapObj.get("user"),{'name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]})
+        self.assertEqual(requestMapObj.get("user.name"),['Naman','Kumar','Aggarwal',{'class':{'id':1233}}])
+        self.assertEqual(requestMapObj.get("user.name[3]"),{'class':{'id':1233}})
+        self.assertEqual(requestMapObj.get("user.name[3].class"),{'id':1233})
+        self.assertEqual(requestMapObj.get("user.name[3].class.id"),1233)
 
-        self.assertEqual(baseMapObj.get("user.name[3].class.id.value"),None)
+        self.assertEqual(requestMapObj.get("user.name[3].class.id.value"),None)
 
-        self.assertEqual(baseMapObj.get("user.name[4].class.id.value"),None)
+        self.assertEqual(requestMapObj.get("user.name[4].class.id.value"),None)
 
-        self.assertEqual(baseMapObj.get("employee"),[{'name':'atul'},{'name':'sumit'}])
+        self.assertEqual(requestMapObj.get("employee"),[{'name':'atul'},{'name':'sumit'}])
 
-        self.assertEqual(baseMapObj.get("employee[3]"),None)
+        self.assertEqual(requestMapObj.get("employee[3]"),None)
 
-        self.assertEqual(baseMapObj.get("user.name[4].class"),None)
+        self.assertEqual(requestMapObj.get("user.name[4].class"),None)
 
         #check object is still the same
-        self.assertEqual(baseMapObj.getObject(),{"user":{'name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]},"employee":[{'name':'atul'},{'name':'sumit'}]})
+        self.assertEqual(requestMapObj.getObject(),{"user":{'name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]},"employee":[{'name':'atul'},{'name':'sumit'}]})
 
 
 
 
     def test_setAll(self):
 
-        baseMapObj = BaseMap()
+        requestMapObj = RequestMap()
 
-        baseMapObj.setAll({'user.name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]})
-        self.assertEqual(baseMapObj.getObject(),{"user":{'name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]}})
+        requestMapObj.setAll({'user.name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]})
+        self.assertEqual(requestMapObj.getObject(),{"user":{'name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]}})
 
-        baseMapObj.setAll({'employee.name':'atul'})
-        self.assertDictEqual(baseMapObj.getObject(),{"user":{'name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]},"employee":{"name":"atul"}})
+        requestMapObj.setAll({'employee.name':'atul'})
+        self.assertDictEqual(requestMapObj.getObject(),{"user":{'name':['Naman','Kumar','Aggarwal',{'class':{'id':1233}}]},"employee":{"name":"atul"}})
 
 
-        baseMapObj = BaseMap()
+        requestMapObj = RequestMap()
 
-        baseMapObj.setAll([{"user.name":"Naman","user.lastname":"Aggarwal"}])
-        self.assertEqual(baseMapObj.getObject(),{"list":[{"user":{"name":"Naman","lastname":"Aggarwal"}}]})
+        requestMapObj.setAll([{"user.name":"Naman","user.lastname":"Aggarwal"}])
+        self.assertEqual(requestMapObj.getObject(),{"list":[{"user":{"name":"Naman","lastname":"Aggarwal"}}]})
 
 
 

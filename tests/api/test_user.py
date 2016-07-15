@@ -26,7 +26,7 @@
 #
 import unittest
 from mastercardapicore.core import Config
-from mastercardapicore.core.model import BaseMap
+from mastercardapicore.core.model import RequestMap
 from user import User
 from mastercardapicore.security.oauth import OAuthAuthentication
 from os.path import dirname, realpath, join
@@ -63,7 +63,7 @@ class UserTest(unittest.TestCase):
           "username" : "jbloggs"
         }
 
-        mapObj = BaseMap()
+        mapObj = RequestMap()
 
         mapObj.setAll(obj)
 

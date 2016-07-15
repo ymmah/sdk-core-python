@@ -80,7 +80,7 @@ class User(BaseObject):
     @staticmethod
     def deleteById(id):
 
-        mapObj = BaseMap()
+        mapObj = RequestMap()
         mapObj.set("id",id)
 
         obj = User(mapObj)
