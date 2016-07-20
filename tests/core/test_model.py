@@ -140,11 +140,15 @@ class RequestMapTest(unittest.TestCase):
 
 
         requestMapObj = RequestMap()
-
         requestMapObj.setAll([{"user.name":"Naman","user.lastname":"Aggarwal"}])
         self.assertEqual(requestMapObj.getObject(),{"list":[{"user":{"name":"Naman","lastname":"Aggarwal"}}]})
 
 
+        #ARIZZINI: check list bug
+        requestMapObj = RequestMap()
+        requestMapObj.setAll([ { "id": 1, "title": "My Title", "body": "some body text", "userId": 1 } ])
+        self.assertEqual(requestMapObj.getObject(),{"list":[{ "id": 1, "title": "My Title", "body": "some body text", "userId": 1 }]})
+        self.assertEqual(requestMapObj.get("list[0].id"), 1)
 
 
 

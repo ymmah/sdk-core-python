@@ -311,15 +311,7 @@ class BaseObject(RequestMap):
         raise NotImplementedError("Child class must define getApiVersion method to use this class")
 
     @classmethod
-    def readObject(cls,inputObject,criteria = None):
-
-        if criteria is not None:
-
-            if isinstance(criteria,RequestMap):
-                inputObject.setAll(criteria.getObject())
-            else:
-                inputObject.setAll(criteria)
-
+    def readObject(cls,inputObject):
         return cls.__execute(APIController.ACTION_READ,inputObject)
 
     @classmethod
@@ -349,27 +341,6 @@ class BaseObject(RequestMap):
         response   = controller.execute(action,inputObject.getResourcePath(action),inputObject.getHeaderParams(action),inputObject.getQueryParams(action),inputObject.getObject())
         returnObjClass = inputObject.__class__
 
-        if action == APIController.ACTION_LIST:
-            returnObj = []
-
-            if RequestMap.KEY_LIST in response:
-                response = response[RequestMap.KEY_LIST]
-
-            if isinstance(response,dict):
-                for key, value in response.iteritems():
-                    requestMap  = RequestMap()
-                    requestMap.setAll(value)
-                    returnObj.append(returnObjClass(requestMap))
-
-            elif isinstance(response,list):
-                for value in response:
-                    requestMap  = RequestMap()
-                    requestMap.setAll(value)
-                    returnObj.append(returnObjClass(requestMap))
-
-            return returnObj
-
-        else:
-            requestMap  = RequestMap()
-            requestMap.setAll(response)
-            return returnObjClass(requestMap)
+        requestMap  = RequestMap()
+        requestMap.setAll(response)
+        return returnObjClass(requestMap)
