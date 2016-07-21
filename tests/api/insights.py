@@ -43,6 +43,18 @@ class Insights(BaseObject):
 
         raise Exception("Invalid action "+str(action))
 
+    def getQueryParams(self,action):
+
+        if action.upper() == "QUERY":
+            return []
+
+        raise Exception("Invalid action "+str(action))
+
+    @classmethod
+    def getApiVersion(self):
+
+        return "1.1.1"
+
     @staticmethod
     def query(criteria):
 

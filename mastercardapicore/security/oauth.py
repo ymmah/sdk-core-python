@@ -110,6 +110,7 @@ class OAuthAuthentication(Authentication):
             return util.base64Encode(sign)
         except:
             privateKeyFile.close()
+            raise Exception("Error Reading the key file")
 
 
 class OAuthParameters(object):

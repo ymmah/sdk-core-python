@@ -24,21 +24,21 @@
 # SUCH DAMAGE.
 #
 
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 INSTALL_REQUIRES = []
 INSTALL_REQUIRES.append('requests')
 INSTALL_REQUIRES.append('pyOpenSSL')
 
-setup(name='mastercardapicore',
-      version='1.0.0',
+setup(name='mastercard_api_core',
+      version='0.0.2',
       description='MasterCard API Python Core SDK',
       long_description='MasterCard API Python Core SDK',
-      author='Naman Aggarwal',
-      author_email='naman.aggarwal@mastercard.com',
+      author='MasterCard Worldwide',
+      author_email='APISupport@mastercard.com',
       url='https://www.developer.mastercard.com',
-      license='BSD',
-      packages=['mastercardapicore','tests'],
+      license='BSD2',
+      packages=find_packages(),
       classifiers=[
         'Intended Audience :: Developers',
         'Natural Language :: English',
@@ -52,6 +52,6 @@ setup(name='mastercardapicore',
         'Programming Language :: Python :: 3.4',
         'Topic :: Software Development :: Libraries :: Python Modules'
         ],
-        tests_require=['mock','nose','coverage'],
+        tests_require=['mock','nose','coverage','urllib3'],
         install_requires=INSTALL_REQUIRES
 )

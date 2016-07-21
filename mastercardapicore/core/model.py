@@ -28,10 +28,10 @@ import re
 from mastercardapicore.core.controller import APIController
 
 ################################################################################
-# BaseMap
+# RequestMap
 ################################################################################
 
-class BaseMap(object):
+class RequestMap(object):
 
     KEY_LIST = "list"
 
@@ -173,7 +173,7 @@ class BaseMap(object):
 
     def getObject(self):
         """
-        Returns the baseMap internal object
+        Returns the requestMap internal object
         """
         return self.__properties
 
@@ -264,7 +264,7 @@ class BaseMap(object):
 
         #If given object is a list then the created map should have a key called list first
         if isinstance(map,list):
-            initialKey = BaseMap.KEY_LIST
+            initialKey = RequestMap.KEY_LIST
 
         #Iterate over the object and keeps on adding the items to the properties object
         self.__iterateItemsAndAdd(map,initialKey)
@@ -286,16 +286,16 @@ class BaseMap(object):
 ################################################################################
 
 
-class BaseObject(BaseMap):
+class BaseObject(RequestMap):
 
 
-    def __init__(self,baseMap = None):
+    def __init__(self,requestMap = None):
 
         #Call the base class constructor
         super(BaseObject, self).__init__()
 
-        if baseMap is not None:
-            self.setAll(baseMap.getObject())
+        if requestMap is not None:
+            self.setAll(requestMap.getObject())
 
     def getResourcePath(self,action):
         raise NotImplementedError("Child class must define getResourcePath method to use this class")
@@ -303,16 +303,15 @@ class BaseObject(BaseMap):
     def getHeaderParams(self,action):
         raise NotImplementedError("Child class must define getHeaderParams method to use this class")
 
+    def getQueryParams(self,action):
+        raise NotImplementedError("Child class must define getQueryParams method to use this class")
+
     @classmethod
-    def readObject(cls,inputObject,criteria = None):
+    def getApiVersion(self):
+        raise NotImplementedError("Child class must define getApiVersion method to use this class")
 
-        if criteria is not None:
-
-            if isinstance(criteria,BaseMap):
-                inputObject.setAll(criteria.getObject())
-            else:
-                inputObject.setAll(criteria)
-
+    @classmethod
+    def readObject(cls,inputObject):
         return cls.__execute(APIController.ACTION_READ,inputObject)
 
     @classmethod
@@ -338,31 +337,10 @@ class BaseObject(BaseMap):
     @classmethod
     def __execute(cls,action,inputObject):
 
-        controller = APIController()
-        response   = controller.execute(action,inputObject.getResourcePath(action),inputObject.getHeaderParams(action),inputObject.getObject())
+        controller = APIController(cls.getApiVersion())
+        response   = controller.execute(action,inputObject.getResourcePath(action),inputObject.getHeaderParams(action),inputObject.getQueryParams(action),inputObject.getObject())
         returnObjClass = inputObject.__class__
 
-        if action == APIController.ACTION_LIST:
-            returnObj = []
-
-            if BaseMap.KEY_LIST in response:
-                response = response[BaseMap.KEY_LIST]
-
-            if isinstance(response,dict):
-                for key, value in response.iteritems():
-                    baseMap  = BaseMap()
-                    baseMap.setAll(value)
-                    returnObj.append(returnObjClass(baseMap))
-
-            elif isinstance(response,list):
-                for value in response:
-                    baseMap  = BaseMap()
-                    baseMap.setAll(value)
-                    returnObj.append(returnObjClass(baseMap))
-
-            return returnObj
-
-        else:
-            baseMap  = BaseMap()
-            baseMap.setAll(response)
-            return returnObjClass(baseMap)
+        requestMap  = RequestMap()
+        requestMap.setAll(response)
+        return returnObjClass(requestMap)

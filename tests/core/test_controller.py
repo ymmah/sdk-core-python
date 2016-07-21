@@ -41,8 +41,8 @@ except ImportError:
 class APIControllerBaseTest(unittest.TestCase):
 
     def setUp(self):
-        keyFile = join(dirname(dirname(realpath(__file__))),"resources","prod_key.p12")
-        auth = OAuthAuthentication("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d",keyFile, "alias", "password")
+        keyFile = join(dirname(dirname(realpath(__file__))),"resources","mcapi_sandbox_key.p12")
+        auth = OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d",keyFile, "alias", "password")
         Config.setAuthentication(auth)
         self.controller = APIController()
 
@@ -164,26 +164,57 @@ class APIControllerTests(APIControllerBaseTest):
             "param1":1,
             "param2":2
         }
+
+        queryMap = {
+            "a":"1"
+        }
+
         url = "http://localhost:8080/fraud/api/v1/account-inquiry"
 
         #Create Request with inputMap
-        request = self.controller.getRequestObject(url,APIController.ACTION_CREATE,inputMap)
+        request = self.controller.getRequestObject(url,APIController.ACTION_CREATE,queryMap,inputMap)
 
-        self.assertEqual(request.params,{APIController.KEY_FORMAT:APIController.JSON})
+        self.assertEqual(request.params,{APIController.KEY_FORMAT:APIController.JSON,"a":"1"})
         self.assertEqual(json.loads(request.data),inputMap)
         self.assertEqual(request.headers,defaultHeaders)
         self.assertEqual(request.url,url)
 
 
+        inputMap = {
+
+            "param1":1,
+            "param2":2
+        }
+
+        queryMap = {
+            "a":"1",
+            "b":2
+        }
+
+
         #List Request with inputMap
-        request = self.controller.getRequestObject(url,APIController.ACTION_LIST,inputMap)
+        request = self.controller.getRequestObject(url,APIController.ACTION_LIST,queryMap,inputMap)
 
-        inputMap[APIController.KEY_FORMAT] = APIController.JSON
-
-        self.assertEqual(request.params,inputMap)
+        self.assertEqual(request.params,{"param1":1,"param2":2,"a":"1","b":2,"Format":"JSON"})
         self.assertEqual(request.data,[])
         self.assertEqual(request.headers,defaultHeaders)
         self.assertEqual(request.url,url)
+
+
+        queryMap = {
+            "a":"1",
+            "b":2
+        }
+
+
+        #List Request with no inputMap
+        request = self.controller.getRequestObject(url,APIController.ACTION_LIST,queryMap,{})
+
+        self.assertEqual(request.params,{"a":"1","b":2,"Format":"JSON"})
+        self.assertEqual(request.data,[])
+        self.assertEqual(request.headers,defaultHeaders)
+        self.assertEqual(request.url,url)
+
 
 
     def test_controllerConstructor(self):
@@ -211,6 +242,8 @@ class APIControllerTests(APIControllerBaseTest):
         }
 
         headerList = ["Content-Type"]
+        queryList = []
+
 
         action = "list"
         resourcePath = "/user/{a}"
@@ -220,13 +253,13 @@ class APIControllerTests(APIControllerBaseTest):
             mock_config.getAuthentication.return_value = None
 
             with self.assertRaises(APIException):
-                content = self.controller.execute(action,resourcePath,headerList,inputMap)
+                content = self.controller.execute(action,resourcePath,headerList,queryList,inputMap)
 
             #Set Authentication to some other object
             mock_config.getAuthentication.return_value = "stringobject"
 
             with self.assertRaises(APIException):
-                content = self.controller.execute(action,resourcePath,headerList,inputMap)
+                content = self.controller.execute(action,resourcePath,headerList,queryList,inputMap)
 
 
         with patch('mastercardapicore.core.controller.Session') as mock_session:
@@ -234,7 +267,7 @@ class APIControllerTests(APIControllerBaseTest):
             response.content = "Some Content"
             response.status_code = 200
             mock_session().send.return_value =response
-            content = self.controller.execute(action,resourcePath,headerList,inputMap)
+            content = self.controller.execute(action,resourcePath,headerList,queryList,inputMap)
 
 
     def test_handleResponse(self):

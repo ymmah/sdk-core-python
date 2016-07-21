@@ -35,8 +35,8 @@ from os.path import dirname, realpath, join
 class OAuthTest(unittest.TestCase):
 
     def setUp(self):
-        keyFile = join(dirname(dirname(realpath(__file__))),"resources","MCOpenAPI.p12")
-        self.auth = OAuthAuthentication("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", keyFile, "mckp", "mcapi")
+        keyFile = join(dirname(dirname(realpath(__file__))),"resources","mcapi_sandbox_key.p12")
+        self.auth = OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", keyFile, "alias", "password")
         Config.setAuthentication(self.auth)
 
     def test_getNonce(self):
@@ -81,7 +81,7 @@ class OAuthTest(unittest.TestCase):
         signature = self.auth.signMessage(baseString)
         signature = Util.uriRfc3986Encode(signature)
 
-        self.assertEqual(signature,"Yh7m15oV0XbRTFP%2Fp4T56sg38QDLKEh4cVK90taaHstE%2FjTdCn53CtbUETQFWLR2VdMMv8ujeewM3NDzLRfVLqwE%2FsWbpeaWtm%2FpffAvHjXFTquo4hBE6CPRNEqFyIjCz4lNaYoeaQMFJVmYfSF2CWn46RP3wmIrfs5IfQNtwUI%3D")
+        self.assertEqual(signature,"S0IF6DIEuurQVVM4VYJl6W02KW54aZx%2FNLiCC351Oygadl8QdnrMl3bauOZn4BiED1ciCUkfbEyAE2SYFjHSQMq8Tc1f7yf8Grc8qTo%2FtRacMF0fBvqaAL46hW0ECW9w33IotWQcZ1CXr4%2BwjXACLOSac5rUl0bMtj%2FKS9xguV98UXrHipe1NUos1%2Fukuo1JqSBccFDrw1Ngeux8A1fCAcLPqvlpnPUBi9TLVKozAyBruhg8UHk5LzFCUIw3sjfdH5SmwaXu9YntuqspIuV9o9%2FBYGu6HSgYgcCE%2FfbUQOwUsNpV9GncDAhzXyNdMm2Y7btde9ELnAqDE8OKf8%2BVqw%3D%3D")
 
 
 
