@@ -31,6 +31,7 @@ Utility file having common functions for MasterCard Core SDK
 import re
 import hashlib
 import base64
+import string
 
 
 try:
@@ -86,7 +87,12 @@ def uriRfc3986Encode(value):
     """
     RFC 3986 encodes the value
     """
-    return quote_plus(value)
+    encoded = quote_plus(value)
+    encoded = string.replace(encoded, '+', '%20')
+    encoded = string.replace(encoded, '*', '%2A')
+    encoded = string.replace(encoded, '~', '%7E')
+    return encoded
+
 
 def sha1Encode(text):
     """

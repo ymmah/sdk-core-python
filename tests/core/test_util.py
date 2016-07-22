@@ -140,7 +140,7 @@ class UtilTests(unittest.TestCase):
 
         nurl = util.normalizeParams(url,params)
 
-        self.assertEqual(nurl,"a=3&b=3&c=1&d=2&k=5%2B8&m=2&n=a+b")
+        self.assertEqual(nurl,"a=3&b=3&c=1&d=2&k=5%2B8&m=2&n=a%20b")
 
 
     def test_uriRfc3986Encode(self):
