@@ -38,9 +38,8 @@ class UserTest(unittest.TestCase):
         keyFile = join(dirname(dirname(realpath(__file__))),"resources","mcapi_sandbox_key.p12")
         auth = OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", keyFile, "alias", "password")
         Config.setAuthentication(auth)
-        Config.setLocal(True)
 
-    @unittest.skip("This test needs a sample nodejs server")
+    #@unittest.skip("This test needs a sample nodejs server")
     def test_example_User(self):
 
         obj = {
@@ -68,6 +67,9 @@ class UserTest(unittest.TestCase):
         mapObj.setAll(obj)
 
         response = User.create(mapObj)
+        
+        
+        
         response = User.listByCriteria()
 
 

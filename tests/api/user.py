@@ -25,60 +25,46 @@
 # SUCH DAMAGE.
 #
 from mastercardapicore.core.model import BaseObject
-
+from mastercardapicore.core.model import OperationConfig
+from mastercardapicore.core.model import OperationMetadata
 
 class User(BaseObject):
+    
+    __config = {
+       "list" : OperationConfig("/mock_crud_server/users", "list", [], []),
+       "create" : OperationConfig("/mock_crud_server/users", "list", [], []),
+       "read" : OperationConfig("/mock_crud_server/users/{id}", "list", [], []),
+       "update" : OperationConfig("/mock_crud_server/users/{id}", "list", [], []),
+       "delete" : OperationConfig("/mock_crud_server/users/{id}", "list", [], []),
 
-    def getResourcePath(self,action):
+    }
 
-        action = action.upper()
-        if action == "LIST":
-            return "/mock_crud_server/users"
-
-        elif action == "CREATE":
-            return "/mock_crud_server/users"
-
-        elif action == "READ":
-            return "/mock_crud_server/users/{id}"
-
-        elif action == "UPDATE":
-            return "/mock_crud_server/users/{id}"
-
-        elif action == "DELETE":
-            return "/mock_crud_server/users/{id}"
-
-
-        raise Exception("Invalid action "+action)
-
-
-    def getHeaderParams(self,action):
-
-        if action.upper() in ["LIST","CREATE","READ","UPDATE","DELETE"]:
-            return {}
-
-        raise Exception("Invalid action "+action)
+    def getOperationConfig(self,operationUUID):
+        if operationUUID not in self.__config:
+            raise Exception("Invalid operationUUID: "+operationUUI)
+        
+        return self.__config[operationUUID]
+    
+    def getOperationMetadata(self):
+        return OperationMetadata("0.0.1", "http://localhost:8080")
 
     @staticmethod
     def listByCriteria(criteria = None):
-
         if criteria is None:
-            return User.listObject(User())
-
+            return BaseObject.execute("list",User())
         else:
-            return User.listObject(User(criteria))
+            return BaseObject.execute("list",User(criteria))
 
     @staticmethod
     def create(mapObj):
-
-        User.createObject(User(mapObj))
+        BaseObject.execute("create", User(mapObj))
 
 
     def update(self,mapObj):
-
-        User.updateObject(self)
+        BaseObject.execute("update", self)
 
     @staticmethod
-    def deleteById(id):
+    def delete(id):
 
         mapObj = RequestMap()
         mapObj.set("id",id)
