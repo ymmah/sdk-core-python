@@ -26,6 +26,8 @@
 #
 import unittest
 from mastercardapicore.core.controller import APIController
+from mastercardapicore.core.model import OperationConfig
+from mastercardapicore.core.model import OperationMetadata
 from mastercardapicore.core import Config
 from mastercardapicore.security.oauth import OAuthAuthentication, Authentication
 from mastercardapicore.core import Constants
@@ -72,8 +74,11 @@ class APIControllerTests(APIControllerBaseTest):
             'four': 4,
             'five':5
         }
+        
+        config = OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", [], [])
+        metadata = OperationMetadata("0.0.1", None)
 
-        url = self.controller.getURL(APIController.ACTION_CREATE, "/fraud/{api}/v{version}/account-inquiry", inputMap)
+        url = self.controller.getURL(config,metadata,inputMap)
 
         #Normal URL
         self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry")
@@ -88,7 +93,10 @@ class APIControllerTests(APIControllerBaseTest):
         }
 
         #URL with trailing /
-        url = self.controller.getURL(APIController.ACTION_CREATE, "/fraud/{api}/v{version}/account-inquiry/", inputMap)
+        config = OperationConfig("/fraud/{api}/v{version}/account-inquiry/", "create", [], [])
+        metadata = OperationMetadata("0.0.1", None)
+        
+        url = self.controller.getURL(config,metadata,inputMap)
         self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry")
         self.assertEqual(3,len(inputMap))
 
@@ -100,7 +108,9 @@ class APIControllerTests(APIControllerBaseTest):
         }
 
         #URL with id and action delete
-        url = self.controller.getURL(APIController.ACTION_DELETE, "/fraud/{api}/v{version}/account-inquiry/{id}", inputMap)
+        config = OperationConfig("/fraud/{api}/v{version}/account-inquiry/{id}", "delete", [], [])
+        metadata = OperationMetadata("0.0.1", None)
+        url = self.controller.getURL(config,metadata,inputMap)
         self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry/1")
         self.assertEqual(1,len(inputMap))
 
@@ -112,8 +122,11 @@ class APIControllerTests(APIControllerBaseTest):
             'id':1
         }
 
+
         #URL with id in inputMap but not in url
-        url = self.controller.getURL(APIController.ACTION_DELETE, "/fraud/{api}/v{version}/account-inquiry", inputMap)
+        config = OperationConfig("/fraud/{api}/v{version}/account-inquiry", "delete", [], [])
+        metadata = OperationMetadata("0.0.1", None)
+        url = self.controller.getURL(config,metadata, inputMap)
         self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry/1")
         self.assertEqual(1,len(inputMap))
 
@@ -125,14 +138,20 @@ class APIControllerTests(APIControllerBaseTest):
         }
 
         #URL with id in inputMap but not in url and method create
-        url = self.controller.getURL(APIController.ACTION_CREATE, "/fraud/{api}/v{version}/account-inquiry", inputMap)
+        config = OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", [], [])
+        metadata = OperationMetadata("0.0.1", None)
+        url = self.controller.getURL(config, metadata, inputMap)
         self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry")
         self.assertEqual(2,len(inputMap))
+        
 
         #Now that the key api and version are not there in map
         #This should raise a key error
         with self.assertRaises(KeyError):
-            url = self.controller.getURL(APIController.ACTION_CREATE, "/fraud/{api}/v{version}/account-inquiry/", inputMap)
+            config = OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", [], [])
+            metadata = OperationMetadata("0.0.1", None)
+            url = self.controller.getURL(config,metadata,inputMap)
+            print(url)
 
 
     def test_getMethod(self):
@@ -151,49 +170,50 @@ class APIControllerTests(APIControllerBaseTest):
 
     def test_getRequestObject(self):
 
-        defaultHeaders = {
-
+        defaultHeaders =  {
             APIController.KEY_ACCEPT:APIController.APPLICATION_JSON,
             APIController.KEY_CONTENT_TYPE:APIController.APPLICATION_JSON,
-            APIController.KEY_USER_AGENT:APIController.PYTHON_SDK+"/"+Constants.VERSION
-
+            APIController.KEY_USER_AGENT:APIController.PYTHON_SDK+"/0.0.1"
         }
-
+     
         inputMap = {
-
             "param1":1,
-            "param2":2
+            "param2":2,
+            "a":"1",
+            APIController.KEY_ACCEPT:APIController.APPLICATION_JSON,
+            APIController.KEY_CONTENT_TYPE:APIController.APPLICATION_JSON,
+            APIController.KEY_USER_AGENT:APIController.PYTHON_SDK+"/0.0.1"
         }
+        
+        config = OperationConfig("/fraud/api/v1/account-inquiry", "create", ['Accept','Content-Type', 'User-Agent'], ["a"])
+        metadata = OperationMetadata("0.0.1", None)
 
-        queryMap = {
-            "a":"1"
-        }
-
-        url = "http://localhost:8080/fraud/api/v1/account-inquiry"
+        url = "https://sandbox.api.mastercard.com/fraud/api/v1/account-inquiry"
+        
+        Config.setAuthentication(None)
 
         #Create Request with inputMap
-        request = self.controller.getRequestObject(url,APIController.ACTION_CREATE,queryMap,inputMap)
+        request = self.controller.getRequestObject(config,metadata,inputMap)
 
+        self.assertEqual(request.url,url)
         self.assertEqual(request.params,{APIController.KEY_FORMAT:APIController.JSON,"a":"1"})
         self.assertEqual(json.loads(request.data),inputMap)
         self.assertEqual(request.headers,defaultHeaders)
-        self.assertEqual(request.url,url)
+        
 
 
         inputMap = {
-
             "param1":1,
-            "param2":2
-        }
-
-        queryMap = {
+            "param2":2,
             "a":"1",
             "b":2
         }
 
 
+        config = OperationConfig("/fraud/api/v1/account-inquiry", "list", ['Accept','Content-Type', 'User-Agent'], ["a", "b"])
+
         #List Request with inputMap
-        request = self.controller.getRequestObject(url,APIController.ACTION_LIST,queryMap,inputMap)
+        request = self.controller.getRequestObject(config,metadata,inputMap)
 
         self.assertEqual(request.params,{"param1":1,"param2":2,"a":"1","b":2,"Format":"JSON"})
         self.assertEqual(request.data,[])
@@ -201,14 +221,15 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(request.url,url)
 
 
-        queryMap = {
+        inputMap = {
             "a":"1",
             "b":2
         }
 
 
+
         #List Request with no inputMap
-        request = self.controller.getRequestObject(url,APIController.ACTION_LIST,queryMap,{})
+        request = self.controller.getRequestObject(config,metadata,inputMap)
 
         self.assertEqual(request.params,{"a":"1","b":2,"Format":"JSON"})
         self.assertEqual(request.data,[])
@@ -219,19 +240,17 @@ class APIControllerTests(APIControllerBaseTest):
 
     def test_controllerConstructor(self):
 
-        temp = Constants.API_BASE_LOCALHOST_URL
-        Constants.API_BASE_LOCALHOST_URL = "someinvalidurl"
-        Config.setLocal(True)
+        temp = Constants.API_BASE_LIVE_URL
+        Constants.API_BASE_LIVE_URL = "someinvalidurl"
+        Config.setSandbox(False)
         with self.assertRaises(APIException):
             controller = APIController()
 
         #replace the url back
-        Constants.API_BASE_LOCALHOST_URL = temp
-        Config.setLocal(False)
+        Constants.API_BASE_LIVE_URL = temp
+        Config.setSandbox(True)
 
     def test_execute(self):
-
-
 
         inputMap = {
 
@@ -241,25 +260,24 @@ class APIControllerTests(APIControllerBaseTest):
             "id":3
         }
 
-        headerList = ["Content-Type"]
-        queryList = []
-
-
-        action = "list"
-        resourcePath = "/user/{a}"
+        
+        config = OperationConfig("/user/{a}", "list", ["Content-Type"], [])
+        metadata = OperationMetadata("0.0.1", None)
 
         with patch('mastercardapicore.core.controller.Config') as mock_config:
             #Set Authentication to None
             mock_config.getAuthentication.return_value = None
+            
+            
 
             with self.assertRaises(APIException):
-                content = self.controller.execute(action,resourcePath,headerList,queryList,inputMap)
+                content = self.controller.execute(config,metadata,inputMap)
 
             #Set Authentication to some other object
             mock_config.getAuthentication.return_value = "stringobject"
 
             with self.assertRaises(APIException):
-                content = self.controller.execute(action,resourcePath,headerList,queryList,inputMap)
+                content = self.controller.execute(config,metadata,inputMap)
 
 
         with patch('mastercardapicore.core.controller.Session') as mock_session:
@@ -267,7 +285,7 @@ class APIControllerTests(APIControllerBaseTest):
             response.content = "Some Content"
             response.status_code = 200
             mock_session().send.return_value =response
-            content = self.controller.execute(action,resourcePath,headerList,queryList,inputMap)
+            content = self.controller.execute(config,metadata,inputMap)
 
 
     def test_handleResponse(self):

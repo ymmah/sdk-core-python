@@ -25,7 +25,52 @@
 # SUCH DAMAGE.
 #
 
-class Constants:
+import unittest
+from mastercardapicore import RequestMap, Config, OAuthAuthentication
+from os.path import dirname, realpath, join
+from base_test import BaseTest
+from userpostheader import UserPostHeader
 
-    API_BASE_LIVE_URL       = "https://api.mastercard.com"
-    API_BASE_SANDBOX_URL    = "https://sandbox.api.mastercard.com"
+
+class UserPostHeaderTest(BaseTest):
+
+    def setUp(self):
+        keyFile = join(dirname(dirname(realpath(__file__))),"resources","mcapi_sandbox_key.p12")
+        auth = OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", keyFile, "alias", "password")
+        Config.setAuthentication(auth)
+        Config.setDebug(True)
+
+    
+        
+        
+        
+                
+    def test_get_user_posts_with_header(self):
+        mapObj = RequestMap()
+        mapObj.set("user_id", "1")
+        
+
+        
+
+        ignoreAsserts = []
+        
+
+        response = UserPostHeader.listByCriteria(mapObj)
+        self.customAssertEqual(ignoreAsserts, "id", response.get("list[0].id"),"1")
+        self.customAssertEqual(ignoreAsserts, "title", response.get("list[0].title"),"My Title")
+        self.customAssertEqual(ignoreAsserts, "body", response.get("list[0].body"),"some body text")
+        self.customAssertEqual(ignoreAsserts, "userId", response.get("list[0].userId"),"1")
+        
+
+        BaseTest.putResponse("get_user_posts_with_header", response.get("list[0]"));
+
+    
+        
+        
+        
+        
+    
+
+if __name__ == '__main__':
+    unittest.main()
+

@@ -25,7 +25,48 @@
 # SUCH DAMAGE.
 #
 
-class Constants:
 
-    API_BASE_LIVE_URL       = "https://api.mastercard.com"
-    API_BASE_SANDBOX_URL    = "https://sandbox.api.mastercard.com"
+from mastercardapicore.core.model import BaseObject
+from mastercardapicore.core.model import RequestMap
+from mastercardapicore.core.model import OperationConfig
+from mastercardapicore.core.model import OperationMetadata
+
+
+class UserPostPath(BaseObject):
+    """
+    
+    """
+
+    __config = {
+        "69eb8a42-4170-4eb3-a6f1-32bca86a7e5c" : OperationConfig("/mock_crud_server/users/{user_id}/posts", "list", [], []),
+        
+    }
+
+    def getOperationConfig(self,operationUUID):
+        if operationUUID not in self.__config:
+            raise Exception("Invalid operationUUID: "+operationUUI)
+
+        return self.__config[operationUUID]
+
+    def getOperationMetadata(self):
+        return OperationMetadata("0.0.1", "http://localhost:8081")
+
+
+
+    @classmethod
+    def listByCriteria(cls,criteria=None):
+        """
+        List objects of type UserPostPath
+
+        @param Dict criteria
+        @return Array of UserPostPath object matching the criteria.
+        """
+
+        if criteria is None:
+            return BaseObject.execute("69eb8a42-4170-4eb3-a6f1-32bca86a7e5c", UserPostPath())
+        else:
+            return BaseObject.execute("69eb8a42-4170-4eb3-a6f1-32bca86a7e5c", UserPostPath(criteria))
+
+
+
+
