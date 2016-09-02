@@ -32,17 +32,15 @@ from mastercardapicore.core.model import OperationConfig
 from mastercardapicore.core.model import OperationMetadata
 
 
-class User(BaseObject):
+class MultiplePathUserPost(BaseObject):
     """
     
     """
 
     __config = {
-        "9ded5f43-1db6-428a-aef5-c8f849f190a8" : OperationConfig("/mock_crud_server/users", "list", [], []),
-        "7187d685-71a8-4d2e-8a95-72ef94cac718" : OperationConfig("/mock_crud_server/users", "create", [], []),
-        "a0aec5ec-9deb-4b1f-a5a4-f8d6db59645d" : OperationConfig("/mock_crud_server/users/{id}", "read", [], []),
-        "16a66c62-624e-42ef-9d1b-3634a23963d2" : OperationConfig("/mock_crud_server/users/{id}", "update", [], []),
-        "37bd1253-3d58-48b2-b6a4-6e4d2bec81a4" : OperationConfig("/mock_crud_server/users/{id}", "delete", [], []),
+        "9fa2e2ee-db81-4495-8685-8f8a42faefd9" : OperationConfig("/mock_crud_server/users/{user_id}/post/{post_id}", "list", [], []),
+        "365e8965-d1fd-4d35-92b3-cab8d31f5a8d" : OperationConfig("/mock_crud_server/users/{user_id}/post/{post_id}", "update", [], ["testQuery"]),
+        "6d27d10e-9ec3-4df2-80d1-50366a464899" : OperationConfig("/mock_crud_server/users/{user_id}/post/{post_id}", "delete", [], []),
         
     }
 
@@ -60,68 +58,28 @@ class User(BaseObject):
     @classmethod
     def listByCriteria(cls,criteria=None):
         """
-        List objects of type User
+        List objects of type MultiplePathUserPost
 
         @param Dict criteria
-        @return Array of User object matching the criteria.
+        @return Array of MultiplePathUserPost object matching the criteria.
         """
 
         if criteria is None:
-            return BaseObject.execute("9ded5f43-1db6-428a-aef5-c8f849f190a8", User())
+            return BaseObject.execute("9fa2e2ee-db81-4495-8685-8f8a42faefd9", MultiplePathUserPost())
         else:
-            return BaseObject.execute("9ded5f43-1db6-428a-aef5-c8f849f190a8", User(criteria))
+            return BaseObject.execute("9fa2e2ee-db81-4495-8685-8f8a42faefd9", MultiplePathUserPost(criteria))
 
 
-
-    @classmethod
-    def create(cls,mapObj):
-        """
-        Creates object of type User
-
-        @param Dict mapObj, containing the required parameters to create a new object
-        @return User of the response of created instance.
-        """
-        return BaseObject.execute("7187d685-71a8-4d2e-8a95-72ef94cac718", User(mapObj))
-
-
-
-
-
-
-
-
-
-
-
-    @classmethod
-    def read(cls,id,criteria=None):
-        """
-        Returns objects of type User by id and optional criteria
-        @param str id
-        @param dict criteria
-        @return instance of User
-        """
-        mapObj =  RequestMap()
-        if id != None:
-            mapObj.set("id", id)
-
-        if criteria != None:
-            if (isinstance(criteria,RequestMap)):
-                mapObj.setAll(criteria.getObject())
-            else:
-                mapObj.setAll(criteria)
-
-        return BaseObject.execute("a0aec5ec-9deb-4b1f-a5a4-f8d6db59645d", User(mapObj))
 
 
 
     def update(self):
         """
-        Updates an object of type User
+        Updates an object of type MultiplePathUserPost
 
-        @return User object representing the response.
+        @return MultiplePathUserPost object representing the response.
         """
-        return BaseObject.execute("16a66c62-624e-42ef-9d1b-3634a23963d2", self)
+        return BaseObject.execute("365e8965-d1fd-4d35-92b3-cab8d31f5a8d", self)
 
 
 
@@ -133,10 +91,10 @@ class User(BaseObject):
     @classmethod
     def deleteById(cls,id,map=None):
         """
-        Delete object of type User by id
+        Delete object of type MultiplePathUserPost by id
 
         @param str id
-        @return User of the response of the deleted instance.
+        @return MultiplePathUserPost of the response of the deleted instance.
         """
 
         mapObj =  RequestMap()
@@ -149,16 +107,16 @@ class User(BaseObject):
             else:
                 mapObj.setAll(map)
 
-        return BaseObject.execute("37bd1253-3d58-48b2-b6a4-6e4d2bec81a4", User(mapObj))
+        return BaseObject.execute("6d27d10e-9ec3-4df2-80d1-50366a464899", MultiplePathUserPost(mapObj))
 
 
     def delete(self):
         """
-        Delete object of type User
+        Delete object of type MultiplePathUserPost
 
-        @return User of the response of the deleted instance.
+        @return MultiplePathUserPost of the response of the deleted instance.
         """
-        return BaseObject.execute("37bd1253-3d58-48b2-b6a4-6e4d2bec81a4", self)
+        return BaseObject.execute("6d27d10e-9ec3-4df2-80d1-50366a464899", self)
 
 
 
