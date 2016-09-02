@@ -25,38 +25,24 @@
 # SUCH DAMAGE.
 #
 from mastercardapicore.core.model import BaseObject
+from mastercardapicore.core.model import OperationConfig
+from mastercardapicore.core.model import OperationMetadata
 
 class Insights(BaseObject):
-
-    def getResourcePath(self,action):
-
-        if action.upper() == "QUERY":
-            return "/sectorinsights/v1/sectins.svc/insights"
-
-        raise Exception("Invalid action "+str(action))
-
-
-    def getHeaderParams(self,action):
-
-        if action.upper() == "QUERY":
-            return []
-
-        raise Exception("Invalid action "+str(action))
-
-    def getQueryParams(self,action):
-
-        if action.upper() == "QUERY":
-            return []
-
-        raise Exception("Invalid action "+str(action))
-
-    @classmethod
-    def getApiVersion(self):
-
-        return "1.1.1"
+    
+    __config = {
+       "query" : OperationConfig("/sectorinsights/v1/sectins.svc/insights", "query", [], []),
+    }
+    
+    def getOperationConfig(self,operationUUID):
+        if operationUUID not in self.__config:
+            raise Exception("Invalid operationUUID: "+operationUUI)
+        
+        return self.__config[operationUUID]
+    
+    def getOperationMetadata(self):
+        return OperationMetadata("0.0.1", None)
 
     @staticmethod
     def query(criteria):
-
-        obj = Insights(criteria)
-        return Insights.queryObject(obj)
+        return BaseObject.execute("query", Insights(criteria))

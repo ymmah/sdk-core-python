@@ -39,7 +39,6 @@ class Config(object):
     sandbox         = True
     debug           = False
     authentication  = None
-    localhost       = False
 
     def __init__(self):
         pass
@@ -61,14 +60,6 @@ class Config(object):
         return cls.sandbox
 
     @classmethod
-    def setLocal(cls,local):
-        cls.localhost = local
-
-    @classmethod
-    def isLocal(cls):
-        return cls.localhost
-
-    @classmethod
     def setAuthentication(cls,authentication):
         cls.authentication = authentication
 
@@ -78,9 +69,7 @@ class Config(object):
 
     @classmethod
     def getAPIBaseURL(cls):
-        if cls.localhost:
-            return Constants.API_BASE_LOCALHOST_URL
-        elif cls.sandbox:
+        if cls.sandbox:
             return Constants.API_BASE_SANDBOX_URL
         else:
             return Constants.API_BASE_LIVE_URL

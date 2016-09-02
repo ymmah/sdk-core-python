@@ -280,6 +280,43 @@ class RequestMap(object):
             return True
         return False
 
+################################################################################
+# OperationConfig
+################################################################################
+
+class OperationConfig:
+    def __init__(self,resourcePath,action,headerParams,queryParams):
+        self.resourcePath = resourcePath
+        self.action = action
+        self.headerParams = headerParams
+        self.queryParams = queryParams
+        
+    def getResourcePath(self):
+        return self.resourcePath
+    
+    def getAction(self):
+        return self.action
+
+    def getHeaderParams(self):
+        return self.headerParams
+    
+    def getQueryParams(self):
+        return self.queryParams
+    
+################################################################################
+# OperationMetadata
+################################################################################
+
+class OperationMetadata:
+    def __init__(self,version,host):
+        self.version = version
+        self.host = host
+        
+    def getVersion(self):
+        return self.version
+    
+    def getHost(self):
+        return self.host
 
 ################################################################################
 # BaseObject
@@ -297,48 +334,17 @@ class BaseObject(RequestMap):
         if requestMap is not None:
             self.setAll(requestMap.getObject())
 
-    def getResourcePath(self,action):
-        raise NotImplementedError("Child class must define getResourcePath method to use this class")
+    def getOperationConfig(self,operationUUID):
+        raise NotImplementedError("Child class must define __getOperationConfig method to use this class")
 
-    def getHeaderParams(self,action):
-        raise NotImplementedError("Child class must define getHeaderParams method to use this class")
+    def getOperationMetadata(self):
+        raise NotImplementedError("Child class must define __getOperationMetadata method to use this class")
 
-    def getQueryParams(self,action):
-        raise NotImplementedError("Child class must define getQueryParams method to use this class")
 
     @classmethod
-    def getApiVersion(self):
-        raise NotImplementedError("Child class must define getApiVersion method to use this class")
+    def execute(cls,operationUUID,inputObject):
 
-    @classmethod
-    def readObject(cls,inputObject):
-        return cls.__execute(APIController.ACTION_READ,inputObject)
-
-    @classmethod
-    def listObjects(cls,inputObject):
-        return cls.__execute(APIController.ACTION_LIST,inputObject)
-
-    @classmethod
-    def createObject(cls,inputObject):
-        return cls.__execute(APIController.ACTION_CREATE,inputObject)
-
-    @classmethod
-    def queryObject(cls,inputObject):
-        return cls.__execute(APIController.ACTION_QUERY,inputObject)
-
-    @classmethod
-    def deleteObject(cls,inputObject):
-        return cls.__execute(APIController.ACTION_DELETE,inputObject)
-
-    @classmethod
-    def updateObject(cls,inputObject):
-        return cls.__execute(APIController.ACTION_UPDATE,inputObject)
-
-    @classmethod
-    def __execute(cls,action,inputObject):
-
-        controller = APIController(cls.getApiVersion())
-        response   = controller.execute(action,inputObject.getResourcePath(action),inputObject.getHeaderParams(action),inputObject.getQueryParams(action),inputObject.getObject())
+        response   = APIController().execute(inputObject.getOperationConfig(operationUUID),inputObject.getOperationMetadata(),inputObject.getObject())
         returnObjClass = inputObject.__class__
 
         requestMap  = RequestMap()

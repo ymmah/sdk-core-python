@@ -57,16 +57,11 @@ class APIController(object):
     JSON             = "JSON"
 
 
-    def __init__(self,version=None):
+    def __init__(self):
 
         #Set the parameters
         self.baseURL = Config.getAPIBaseURL()
-
-        if not version is None:
-            self.version = version
-        else:
-            self.version = Constants.VERSION
-
+        
         #Verify if the URL is correct
         if not util.validateURL(self.baseURL):
             raise APIException("URL: '" + self.baseURL + "' is not a valid url")
@@ -87,19 +82,29 @@ class APIController(object):
         """
         return text[:-1] if text.endswith("/") else text
 
-    def getURL(self,action,resourcePath,inputMap):
+    def getURL(self,config,metadata,inputMap):
         """
         Forms the complete URL by combining baseURL and replaced path variables in resourcePath from inputMap
         """
 
+        resourcePath = config.getResourcePath()
+        action= config.getAction()
+
+        if not metadata.getHost() is None:
+            baseURL = metadata.getHost()
+        else: 
+            baseURL = self.baseURL
+            
+        print "baseURL:::: "+baseURL
+    
         #Remove the Trailing slash from base URL
-        self.baseURL = self.removeForwardSlashFromTail(self.baseURL)
+        baseURL = self.removeForwardSlashFromTail(baseURL)
 
         #Remove the Trailing slash from the resource path
         resourcePath = self.removeForwardSlashFromTail(resourcePath)
 
         #Combine the  base URL and the path
-        fullURL = self.baseURL + resourcePath
+        fullURL = baseURL + resourcePath
 
         #Replace the path variables
         fullURL = util.getReplacedPath(fullURL,inputMap)
@@ -113,14 +118,25 @@ class APIController(object):
 
         return fullURL
 
-    def getRequestObject(self,url,action,queryMap,inputMap):
+    def getRequestObject(self,config,metadata,inputMap):
         """
         Gets the Request Object with URL and
         """
-        #set action as upper for comparison
-        action  = action.upper()
+        
+        #Separate the headers from the inputMap
+        headerMap = util.subMap(inputMap,config.getHeaderParams())
+
+        #Separate the query from the inputMap
+        queryMap  = util.subMap(inputMap,config.getQueryParams())
+        
+        #Extract the action
+        action = config.getAction()
+        
+        #getting the url
+        fullURL = self.getURL(config,metadata,inputMap)
+
         #get method from action
-        method  = self.getMethod(action)
+        method  = self.getMethod(action)        
 
         if method is None:
             raise APIException("Invalid action supplied: " + action);
@@ -129,15 +145,15 @@ class APIController(object):
         request = Request()
         #set the request parameters
         request.method = method
-        request.url    = url
+        request.url    = fullURL
         request.headers[APIController.KEY_ACCEPT]       = APIController.APPLICATION_JSON
         request.headers[APIController.KEY_CONTENT_TYPE] = APIController.APPLICATION_JSON
-        request.headers[APIController.KEY_USER_AGENT]   = APIController.PYTHON_SDK+"/"+self.version
+        request.headers[APIController.KEY_USER_AGENT]   = APIController.PYTHON_SDK+"/"+metadata.getVersion()
 
         #Add inputMap to params if action in read,delete,list,query
-        if action in [APIController.ACTION_READ,APIController.ACTION_DELETE,APIController.ACTION_LIST,APIController.ACTION_QUERY]:
+        if action.upper() in [APIController.ACTION_READ,APIController.ACTION_DELETE,APIController.ACTION_LIST,APIController.ACTION_QUERY]:
             request.params = inputMap
-        elif action in [APIController.ACTION_CREATE,APIController.ACTION_UPDATE]:
+        elif action.upper() in [APIController.ACTION_CREATE,APIController.ACTION_UPDATE]:
             request.data = json.dumps(inputMap)
 
         #Set the query parameter Format as JSON
@@ -145,6 +161,15 @@ class APIController(object):
 
         #Add the query in queryMap
         request.params.update(queryMap)
+        
+        #Add headers
+        for key, value in headerMap.items():
+            request.headers[key] = value
+
+        #Sign the request
+        #This should add the authorization header in the request
+        if (Config.getAuthentication()):
+            Config.getAuthentication().signRequest(fullURL,request)
 
         return request
 
@@ -162,27 +187,13 @@ class APIController(object):
 
         return actions.get(action.upper(),None)
 
-    def execute(self,action,resourcePath,headerList,queryList,inputMap):
+    def execute(self,config,metadata,inputMap):
 
         #Check preconditions for execute
         self.__check()
 
-        #Separate the headers from the inputMap
-        headers = util.subMap(inputMap,headerList)
+        request = self.getRequestObject(config,metadata,inputMap)
 
-        #Separate the query from the inputMap
-        queryMap  = util.subMap(inputMap,queryList)
-
-        fullURL = self.getURL(action,resourcePath,inputMap)
-        request = self.getRequestObject(fullURL,action,queryMap,inputMap)
-
-        #Add headers
-        for key, value in headers.items():
-            request.headers[key] = value
-
-        #Sign the request
-        #This should add the authorization header in the request
-        Config.getAuthentication().signRequest(fullURL,request)
         prepreq = request.prepare()
 
         ##Log the request parameters if Debug is on
