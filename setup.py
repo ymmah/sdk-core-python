@@ -26,10 +26,6 @@
 
 from setuptools import setup, find_packages
 
-INSTALL_REQUIRES = []
-INSTALL_REQUIRES.append('requests')
-INSTALL_REQUIRES.append('pyOpenSSL')
-
 setup(name='mastercard_api_core',
       version='1.1.0',
       description='MasterCard API Python Core SDK',
@@ -53,5 +49,5 @@ setup(name='mastercard_api_core',
         'Topic :: Software Development :: Libraries :: Python Modules'
         ],
         tests_require=['mock','nose','coverage','urllib3'],
-        install_requires=INSTALL_REQUIRES
+        install_requires=['requests', 'pyOpenSSL', 'cryptography==1.4']
 )
