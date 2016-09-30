@@ -26,6 +26,7 @@
 #
 import re
 from mastercardapicore.core.controller import APIController
+from collections import OrderedDict
 
 ################################################################################
 # RequestMap
@@ -37,7 +38,7 @@ class RequestMap(object):
 
     def __init__(self):
 
-        self.__properties = {}
+        self.__properties = OrderedDict()
         self.parentWithSquareBracket = re.compile("\[(.*)\]")
 
     def _moveInList(self,key,match):
@@ -114,7 +115,7 @@ class RequestMap(object):
             self.__subProperty = self.__subProperty[txt_key]
 
             try:
-                if value == {}: #If value is {} then we just want to move in the dict
+                if value == OrderedDict(): #If value is OrderedDict() then we just want to move in the dict
                     self.__subProperty = self.__subProperty[arr_key]
                 else: # This means that this is the last key and value need to be set
                     self.__subProperty[int(arr_key)] = value
@@ -132,11 +133,11 @@ class RequestMap(object):
         match = self.parentWithSquareBracket.search(key)
         #If it is a type of key[0]
         if match is not None:
-            self._handleListTypeKeys(key,match,{})
+            self._handleListTypeKeys(key,match,OrderedDict())
         else: #if it does not have [] like key1
             if key not in self.__subProperty:
-                if isinstance(self.__subProperty,dict):
-                    self.__subProperty[key] = {}
+                if isinstance(self.__subProperty,OrderedDict):
+                    self.__subProperty[key] = OrderedDict()
                 else:
                     raise TypeError("Invalid Key String : Cannot override value "+str(self.__subProperty))
 
