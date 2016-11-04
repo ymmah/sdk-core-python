@@ -38,7 +38,7 @@ class UserPostHeader(BaseObject):
     """
 
     __config = {
-        "1e9905a7-4281-4f24-8e7c-ca2cda672d76" : OperationConfig("/mock_crud_server/users/posts", "list", ["user_id"], []),
+        "1e5446b1-24d6-4841-867c-83105e47a3b3" : OperationConfig("/mock_crud_server/users/posts", "list", ["user_id"], []),
         
     }
 
@@ -62,10 +62,10 @@ class UserPostHeader(BaseObject):
         @return Array of UserPostHeader object matching the criteria.
         """
 
-        if criteria is None:
-            return BaseObject.execute("1e9905a7-4281-4f24-8e7c-ca2cda672d76", UserPostHeader())
+        if not criteria :
+            return BaseObject.execute("1e5446b1-24d6-4841-867c-83105e47a3b3", UserPostHeader())
         else:
-            return BaseObject.execute("1e9905a7-4281-4f24-8e7c-ca2cda672d76", UserPostHeader(criteria))
+            return BaseObject.execute("1e5446b1-24d6-4841-867c-83105e47a3b3", UserPostHeader(criteria))
 
 
 
