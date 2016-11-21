@@ -57,14 +57,7 @@ class APIController(object):
     JSON             = "JSON"
 
 
-    def __init__(self):
 
-        #Set the parameters
-        self.baseURL = Config.getAPIBaseURL()
-        
-        #Verify if the URL is correct
-        if not util.validateURL(self.baseURL):
-            raise APIException("URL: '" + self.baseURL + "' is not a valid url")
 
 
     def __check(self):
@@ -75,6 +68,20 @@ class APIController(object):
         if Config.getAuthentication() is None or not isinstance(Config.getAuthentication(),Authentication):
             raise  APIException("No or incorrect authentication has been configured")
 
+    def generateHost(self):
+
+        #Set the parameters
+        baseURL = "https://"
+        if Config.getSubDomain():
+            baseURL += Config.getSubDomain()
+            baseURL += "."
+        baseURL += "api.mastercard.com"
+        
+        #Verify if the URL is correct
+        if not util.validateURL(baseURL):
+            raise APIException("URL: '" + baseURL + "' is not a valid url")
+        
+        return baseURL
 
     def removeForwardSlashFromTail(self,text):
         """
@@ -93,7 +100,7 @@ class APIController(object):
         if not metadata.getHost() is None:
             baseURL = metadata.getHost()
         else: 
-            baseURL = self.baseURL
+            baseURL = self.generateHost()
             
         print "baseURL:::: "+baseURL
     
@@ -102,7 +109,15 @@ class APIController(object):
 
         #Remove the Trailing slash from the resource path
         resourcePath = self.removeForwardSlashFromTail(resourcePath)
-
+        
+        #arizzini: we need to set the environment variable in the resourcepath
+        if "{:env}" in resourcePath:
+            environment = ""
+            if Config.getEnvironment():
+                environment = Config.getEnvironment()
+            resourcePath = resourcePath.replace("{:env}", environment)
+            resourcePath = resourcePath.replace("//", "/")
+            
         #Combine the  base URL and the path
         fullURL = baseURL + resourcePath
 

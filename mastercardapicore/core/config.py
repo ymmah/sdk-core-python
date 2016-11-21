@@ -36,7 +36,8 @@ class Config(object):
     Configurable options for MasterCard APIs Core SDK
     """
 
-    sandbox         = True
+    subdomain       = "sandbox"
+    environment     = None
     debug           = False
     authentication  = None
 
@@ -53,11 +54,14 @@ class Config(object):
 
     @classmethod
     def setSandbox(cls,sandbox):
-        cls.sandbox = sandbox
+        if sandbox :
+            cls.subdomain = "sandbox"
+        else:
+            cls.subdomain = None
 
     @classmethod
     def isSandbox(cls):
-        return cls.sandbox
+        return cls.subdomain == "sandbox"
 
     @classmethod
     def setAuthentication(cls,authentication):
@@ -68,8 +72,25 @@ class Config(object):
         return cls.authentication
 
     @classmethod
-    def getAPIBaseURL(cls):
-        if cls.sandbox:
-            return Constants.API_BASE_SANDBOX_URL
+    def setEnvironment(cls,environment):
+        if environment:
+            cls.environment = environment
         else:
-            return Constants.API_BASE_LIVE_URL
+            cls.environment = None
+
+    @classmethod
+    def getEnvironment(cls):
+        return cls.environment
+    
+    @classmethod
+    def setSubDomain(cls,subDomain):
+        if subDomain:
+            cls.subdomain = subDomain
+        else:
+            cls.subdomain = None
+    
+    @classmethod
+    def getSubDomain(cls):
+        return cls.subdomain
+        
+

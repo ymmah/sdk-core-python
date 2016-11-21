@@ -236,19 +236,53 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(request.headers,defaultHeaders)
         self.assertEqual(request.url,url)
 
-
-
-    def test_controllerConstructor(self):
-
-        temp = Constants.API_BASE_LIVE_URL
-        Constants.API_BASE_LIVE_URL = "someinvalidurl"
+    def test_subdomain(self):
+        #default
+        
+        self.assertEqual(self.controller.generateHost(), "https://sandbox.api.mastercard.com")
+        
         Config.setSandbox(False)
-        with self.assertRaises(APIException):
-            controller = APIController()
-
-        #replace the url back
-        Constants.API_BASE_LIVE_URL = temp
+        self.assertEqual(self.controller.generateHost(), "https://api.mastercard.com")
+        
+        Config.setSubDomain("stage")
+        self.assertEqual(self.controller.generateHost(), "https://stage.api.mastercard.com")
+        
+        Config.setSubDomain("")
+        self.assertEqual(self.controller.generateHost(), "https://api.mastercard.com")
+        
+        Config.setSubDomain(None)
+        self.assertEqual(self.controller.generateHost(), "https://api.mastercard.com")
+        
         Config.setSandbox(True)
+        self.assertEqual(self.controller.generateHost(), "https://sandbox.api.mastercard.com")
+       
+    def test_environment(self):
+        inputMap = []
+        config = OperationConfig("/fraud/{:env}/v1/account-inquiry", "create", [], [])
+        metadata = OperationMetadata("0.0.1", None)
+        
+
+        #dafault
+        url = self.controller.getURL(config,metadata,inputMap)
+        self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/v1/account-inquiry")
+        
+        #dafault
+        Config.setEnvironment("mtf")
+        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/mtf/v1/account-inquiry")
+        
+        Config.setEnvironment("itf")
+        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/itf/v1/account-inquiry")
+        
+        Config.setEnvironment("peat")
+        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/peat/v1/account-inquiry")
+        
+        Config.setEnvironment("")
+        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/v1/account-inquiry")
+        
+        Config.setEnvironment(None)
+        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/v1/account-inquiry")
+        
+        
 
     def test_execute(self):
 
