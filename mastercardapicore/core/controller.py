@@ -113,7 +113,9 @@ class APIController(object):
         #arizzini: we need to set the environment variable in the resourcepath
         if "{:env}" in resourcePath:
             environment = ""
-            if Config.getEnvironment():
+            if metadata.getEnvironment():
+                environment = metadata.getEnvironment()
+            elif Config.getEnvironment():
                 environment = Config.getEnvironment()
             resourcePath = resourcePath.replace("{:env}", environment)
             resourcePath = resourcePath.replace("//", "/")

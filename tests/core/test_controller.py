@@ -260,6 +260,7 @@ class APIControllerTests(APIControllerBaseTest):
         inputMap = []
         config = OperationConfig("/fraud/{:env}/v1/account-inquiry", "create", [], [])
         metadata = OperationMetadata("0.0.1", None)
+        metadata2 = OperationMetadata("0.0.1", None, "andrea")
         
 
         #dafault
@@ -281,6 +282,9 @@ class APIControllerTests(APIControllerBaseTest):
         
         Config.setEnvironment(None)
         self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/v1/account-inquiry")
+        
+        Config.setEnvironment(None)
+        self.assertEqual(self.controller.getURL(config,metadata2,inputMap),"https://sandbox.api.mastercard.com/fraud/andrea/v1/account-inquiry")
         
         
 
