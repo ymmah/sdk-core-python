@@ -29,17 +29,17 @@
 Config File for MasterCard APIs Core SDK
 """
 
-from mastercardapicore.core import Constants
+from mastercardapicore.core import Environment
 
 class Config(object):
     """
     Configurable options for MasterCard APIs Core SDK
     """
 
-    subdomain       = "sandbox"
-    environment     = None
+    environment     = Environment.SANDBOX
     debug           = False
     authentication  = None
+    registeredInstances = {}
 
     def __init__(self):
         pass
@@ -55,13 +55,13 @@ class Config(object):
     @classmethod
     def setSandbox(cls,sandbox):
         if sandbox :
-            cls.subdomain = "sandbox"
+            cls.environment = Environment.SANDBOX
         else:
-            cls.subdomain = None
+            cls.environment =  Environment.PRODUCTION
 
     @classmethod
     def isSandbox(cls):
-        return cls.subdomain == "sandbox"
+        return cls.environment == Environment.SANDBOX
 
     @classmethod
     def setAuthentication(cls,authentication):
@@ -75,22 +75,18 @@ class Config(object):
     def setEnvironment(cls,environment):
         if environment:
             cls.environment = environment
-        else:
-            cls.environment = None
-
+            for registeredInstance in cls.registeredInstances.values():
+                registeredInstance.setEnvironment(environment)
+            
     @classmethod
     def getEnvironment(cls):
-        return cls.environment
+        return cls.environment    
     
     @classmethod
-    def setSubDomain(cls,subDomain):
-        if subDomain:
-            cls.subdomain = subDomain
-        else:
-            cls.subdomain = None
-    
-    @classmethod
-    def getSubDomain(cls):
-        return cls.subdomain
-        
+    def registerResourceConfig(cls,resourceConfig):
+        if not resourceConfig.__class__.__name__ in cls.registeredInstances.keys():
+            cls.registeredInstances[resourceConfig.__class__.__name__] = resourceConfig
 
+    @classmethod
+    def clearResourceConfig(cls):
+        cls.registeredInstances = {}

@@ -25,7 +25,39 @@
 # SUCH DAMAGE.
 #
 
+################################################################################
+# Constants
+################################################################################
+
 class Constants:
 
     API_BASE_LIVE_URL       = "https://api.mastercard.com"
     API_BASE_SANDBOX_URL    = "https://sandbox.api.mastercard.com"
+
+################################################################################
+# Environment
+################################################################################
+
+class Environment:
+    PRODUCTION  = "production"
+    SANDBOX     = "sandbox" 
+    STAGE       = "stage"
+    DEV         = "dev"
+    MTF         = "mtf"
+    ITF         = "itf"
+    LOCALHOST   = "localhost"
+    DEVCLOUD    = "devcloud"
+    LABSCLOUD   = "labscloud"
+    OTHER1      = "other1"
+    OTHER2      = "other2"
+    OTHER3      = "other3"
+    
+    mapping     = {  
+        "production": ["https://api.mastercard.com", None], 
+        "sandbox": ["https://sandbox.api.mastercard.com", None],
+        "stage": ["https://stage.api.mastercard.com", None],
+        "dev": ["https://dev.api.mastercard.com", None],
+        "mtf": ["https://sandbox.api.mastercard.com", "mtf"],
+        "itf": ["https://sandbox.api.mastercard.com", "itf"],
+        "localhost": ["http://localhost:8081", None] 
+    }

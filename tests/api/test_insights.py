@@ -38,20 +38,22 @@ class InsightsTest(unittest.TestCase):
         keyFile = join(dirname(dirname(realpath(__file__))),"resources","mcapi_sandbox_key.p12")
         auth = OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", keyFile, "test", "password")
         Config.setAuthentication(auth)
+        Config.setDebug(False)
 
 
-    #def test_example_Insights(self):
+    def test_example_Insights(self):
 
-        #mapObj = RequestMap()
+        mapObj = RequestMap()
 
-        #mapObj.set("Period","")
-        #mapObj.set("CurrentRow","1")
-        #mapObj.set("Sector","")
-        #mapObj.set("Offset","25")
-        #mapObj.set("Country","US")
-        #mapObj.set("Ecomm","")
+        mapObj.set("Period","")
+        mapObj.set("CurrentRow","1")
+        mapObj.set("Sector","")
+        mapObj.set("Offset","25")
+        mapObj.set("Country","US")
+        mapObj.set("Ecomm","")
 
-        #response = Insights.query(mapObj)
+        response = Insights.query(mapObj)
+        
 
 
 if __name__ == '__main__':
