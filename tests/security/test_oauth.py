@@ -81,7 +81,7 @@ class OAuthTest(unittest.TestCase):
         signature = self.auth.signMessage(baseString)
         signature = Util.uriRfc3986Encode(signature)
 
-        self.assertEqual(signature,"C4bZsOQpd%2BtTxrpWr%2FPn2m6Es%2FzwPZcFr%2FmcrWqhLuCGEMdSrcbisXx4vlQAZ9n9vRaDBTkCM3I50McbESh0RMhEI8QwT2NsmF%2BjzjFQ8Y6JdlpHim3kGBDr2MnxGo5DQJpAuNhkWzWk%2F9ucApJZ5s0jPG7U0kqhdtw5dg1IIm40O3%2BTS%2FQq%2B5u2xbrSUajmggotQfFZB9fnt3DQykSYoLOgdxzF8FJqudIGedMaTcoQIUVUhj1do9IpqBH5ukHdxg29DEL%2FUEkpZKOzkGRZWxSJAjGcFVIX1nQHNbz0S6LrExOqv8HdSWU6tKDh8h1LiB6V2SAkJSMDt4yESLhExw%3D%3D")
+        self.assertEqual(signature,"OY%2BOvr%2FubzkKYsgnYliwMAB5Cq4z7JvyhQFNXE0EVZkejE96PXFdkpfrNvCI2vO5zRb55PsPh9aW3EbjVkI%2FJBk%2F%2BHUjXkT%2Bg%2BTNMtvl5Ohfo%2BI4Fag3y7on3%2B6n4WWC0w2wcTILngg7SyMk5OqGGrpopl4393%2BXfCZDsmPvOrKoIdZPB6CKvQ1%2FSTEkhufHCOVb7ezybrO%2FiO7Uw5KEsvKK2PNi6CVNp%2F8whdC618C2r%2BvRoaS9nle%2BsfVDSn5Fvpe7QyiQPsCQEmjd6XT11Vy%2F3GE9ZDiU%2B8%2FhErvJNUNFrCm8gYmePfNLQWYUKIYL4bvWG7U5OeQDTOTiBrFq5w%3D%3D")
 
 
 

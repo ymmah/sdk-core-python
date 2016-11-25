@@ -62,10 +62,10 @@ class OAuthAuthentication(Authentication):
         oAuthParameters.setOAuthConsumerKey(self._clientId)
         oAuthParameters.setOAuthNonce(SecurityUtil.getNonce())
         oAuthParameters.setOAuthTimestamp(SecurityUtil.getTimestamp())
-        oAuthParameters.setOAuthSignatureMethod("RSA-SHA1")
+        oAuthParameters.setOAuthSignatureMethod("RSA-SHA256")
         oAuthParameters.setOAuthVersion("1.0")
         if body is not None:
-            encodedHash = util.base64Encode(util.sha1Encode(body))
+            encodedHash = util.base64Encode(util.sha256Encode(body))
             oAuthParameters.setOAuthBodyHash(encodedHash)
 
         return oAuthParameters
@@ -105,7 +105,7 @@ class OAuthAuthentication(Authentication):
         try:
             p12 = crypto.load_pkcs12(privateKeyFile.read(), self._password.encode("utf-8"))
             privateKey = p12.get_privatekey()
-            sign = crypto.sign(privateKey,message.encode("utf-8"),'sha1')
+            sign = crypto.sign(privateKey,message.encode("utf-8"),'SHA256')
             privateKeyFile.close()
             return util.base64Encode(sign)
         except:
