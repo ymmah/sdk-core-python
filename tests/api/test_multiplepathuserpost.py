@@ -26,19 +26,20 @@
 #
 
 import unittest
+
 from mastercardapicore import RequestMap, Config, OAuthAuthentication
 from os.path import dirname, realpath, join
+import time
 from base_test import BaseTest
 from multiplepathuserpost import MultiplePathUserPost
+
 
 
 class MultiplePathUserPostTest(BaseTest):
 
     def setUp(self):
-        keyFile = join(dirname(dirname(realpath(__file__))),"resources","mcapi_sandbox_key.p12")
-        auth = OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", keyFile, "test", "password")
-        Config.setAuthentication(auth)
         Config.setDebug(True)
+        self.resetAuthentication()
 
     
         
@@ -46,24 +47,27 @@ class MultiplePathUserPostTest(BaseTest):
         
                 
     def test_get_user_posts_with_mutplie_path(self):
-        mapObj = RequestMap()
-        mapObj.set("user_id", "1")
-        mapObj.set("post_id", "2")
         
 
         
+    
+        map = RequestMap()
+        map.set("user_id", "1")
+        map.set("post_id", "2")
+        
+        
+        response = MultiplePathUserPost.listByCriteria(map)
 
         ignoreAsserts = []
         
-
-        response = MultiplePathUserPost.listByCriteria(mapObj)
         self.customAssertEqual(ignoreAsserts, "id", response.get("list[0].id"),"1")
         self.customAssertEqual(ignoreAsserts, "title", response.get("list[0].title"),"My Title")
         self.customAssertEqual(ignoreAsserts, "body", response.get("list[0].body"),"some body text")
         self.customAssertEqual(ignoreAsserts, "userId", response.get("list[0].userId"),"1")
         
 
-        BaseTest.putResponse("get_user_posts_with_mutplie_path", response.get("list[0]"));
+        BaseTest.putResponse("get_user_posts_with_mutplie_path", response.get("list[0]"))
+        
 
     
         
@@ -75,28 +79,29 @@ class MultiplePathUserPostTest(BaseTest):
         
                 
     def test_update_user_posts_with_mutplie_path(self):
-        mapObj = RequestMap()
-        mapObj.set("user_id", "1")
-        mapObj.set("post_id", "1")
-        mapObj.set("testQuery", "testQuery")
-        mapObj.set("name", "Joe Bloggs")
-        mapObj.set("username", "jbloggs")
-        mapObj.set("email", "name@example.com")
-        mapObj.set("phone", "1-770-736-8031")
-        mapObj.set("website", "hildegard.org")
-        mapObj.set("address.line1", "2000 Purchase Street")
-        mapObj.set("address.city", "New York")
-        mapObj.set("address.state", "NY")
-        mapObj.set("address.postalCode", "10577")
         
 
         
+    
+        map = RequestMap()
+        map.set("user_id", "1")
+        map.set("post_id", "1")
+        map.set("testQuery", "testQuery")
+        map.set("name", "Joe Bloggs")
+        map.set("username", "jbloggs")
+        map.set("email", "name@example.com")
+        map.set("phone", "1-770-736-8031")
+        map.set("website", "hildegard.org")
+        map.set("address.line1", "2000 Purchase Street")
+        map.set("address.city", "New York")
+        map.set("address.state", "NY")
+        map.set("address.postalCode", "10577")
+        
+        
+        response = MultiplePathUserPost(map).update()
 
         ignoreAsserts = []
         
-
-        request = MultiplePathUserPost(mapObj)
-        response = request.update()
         self.customAssertEqual(ignoreAsserts, "website", response.get("website"),"hildegard.org")
         self.customAssertEqual(ignoreAsserts, "address.instructions.doorman", response.get("address.instructions.doorman"),"true")
         self.customAssertEqual(ignoreAsserts, "address.instructions.text", response.get("address.instructions.text"),"some delivery instructions text")
@@ -112,7 +117,8 @@ class MultiplePathUserPostTest(BaseTest):
         self.customAssertEqual(ignoreAsserts, "username", response.get("username"),"jbloggs")
         
 
-        BaseTest.putResponse("update_user_posts_with_mutplie_path", response);
+        BaseTest.putResponse("update_user_posts_with_mutplie_path", response)
+        
 
     
         
@@ -127,21 +133,24 @@ class MultiplePathUserPostTest(BaseTest):
         
                 
     def test_delete_user_posts_with_mutplie_path(self):
+        
+
+        
+
         map = RequestMap()
         map.set("user_id", "1")
         map.set("post_id", "2")
         
-
         
+        response = MultiplePathUserPost.deleteById("",map)
+        self.assertNotEqual(response,None)
 
         ignoreAsserts = []
         
-
-        response = MultiplePathUserPost.deleteById("",map)
-        self.assertNotEqual(response,None)
         
 
-        BaseTest.putResponse("delete_user_posts_with_mutplie_path", response);
+        BaseTest.putResponse("delete_user_posts_with_mutplie_path", response)
+        
 
     
 

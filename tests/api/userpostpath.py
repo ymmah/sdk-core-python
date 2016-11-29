@@ -38,7 +38,7 @@ class UserPostPath(BaseObject):
     """
 
     __config = {
-        "69eb8a42-4170-4eb3-a6f1-32bca86a7e5c" : OperationConfig("/mock_crud_server/users/{user_id}/posts", "list", [], []),
+        "40ebb906-ebe3-4f49-8c82-e69df5a5c287" : OperationConfig("/mock_crud_server/users/{user_id}/posts", "list", [], []),
         
     }
 
@@ -62,10 +62,10 @@ class UserPostPath(BaseObject):
         @return Array of UserPostPath object matching the criteria.
         """
 
-        if criteria is None:
-            return BaseObject.execute("69eb8a42-4170-4eb3-a6f1-32bca86a7e5c", UserPostPath())
+        if not criteria :
+            return BaseObject.execute("40ebb906-ebe3-4f49-8c82-e69df5a5c287", UserPostPath())
         else:
-            return BaseObject.execute("69eb8a42-4170-4eb3-a6f1-32bca86a7e5c", UserPostPath(criteria))
+            return BaseObject.execute("40ebb906-ebe3-4f49-8c82-e69df5a5c287", UserPostPath(criteria))
 
 
 

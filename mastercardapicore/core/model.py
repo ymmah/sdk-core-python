@@ -309,15 +309,19 @@ class OperationConfig:
 ################################################################################
 
 class OperationMetadata:
-    def __init__(self,version,host):
+    def __init__(self,version,host,environment=None):
         self.version = version
         self.host = host
+        self.environment = environment
         
     def getVersion(self):
         return self.version
     
     def getHost(self):
         return self.host
+    
+    def getEnvironment(self):
+        return self.environment
 
 ################################################################################
 # BaseObject

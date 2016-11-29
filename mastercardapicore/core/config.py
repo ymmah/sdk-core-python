@@ -29,16 +29,17 @@
 Config File for MasterCard APIs Core SDK
 """
 
-from mastercardapicore.core import Constants
+from mastercardapicore.core import Environment
 
 class Config(object):
     """
     Configurable options for MasterCard APIs Core SDK
     """
 
-    sandbox         = True
+    environment     = Environment.SANDBOX
     debug           = False
     authentication  = None
+    registeredInstances = {}
 
     def __init__(self):
         pass
@@ -53,11 +54,14 @@ class Config(object):
 
     @classmethod
     def setSandbox(cls,sandbox):
-        cls.sandbox = sandbox
+        if sandbox :
+            cls.environment = Environment.SANDBOX
+        else:
+            cls.environment =  Environment.PRODUCTION
 
     @classmethod
     def isSandbox(cls):
-        return cls.sandbox
+        return cls.environment == Environment.SANDBOX
 
     @classmethod
     def setAuthentication(cls,authentication):
@@ -68,8 +72,22 @@ class Config(object):
         return cls.authentication
 
     @classmethod
-    def getAPIBaseURL(cls):
-        if cls.sandbox:
-            return Constants.API_BASE_SANDBOX_URL
-        else:
-            return Constants.API_BASE_LIVE_URL
+    def setEnvironment(cls,environment):
+        if environment:
+            cls.environment = environment
+            for registeredInstance in cls.registeredInstances.values():
+                registeredInstance.setEnvironment(environment)
+            
+    @classmethod
+    def getEnvironment(cls):
+        return cls.environment    
+    
+    @classmethod
+    def registerResourceConfig(cls,resourceConfig):
+        className = resourceConfig.getName()
+        if not className in cls.registeredInstances.keys():
+            cls.registeredInstances[className] = resourceConfig
+
+    @classmethod
+    def clearResourceConfig(cls):
+        cls.registeredInstances = {}

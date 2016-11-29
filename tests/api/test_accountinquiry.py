@@ -24,25 +24,38 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-from mastercardapicore.core.model import BaseObject
-from mastercardapicore.core.model import OperationConfig
-from mastercardapicore.core.model import OperationMetadata
+import unittest
+from mastercardapicore.core import Config
+from mastercardapicore.core.model import RequestMap
+from accountinquiry import AccountInquiry
+from base_test import BaseTest
+from mastercardapicore.security.oauth import OAuthAuthentication
+from os.path import dirname, realpath, join
 
-class Insights(BaseObject):
-    
-    __config = {
-       "query" : OperationConfig("/sectorinsights/v1/sectins.svc/insights", "query", [], []),
-    }
-    
-    def getOperationConfig(self,operationUUID):
-        if operationUUID not in self.__config:
-            raise Exception("Invalid operationUUID: "+operationUUI)
+class AccountInquiryTest(BaseTest):
+
+
+    def setUp(self):
+        keyFile = join(dirname(dirname(realpath(__file__))),"resources","mcapi_sandbox_key.p12")
+        auth = OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", keyFile, "test", "password")
+        Config.setAuthentication(auth)
+        Config.setDebug(False)
+
+
+    def test_account_inquiry(self):
+
+        mapObj = RequestMap()
+        mapObj.set("AccountInquiry.AccountNumber","5343434343434343")
+
+        response = AccountInquiry.update(mapObj)
         
-        return self.__config[operationUUID]
-    
-    def getOperationMetadata(self):
-        return OperationMetadata("0.0.1", "https://sandbox.api.mastercard.com")
+        ignoreAsserts = []
+        
+        self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.Listed"),"True")
+        self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.ReasonCode"),"S")
+        self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.Reason"),"STOLEN")
+        
 
-    @staticmethod
-    def query(criteria):
-        return BaseObject.execute("query", Insights(criteria))
+
+if __name__ == '__main__':
+    unittest.main()

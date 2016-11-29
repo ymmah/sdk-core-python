@@ -28,30 +28,35 @@
 import unittest
 from mastercardapicore import RequestMap, Config, OAuthAuthentication
 from os.path import dirname, realpath, join
+import time
 from base_test import BaseTest
 from user import User
 
-class UserTest2(BaseTest):
+
+
+class UserTest(BaseTest):
 
     def setUp(self):
-        keyFile = join(dirname(dirname(realpath(__file__))),"resources","mcapi_sandbox_key.p12")
-        auth = OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", keyFile, "test", "password")
-        Config.setAuthentication(auth)
+        Config.setDebug(True)
+        self.resetAuthentication()
+
     
         
         
         
                 
     def test_list_users(self):
-        mapObj = RequestMap()
         
 
         
+    
+        map = RequestMap()
+        
+        
+        response = User.listByCriteria(map)
 
         ignoreAsserts = []
         
-
-        response = User.listByCriteria(mapObj)
         self.customAssertEqual(ignoreAsserts, "website", response.get("list[0].website"),"hildegard.org")
         self.customAssertEqual(ignoreAsserts, "address.instructions.doorman", response.get("list[0].address.instructions.doorman"),"true")
         self.customAssertEqual(ignoreAsserts, "address.instructions.text", response.get("list[0].address.instructions.text"),"some delivery instructions text")
@@ -67,20 +72,23 @@ class UserTest2(BaseTest):
         self.customAssertEqual(ignoreAsserts, "username", response.get("list[0].username"),"jbloggs")
         
 
-        BaseTest.putResponse("list_users", response.get("list[0]"));
+        BaseTest.putResponse("list_users", response.get("list[0]"))
+        
 
     
     def test_list_users_query(self):
-        mapObj = RequestMap()
-        mapObj.set("max", "10")
         
 
         
+    
+        map = RequestMap()
+        map.set("max", "10")
+        
+        
+        response = User.listByCriteria(map)
 
         ignoreAsserts = []
         
-
-        response = User.listByCriteria(mapObj)
         self.customAssertEqual(ignoreAsserts, "website", response.get("list[0].website"),"hildegard.org")
         self.customAssertEqual(ignoreAsserts, "address.instructions.doorman", response.get("list[0].address.instructions.doorman"),"true")
         self.customAssertEqual(ignoreAsserts, "address.instructions.text", response.get("list[0].address.instructions.text"),"some delivery instructions text")
@@ -96,7 +104,8 @@ class UserTest2(BaseTest):
         self.customAssertEqual(ignoreAsserts, "username", response.get("list[0].username"),"jbloggs")
         
 
-        BaseTest.putResponse("list_users_query", response.get("list[0]"));
+        BaseTest.putResponse("list_users_query", response.get("list[0]"))
+        
 
     
         
@@ -107,25 +116,26 @@ class UserTest2(BaseTest):
         
                 
     def test_create_user(self):
-        mapObj = RequestMap()
-        mapObj.set("website", "hildegard.org")
-        mapObj.set("address.city", "New York")
-        mapObj.set("address.postalCode", "10577")
-        mapObj.set("address.state", "NY")
-        mapObj.set("address.line1", "2000 Purchase Street")
-        mapObj.set("phone", "1-770-736-8031")
-        mapObj.set("name", "Joe Bloggs")
-        mapObj.set("email", "name@example.com")
-        mapObj.set("username", "jbloggs")
         
 
         
+    
+        map = RequestMap()
+        map.set("website", "hildegard.org")
+        map.set("address.city", "New York")
+        map.set("address.postalCode", "10577")
+        map.set("address.state", "NY")
+        map.set("address.line1", "2000 Purchase Street")
+        map.set("phone", "1-770-736-8031")
+        map.set("name", "Joe Bloggs")
+        map.set("email", "name@example.com")
+        map.set("username", "jbloggs")
+        
+        
+        response = User.create(map)
 
         ignoreAsserts = []
         
-
-        response = User.create(mapObj)
-
         self.customAssertEqual(ignoreAsserts, "website", response.get("website"),"hildegard.org")
         self.customAssertEqual(ignoreAsserts, "address.instructions.doorman", response.get("address.instructions.doorman"),"true")
         self.customAssertEqual(ignoreAsserts, "address.instructions.text", response.get("address.instructions.text"),"some delivery instructions text")
@@ -141,7 +151,8 @@ class UserTest2(BaseTest):
         self.customAssertEqual(ignoreAsserts, "username", response.get("username"),"jbloggs")
         
 
-        BaseTest.putResponse("create_user", response);
+        BaseTest.putResponse("create_user", response)
+        
 
     
         
@@ -158,18 +169,20 @@ class UserTest2(BaseTest):
         
                 
     def test_get_user(self):
+        
+
+        
+
         id = ""
         map = RequestMap()
         
-
         map.set("id", BaseTest.resolveResponseValue("create_user.id"));
         
+        response = User.read(id,map)
 
         ignoreAsserts = []
-        ignoreAsserts.append("address.city");
+        ignoreAsserts.append("address.city")
         
-
-        response = User.read(id,map)
         self.customAssertEqual(ignoreAsserts, "website", response.get("website"),"hildegard.org")
         self.customAssertEqual(ignoreAsserts, "address.instructions.doorman", response.get("address.instructions.doorman"),"true")
         self.customAssertEqual(ignoreAsserts, "address.instructions.text", response.get("address.instructions.text"),"some delivery instructions text")
@@ -185,23 +198,26 @@ class UserTest2(BaseTest):
         self.customAssertEqual(ignoreAsserts, "username", response.get("username"),"jbloggs")
         
 
-        BaseTest.putResponse("get_user", response);
+        BaseTest.putResponse("get_user", response)
+        
 
     
     def test_get_user_query(self):
+        
+
+        
+
         id = ""
         map = RequestMap()
         map.set("min", "1")
         map.set("max", "10")
         
-
         map.set("id", BaseTest.resolveResponseValue("create_user.id"));
         
+        response = User.read(id,map)
 
         ignoreAsserts = []
         
-
-        response = User.read(id,map)
         self.customAssertEqual(ignoreAsserts, "website", response.get("website"),"hildegard.org")
         self.customAssertEqual(ignoreAsserts, "address.instructions.doorman", response.get("address.instructions.doorman"),"true")
         self.customAssertEqual(ignoreAsserts, "address.instructions.text", response.get("address.instructions.text"),"some delivery instructions text")
@@ -217,7 +233,8 @@ class UserTest2(BaseTest):
         self.customAssertEqual(ignoreAsserts, "username", response.get("username"),"jbloggs")
         
 
-        BaseTest.putResponse("get_user_query", response);
+        BaseTest.putResponse("get_user_query", response)
+        
 
     
         
@@ -227,26 +244,32 @@ class UserTest2(BaseTest):
         
                 
     def test_update_user(self):
-        mapObj = RequestMap()
-        mapObj.set("name", "Joe Bloggs")
-        mapObj.set("username", "jbloggs")
-        mapObj.set("email", "name@example.com")
-        mapObj.set("phone", "1-770-736-8031")
-        mapObj.set("website", "hildegard.org")
-        mapObj.set("address.line1", "2000 Purchase Street")
-        mapObj.set("address.city", "New York")
-        mapObj.set("address.state", "NY")
-        mapObj.set("address.postalCode", "10577")
         
 
-        mapObj.set("id", BaseTest.resolveResponseValue("create_user.id"));
         
+    
+        map = RequestMap()
+        map.set("name", "Joe Bloggs")
+        map.set("username", "jbloggs")
+        map.set("email", "name@example.com")
+        map.set("phone", "1-770-736-8031")
+        map.set("website", "hildegard.org")
+        map.set("address.line1", "2000 Purchase Street")
+        map.set("address.city", "New York")
+        map.set("address.state", "NY")
+        map.set("address.postalCode", "10577")
+        
+        map.set("id", BaseTest.resolveResponseValue("create_user.id"));
+        map.set("id2", BaseTest.resolveResponseValue("create_user.id"));
+        map.set("prepend", "prepend"+BaseTest.resolveResponseValue("create_user.id"));
+        map.set("append", BaseTest.resolveResponseValue("create_user.id")+"append");
+        map.set("complex", "prepend-"+BaseTest.resolveResponseValue("create_user.id")+"-"+BaseTest.resolveResponseValue("create_user.name"));
+        map.set("name", BaseTest.resolveResponseValue("val:Andrea Rizzini"));
+        
+        response = User(map).update()
 
         ignoreAsserts = []
         
-
-        request = User(mapObj)
-        response = request.update()
         self.customAssertEqual(ignoreAsserts, "website", response.get("website"),"hildegard.org")
         self.customAssertEqual(ignoreAsserts, "address.instructions.doorman", response.get("address.instructions.doorman"),"true")
         self.customAssertEqual(ignoreAsserts, "address.instructions.text", response.get("address.instructions.text"),"some delivery instructions text")
@@ -262,7 +285,8 @@ class UserTest2(BaseTest):
         self.customAssertEqual(ignoreAsserts, "username", response.get("username"),"jbloggs")
         
 
-        BaseTest.putResponse("update_user", response);
+        BaseTest.putResponse("update_user", response)
+        
 
     
         
@@ -277,20 +301,83 @@ class UserTest2(BaseTest):
         
                 
     def test_delete_user(self):
-        map = RequestMap()
         
 
+        
+
+        map = RequestMap()
+        
         map.set("id", BaseTest.resolveResponseValue("create_user.id"));
         
+        response = User.deleteById("ssss",map)
+        self.assertNotEqual(response,None)
 
         ignoreAsserts = []
         
-
-        response = User.deleteById("ssss",map)
-        self.assertNotEqual(response,None)
         
 
-        BaseTest.putResponse("delete_user", response);
+        BaseTest.putResponse("delete_user", response)
+        
+
+    
+
+        
+        
+        
+    
+        
+        
+        
+        
+                
+    def test_delete_user_200(self):
+        
+
+        
+
+        map = RequestMap()
+        
+        map.set("id", BaseTest.resolveResponseValue("create_user.id"));
+        
+        response = User.delete200ById("ssss",map)
+        self.assertNotEqual(response,None)
+
+        ignoreAsserts = []
+        
+        
+
+        BaseTest.putResponse("delete_user_200", response)
+        
+
+    
+
+        
+        
+        
+    
+        
+        
+        
+        
+                
+    def test_delete_user_204(self):
+        
+
+        
+
+        map = RequestMap()
+        
+        map.set("id", BaseTest.resolveResponseValue("create_user.id"));
+        
+        response = User.delete204ById("ssss",map)
+        self.assertNotEqual(response,None)
+
+        ignoreAsserts = []
+        
+        
+
+        BaseTest.putResponse("delete_user_204", response)
+        
 
     
 

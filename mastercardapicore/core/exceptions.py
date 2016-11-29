@@ -42,6 +42,7 @@ class APIException(Exception):
         self._status     = status
         self._error_data = error_data
         self._error_code = None
+        
         #If error_data is not None set the appropriate message
         if error_data is not None:
             error_dict = {}

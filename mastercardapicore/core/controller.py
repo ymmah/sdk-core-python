@@ -57,14 +57,7 @@ class APIController(object):
     JSON             = "JSON"
 
 
-    def __init__(self):
 
-        #Set the parameters
-        self.baseURL = Config.getAPIBaseURL()
-        
-        #Verify if the URL is correct
-        if not util.validateURL(self.baseURL):
-            raise APIException("URL: '" + self.baseURL + "' is not a valid url")
 
 
     def __check(self):
@@ -74,7 +67,7 @@ class APIController(object):
 
         if Config.getAuthentication() is None or not isinstance(Config.getAuthentication(),Authentication):
             raise  APIException("No or incorrect authentication has been configured")
-
+        
 
     def removeForwardSlashFromTail(self,text):
         """
@@ -89,20 +82,28 @@ class APIController(object):
 
         resourcePath = config.getResourcePath()
         action= config.getAction()
+        baseURL = metadata.getHost()
 
-        if not metadata.getHost() is None:
-            baseURL = metadata.getHost()
-        else: 
-            baseURL = self.baseURL
-            
-        print "baseURL:::: "+baseURL
-    
+        if baseURL: 
+            if not util.validateURL(baseURL):
+                raise APIException("URL: '" + baseURL + "' is not a valid url")
+        else:
+            raise APIException("URL: '' is not a valid url")
+        
         #Remove the Trailing slash from base URL
         baseURL = self.removeForwardSlashFromTail(baseURL)
 
         #Remove the Trailing slash from the resource path
         resourcePath = self.removeForwardSlashFromTail(resourcePath)
-
+        
+        #arizzini: we need to set the environment variable in the resourcepath
+        if "{:env}" in resourcePath:
+            environment = ""
+            if metadata.getEnvironment():
+                environment = metadata.getEnvironment()
+            resourcePath = resourcePath.replace("{:env}", environment)
+            resourcePath = resourcePath.replace("//", "/")
+            
         #Combine the  base URL and the path
         fullURL = baseURL + resourcePath
 

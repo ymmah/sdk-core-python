@@ -38,9 +38,9 @@ class MultiplePathUserPost(BaseObject):
     """
 
     __config = {
-        "9fa2e2ee-db81-4495-8685-8f8a42faefd9" : OperationConfig("/mock_crud_server/users/{user_id}/post/{post_id}", "list", [], []),
-        "365e8965-d1fd-4d35-92b3-cab8d31f5a8d" : OperationConfig("/mock_crud_server/users/{user_id}/post/{post_id}", "update", [], ["testQuery"]),
-        "6d27d10e-9ec3-4df2-80d1-50366a464899" : OperationConfig("/mock_crud_server/users/{user_id}/post/{post_id}", "delete", [], []),
+        "96c94c4d-fe46-4a70-96d2-ee0227a4690f" : OperationConfig("/mock_crud_server/users/{user_id}/post/{post_id}", "list", [], []),
+        "1f153175-4a49-4cd2-bfb2-a949351dab10" : OperationConfig("/mock_crud_server/users/{user_id}/post/{post_id}", "update", [], ["testQuery"]),
+        "7d0317ff-5d7d-427b-abd2-9df62d5becb7" : OperationConfig("/mock_crud_server/users/{user_id}/post/{post_id}", "delete", [], []),
         
     }
 
@@ -55,6 +55,7 @@ class MultiplePathUserPost(BaseObject):
 
 
 
+
     @classmethod
     def listByCriteria(cls,criteria=None):
         """
@@ -64,10 +65,10 @@ class MultiplePathUserPost(BaseObject):
         @return Array of MultiplePathUserPost object matching the criteria.
         """
 
-        if criteria is None:
-            return BaseObject.execute("9fa2e2ee-db81-4495-8685-8f8a42faefd9", MultiplePathUserPost())
+        if not criteria :
+            return BaseObject.execute("96c94c4d-fe46-4a70-96d2-ee0227a4690f", MultiplePathUserPost())
         else:
-            return BaseObject.execute("9fa2e2ee-db81-4495-8685-8f8a42faefd9", MultiplePathUserPost(criteria))
+            return BaseObject.execute("96c94c4d-fe46-4a70-96d2-ee0227a4690f", MultiplePathUserPost(criteria))
 
 
 
@@ -79,7 +80,7 @@ class MultiplePathUserPost(BaseObject):
 
         @return MultiplePathUserPost object representing the response.
         """
-        return BaseObject.execute("365e8965-d1fd-4d35-92b3-cab8d31f5a8d", self)
+        return BaseObject.execute("1f153175-4a49-4cd2-bfb2-a949351dab10", self)
 
 
 
@@ -98,16 +99,16 @@ class MultiplePathUserPost(BaseObject):
         """
 
         mapObj =  RequestMap()
-        if id != None:
+        if id:
             mapObj.set("id", id)
 
-        if map != None:
+        if map:
             if (isinstance(map,RequestMap)):
                 mapObj.setAll(map.getObject())
             else:
                 mapObj.setAll(map)
 
-        return BaseObject.execute("6d27d10e-9ec3-4df2-80d1-50366a464899", MultiplePathUserPost(mapObj))
+        return BaseObject.execute("7d0317ff-5d7d-427b-abd2-9df62d5becb7", MultiplePathUserPost(mapObj))
 
 
     def delete(self):
@@ -116,7 +117,7 @@ class MultiplePathUserPost(BaseObject):
 
         @return MultiplePathUserPost of the response of the deleted instance.
         """
-        return BaseObject.execute("6d27d10e-9ec3-4df2-80d1-50366a464899", self)
+        return BaseObject.execute("7d0317ff-5d7d-427b-abd2-9df62d5becb7", self)
 
 
 
