@@ -28,6 +28,7 @@
 import unittest
 
 from mastercardapicore.core import Environment 
+from mastercardapicore.core import Config
 
 
 class ResourceConfig(object):
@@ -40,6 +41,15 @@ class ResourceConfig(object):
     context = None
     version = "0.0.1"
     environmentMap = Environment.mapping
+    initialized = False
+    
+    
+    def __init__(cls):
+        if cls.initialized == False:
+            Config.registerResourceConfig(cls)
+            cls.setEnvironment(Config.getEnvironment())
+            cls.initialized = True
+        
 
     @classmethod
     def getContext(cls):

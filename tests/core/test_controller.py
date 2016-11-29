@@ -270,9 +270,9 @@ class APIControllerTests(APIControllerBaseTest):
     def test_environment(self):
         inputMap = []
         
-        resourceConfig = ResourceConfig()
-        Config.registerResourceConfig(resourceConfig)
+        
         Config.setEnvironment(Environment.SANDBOX);
+        resourceConfig = ResourceConfig()
         
         
         config = OperationConfig("/fraud/{:env}/v1/account-inquiry", "create", [], [])
