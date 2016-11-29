@@ -27,7 +27,7 @@
 from setuptools import setup, find_packages
 
 setup(name='mastercard_api_core',
-      version='1.1.1',
+      version='1.2.0',
       description='MasterCard API Python Core SDK',
       long_description='MasterCard API Python Core SDK',
       author='MasterCard Worldwide',

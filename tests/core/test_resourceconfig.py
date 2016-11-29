@@ -24,25 +24,69 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-from mastercardapicore.core.model import BaseObject
-from mastercardapicore.core.model import OperationConfig
-from mastercardapicore.core.model import OperationMetadata
 
-class Insights(BaseObject):
+import unittest
+
+from mastercardapicore.core import Environment 
+from mastercardapicore.core import Config
+
+
+class ResourceConfig(object):
+    """
+    Configurable Resouces so that we can point to different environments
+    """
+    name = "aName"
+    override = None
+    host = None
+    context = None
+    version = "0.0.1"
+    environmentMap = Environment.mapping
+    initialized = False
     
-    __config = {
-       "query" : OperationConfig("/sectorinsights/v1/sectins.svc/insights", "query", [], []),
-    }
     
-    def getOperationConfig(self,operationUUID):
-        if operationUUID not in self.__config:
-            raise Exception("Invalid operationUUID: "+operationUUI)
+    def __init__(cls):
+        if cls.initialized == False:
+            Config.registerResourceConfig(cls)
+            cls.setEnvironment(Config.getEnvironment())
+            cls.initialized = True
         
-        return self.__config[operationUUID]
-    
-    def getOperationMetadata(self):
-        return OperationMetadata("0.0.1", "https://sandbox.api.mastercard.com")
 
-    @staticmethod
-    def query(criteria):
-        return BaseObject.execute("query", Insights(criteria))
+    @classmethod
+    def getContext(cls):
+        return cls.context
+    
+    @classmethod
+    def getHost(cls):
+        if cls.override:
+            return cls.override
+        else:
+            return cls.host
+    
+    @classmethod
+    def getVersion(cls):
+        return cls.version
+    
+    @classmethod
+    def getName(cls):
+        return cls.name
+        
+    @classmethod
+    def setEnvironment(cls,environment):
+        if environment in cls.environmentMap.keys():
+            tuple = cls.environmentMap[environment]
+            cls.host = tuple[0]
+            cls.context = tuple[1]
+      
+      
+    @classmethod
+    def setCustomEnvironment(cls,host,context):
+        cls.host = host
+        cls.context = context
+        
+    
+    
+    
+    
+    
+    
+    

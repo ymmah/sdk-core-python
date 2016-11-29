@@ -67,21 +67,7 @@ class APIController(object):
 
         if Config.getAuthentication() is None or not isinstance(Config.getAuthentication(),Authentication):
             raise  APIException("No or incorrect authentication has been configured")
-
-    def generateHost(self):
-
-        #Set the parameters
-        baseURL = "https://"
-        if Config.getSubDomain():
-            baseURL += Config.getSubDomain()
-            baseURL += "."
-        baseURL += "api.mastercard.com"
         
-        #Verify if the URL is correct
-        if not util.validateURL(baseURL):
-            raise APIException("URL: '" + baseURL + "' is not a valid url")
-        
-        return baseURL
 
     def removeForwardSlashFromTail(self,text):
         """
@@ -96,14 +82,14 @@ class APIController(object):
 
         resourcePath = config.getResourcePath()
         action= config.getAction()
+        baseURL = metadata.getHost()
 
-        if not metadata.getHost() is None:
-            baseURL = metadata.getHost()
-        else: 
-            baseURL = self.generateHost()
-            
-        print "baseURL:::: "+baseURL
-    
+        if baseURL: 
+            if not util.validateURL(baseURL):
+                raise APIException("URL: '" + baseURL + "' is not a valid url")
+        else:
+            raise APIException("URL: '' is not a valid url")
+        
         #Remove the Trailing slash from base URL
         baseURL = self.removeForwardSlashFromTail(baseURL)
 
@@ -115,8 +101,6 @@ class APIController(object):
             environment = ""
             if metadata.getEnvironment():
                 environment = metadata.getEnvironment()
-            elif Config.getEnvironment():
-                environment = Config.getEnvironment()
             resourcePath = resourcePath.replace("{:env}", environment)
             resourcePath = resourcePath.replace("//", "/")
             

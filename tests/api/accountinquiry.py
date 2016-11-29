@@ -28,10 +28,10 @@ from mastercardapicore.core.model import BaseObject
 from mastercardapicore.core.model import OperationConfig
 from mastercardapicore.core.model import OperationMetadata
 
-class Insights(BaseObject):
+class AccountInquiry(BaseObject):
     
     __config = {
-       "query" : OperationConfig("/sectorinsights/v1/sectins.svc/insights", "query", [], []),
+       "update" : OperationConfig("/fraud/loststolen/v1/account-inquiry", "update", [], []),
     }
     
     def getOperationConfig(self,operationUUID):
@@ -44,5 +44,8 @@ class Insights(BaseObject):
         return OperationMetadata("0.0.1", "https://sandbox.api.mastercard.com")
 
     @staticmethod
-    def query(criteria):
-        return BaseObject.execute("query", Insights(criteria))
+    def update(criteria):
+        return BaseObject.execute("update", AccountInquiry(criteria))
+
+
+

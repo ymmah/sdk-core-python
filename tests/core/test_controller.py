@@ -25,10 +25,12 @@
 # SUCH DAMAGE.
 #
 import unittest
+from test_resourceconfig import ResourceConfig
 from mastercardapicore.core.controller import APIController
 from mastercardapicore.core.model import OperationConfig
 from mastercardapicore.core.model import OperationMetadata
 from mastercardapicore.core import Config
+from mastercardapicore.core import Environment
 from mastercardapicore.security.oauth import OAuthAuthentication, Authentication
 from mastercardapicore.core import Constants
 from mastercardapicore.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
@@ -51,6 +53,33 @@ class APIControllerBaseTest(unittest.TestCase):
 
 class APIControllerTests(APIControllerBaseTest):
 
+    def test_config(self):
+        self.assertEqual(Config.getEnvironment(), Environment.SANDBOX)
+
+        Config.setSandbox(False)
+        self.assertEqual(Config.getEnvironment(), Environment.PRODUCTION)
+        
+        Config.setSandbox(True)
+        self.assertEqual(Config.getEnvironment(), Environment.SANDBOX)
+        
+        Config.setEnvironment(Environment.STAGE)
+        self.assertEqual(Config.getEnvironment(), Environment.STAGE)
+        
+        Config.setEnvironment("")
+        self.assertEqual(Config.getEnvironment(), Environment.STAGE)
+        
+        Config.setEnvironment(None)
+        self.assertEqual(Config.getEnvironment(), Environment.STAGE)
+        
+    def test_ResourceConfig(self):
+        
+        resourceConfig1 = ResourceConfig()
+        resourceConfig2 = ResourceConfig()
+        
+        resourceConfig1.setEnvironment(Environment.SANDBOX)
+        self.assertEqual(resourceConfig1.getVersion(), resourceConfig2.getVersion())
+        self.assertEqual(resourceConfig1.getHost(), resourceConfig2.getHost())
+        self.assertEqual(resourceConfig1.getContext(), resourceConfig2.getContext())
 
 
     def test_removeForwareSlashFromTail(self):
@@ -75,8 +104,9 @@ class APIControllerTests(APIControllerBaseTest):
             'five':5
         }
         
+        resourceConfig = ResourceConfig()
         config = OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", [], [])
-        metadata = OperationMetadata("0.0.1", None)
+        metadata = OperationMetadata("0.0.1", "https://sandbox.api.mastercard.com")
 
         url = self.controller.getURL(config,metadata,inputMap)
 
@@ -94,7 +124,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         #URL with trailing /
         config = OperationConfig("/fraud/{api}/v{version}/account-inquiry/", "create", [], [])
-        metadata = OperationMetadata("0.0.1", None)
+        
         
         url = self.controller.getURL(config,metadata,inputMap)
         self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry")
@@ -109,7 +139,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         #URL with id and action delete
         config = OperationConfig("/fraud/{api}/v{version}/account-inquiry/{id}", "delete", [], [])
-        metadata = OperationMetadata("0.0.1", None)
+        
         url = self.controller.getURL(config,metadata,inputMap)
         self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry/1")
         self.assertEqual(1,len(inputMap))
@@ -125,7 +155,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         #URL with id in inputMap but not in url
         config = OperationConfig("/fraud/{api}/v{version}/account-inquiry", "delete", [], [])
-        metadata = OperationMetadata("0.0.1", None)
+        
         url = self.controller.getURL(config,metadata, inputMap)
         self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry/1")
         self.assertEqual(1,len(inputMap))
@@ -139,7 +169,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         #URL with id in inputMap but not in url and method create
         config = OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", [], [])
-        metadata = OperationMetadata("0.0.1", None)
+        
         url = self.controller.getURL(config, metadata, inputMap)
         self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry")
         self.assertEqual(2,len(inputMap))
@@ -149,7 +179,7 @@ class APIControllerTests(APIControllerBaseTest):
         #This should raise a key error
         with self.assertRaises(KeyError):
             config = OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", [], [])
-            metadata = OperationMetadata("0.0.1", None)
+            
             url = self.controller.getURL(config,metadata,inputMap)
             print(url)
 
@@ -186,7 +216,7 @@ class APIControllerTests(APIControllerBaseTest):
         }
         
         config = OperationConfig("/fraud/api/v1/account-inquiry", "create", ['Accept','Content-Type', 'User-Agent'], ["a"])
-        metadata = OperationMetadata("0.0.1", None)
+        metadata = OperationMetadata("0.0.1", "https://sandbox.api.mastercard.com")
 
         url = "https://sandbox.api.mastercard.com/fraud/api/v1/account-inquiry"
         
@@ -236,56 +266,49 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(request.headers,defaultHeaders)
         self.assertEqual(request.url,url)
 
-    def test_subdomain(self):
-        #default
-        
-        self.assertEqual(self.controller.generateHost(), "https://sandbox.api.mastercard.com")
-        
-        Config.setSandbox(False)
-        self.assertEqual(self.controller.generateHost(), "https://api.mastercard.com")
-        
-        Config.setSubDomain("stage")
-        self.assertEqual(self.controller.generateHost(), "https://stage.api.mastercard.com")
-        
-        Config.setSubDomain("")
-        self.assertEqual(self.controller.generateHost(), "https://api.mastercard.com")
-        
-        Config.setSubDomain(None)
-        self.assertEqual(self.controller.generateHost(), "https://api.mastercard.com")
-        
-        Config.setSandbox(True)
-        self.assertEqual(self.controller.generateHost(), "https://sandbox.api.mastercard.com")
        
     def test_environment(self):
         inputMap = []
-        config = OperationConfig("/fraud/{:env}/v1/account-inquiry", "create", [], [])
-        metadata = OperationMetadata("0.0.1", None)
-        metadata2 = OperationMetadata("0.0.1", None, "andrea")
         
+        
+        Config.setEnvironment(Environment.SANDBOX);
+        resourceConfig = ResourceConfig()
+        
+        
+        config = OperationConfig("/fraud/{:env}/v1/account-inquiry", "create", [], [])
+        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
 
         #dafault
+        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
         url = self.controller.getURL(config,metadata,inputMap)
         self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/v1/account-inquiry")
         
         #dafault
-        Config.setEnvironment("mtf")
+        Config.setEnvironment(Environment.MTF)
+        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
         self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/mtf/v1/account-inquiry")
         
-        Config.setEnvironment("itf")
+        Config.setEnvironment(Environment.ITF)
+        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
         self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/itf/v1/account-inquiry")
         
-        Config.setEnvironment("peat")
-        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/peat/v1/account-inquiry")
+        Config.setEnvironment(Environment.STAGE)
+        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
+        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://stage.api.mastercard.com/fraud/v1/account-inquiry")
         
         Config.setEnvironment("")
-        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/v1/account-inquiry")
+        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
+        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://stage.api.mastercard.com/fraud/v1/account-inquiry")
         
         Config.setEnvironment(None)
-        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/v1/account-inquiry")
+        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
+        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://stage.api.mastercard.com/fraud/v1/account-inquiry")
         
-        Config.setEnvironment(None)
-        self.assertEqual(self.controller.getURL(config,metadata2,inputMap),"https://sandbox.api.mastercard.com/fraud/andrea/v1/account-inquiry")
+        Config.setEnvironment(Environment.LOCALHOST)
+        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
+        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"http://localhost:8081/fraud/v1/account-inquiry")
         
+        Config.clearResourceConfig()
         
 
     def test_execute(self):
@@ -300,7 +323,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         
         config = OperationConfig("/user/{a}", "list", ["Content-Type"], [])
-        metadata = OperationMetadata("0.0.1", None)
+        metadata = OperationMetadata("0.0.1", "https://sandbox.api.mastercard.com")
 
         with patch('mastercardapicore.core.controller.Config') as mock_config:
             #Set Authentication to None
