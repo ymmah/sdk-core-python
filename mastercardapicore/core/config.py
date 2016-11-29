@@ -84,8 +84,9 @@ class Config(object):
     
     @classmethod
     def registerResourceConfig(cls,resourceConfig):
-        if not resourceConfig.__class__.__name__ in cls.registeredInstances.keys():
-            cls.registeredInstances[resourceConfig.__class__.__name__] = resourceConfig
+        className = resourceConfig.getName()
+        if not className in cls.registeredInstances.keys():
+            cls.registeredInstances[className] = resourceConfig
 
     @classmethod
     def clearResourceConfig(cls):

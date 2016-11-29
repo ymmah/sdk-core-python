@@ -90,9 +90,6 @@ class APIController(object):
         else:
             raise APIException("URL: '' is not a valid url")
         
-        print "baseURL:::: "+baseURL
-
-            
         #Remove the Trailing slash from base URL
         baseURL = self.removeForwardSlashFromTail(baseURL)
 

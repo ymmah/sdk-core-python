@@ -34,11 +34,11 @@ class ResourceConfig(object):
     """
     Configurable Resouces so that we can point to different environments
     """
+    name = "aName"
     override = None
     host = None
     context = None
     version = "0.0.1"
-    
     environmentMap = Environment.mapping
 
     @classmethod
@@ -55,6 +55,10 @@ class ResourceConfig(object):
     @classmethod
     def getVersion(cls):
         return cls.version
+    
+    @classmethod
+    def getName(cls):
+        return cls.name
         
     @classmethod
     def setEnvironment(cls,environment):
