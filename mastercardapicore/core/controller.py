@@ -97,11 +97,11 @@ class APIController(object):
         resourcePath = self.removeForwardSlashFromTail(resourcePath)
         
         #arizzini: we need to set the environment variable in the resourcepath
-        if "{:env}" in resourcePath:
+        if "#env" in resourcePath:
             environment = ""
             if metadata.getEnvironment():
                 environment = metadata.getEnvironment()
-            resourcePath = resourcePath.replace("{:env}", environment)
+            resourcePath = resourcePath.replace("#env", environment)
             resourcePath = resourcePath.replace("//", "/")
             
         #Combine the  base URL and the path
