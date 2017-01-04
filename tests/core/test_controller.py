@@ -275,7 +275,7 @@ class APIControllerTests(APIControllerBaseTest):
         resourceConfig = ResourceConfig()
         
         
-        config = OperationConfig("/fraud/{:env}/v1/account-inquiry", "create", [], [])
+        config = OperationConfig("/fraud/#env/v1/account-inquiry", "create", [], [])
         metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
 
         #dafault
@@ -284,13 +284,13 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/v1/account-inquiry")
         
         #dafault
-        Config.setEnvironment(Environment.MTF)
+        Config.setEnvironment(Environment.PRODUCTION_MTF)
         metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
-        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/mtf/v1/account-inquiry")
+        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://api.mastercard.com/fraud/mtf/v1/account-inquiry")
         
-        Config.setEnvironment(Environment.ITF)
+        Config.setEnvironment(Environment.PRODUCTION_ITF)
         metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
-        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://sandbox.api.mastercard.com/fraud/itf/v1/account-inquiry")
+        self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://api.mastercard.com/fraud/itf/v1/account-inquiry")
         
         Config.setEnvironment(Environment.STAGE)
         metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
