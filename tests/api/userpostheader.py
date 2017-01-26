@@ -26,10 +26,10 @@
 #
 
 
-from mastercardapicore.core.model import BaseObject
-from mastercardapicore.core.model import RequestMap
-from mastercardapicore.core.model import OperationConfig
-from mastercardapicore.core.model import OperationMetadata
+from mastercardapicore import BaseObject
+from mastercardapicore import RequestMap
+from mastercardapicore import OperationConfig
+from mastercardapicore import OperationMetadata
 
 
 class UserPostHeader(BaseObject):
