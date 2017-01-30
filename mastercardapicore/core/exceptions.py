@@ -56,7 +56,7 @@ class APIException(Exception):
             self._raw_error_data = smartMap
             case_insensitive_error_data = self.parseMap(error_data)
         
-        self._error_code = None
+        self._reason_code = None
         self._reference = None
         
         #If error_data is not None set the appropriate message
@@ -83,8 +83,8 @@ class APIException(Exception):
 
 
     def __initErrorDataFromDict(self,error_dict):
-        self._error_code = error_dict.get("reasoncode",)
-        self._message    = error_dict.get("description",self._message)
+        self._reason_code = error_dict.get("reasoncode",None)
+        self._description    = error_dict.get("description",None)
         
         
     def parseMap(self,aMap):
@@ -110,13 +110,16 @@ class APIException(Exception):
         return result
 
     def getMessage(self):
-        return self._message
+        if (self._description):
+            return self._description
+        else:
+            return self._message
 
     def getHttpStatus(self):
         return self._http_status
 
-    def getErrorCode(self):
-        return self._error_code
+    def getReasonCode(self):
+        return self._reason_code
 
     def getRawErrorData(self):
         return self._raw_error_data
@@ -128,8 +131,8 @@ class APIException(Exception):
         exception_data.append(self.getMessage())
         exception_data.append("\" (status: ")
         exception_data.append("{}".format(self.getStatus()))
-        exception_data.append(", error code: ")
-        exception_data.append("{}".format(self.getErrorCode()))
+        exception_data.append(", reason code: ")
+        exception_data.append("{}".format(self.getReasonCode()))
         exception_data.append(")")
         return ''.join(exception_data)
 

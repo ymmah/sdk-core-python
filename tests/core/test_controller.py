@@ -368,7 +368,7 @@ class APIControllerTests(APIControllerBaseTest):
             
         self.assertEqual(cm.exception.getHttpStatus(), 301)
         self.assertEqual(cm.exception.getMessage(), "Moved Permanently")
-        self.assertEqual(cm.exception.getErrorCode(), "some code")
+        self.assertEqual(cm.exception.getReasonCode(), "some code")
         
         
         with self.assertRaises(APIException) as cm:
@@ -376,14 +376,14 @@ class APIControllerTests(APIControllerBaseTest):
             
         self.assertEqual(cm.exception.getHttpStatus(), 301)
         self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
-        self.assertEqual(cm.exception.getErrorCode(), "SYSTEM_ERROR1")
+        self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
         
         with self.assertRaises(APIException) as cm:
             content = self.controller.handleResponse(response,{"errors" :{"error":{"source":"System", "reasoncode":"SYSTEM_ERROR1", "description":"Unknown Error1", "recoverable":"false"}}})
             
         self.assertEqual(cm.exception.getHttpStatus(), 301)
         self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
-        self.assertEqual(cm.exception.getErrorCode(), "SYSTEM_ERROR1")
+        self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
 
 
         response.status_code = 400
@@ -392,7 +392,7 @@ class APIControllerTests(APIControllerBaseTest):
                 
         self.assertEqual(cm.exception.getHttpStatus(), 400)
         self.assertEqual(cm.exception.getMessage(), "Bad Request")
-        self.assertEqual(cm.exception.getErrorCode(), None)
+        self.assertEqual(cm.exception.getReasonCode(), None)
         
 
         response.status_code = 401
@@ -401,7 +401,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         self.assertEqual(cm.exception.getHttpStatus(), 401)
         self.assertEqual(cm.exception.getMessage(), "Unauthorized")
-        self.assertEqual(cm.exception.getErrorCode(), None)
+        self.assertEqual(cm.exception.getReasonCode(), None)
 
         response.status_code = 403
         with self.assertRaises(APIException) as cm:
@@ -409,7 +409,7 @@ class APIControllerTests(APIControllerBaseTest):
                 
         self.assertEqual(cm.exception.getHttpStatus(), 403)
         self.assertEqual(cm.exception.getMessage(), "Forbidden")
-        self.assertEqual(cm.exception.getErrorCode(), None)
+        self.assertEqual(cm.exception.getReasonCode(), None)
 
         response.status_code = 404
         with self.assertRaises(APIException) as cm:
@@ -417,7 +417,7 @@ class APIControllerTests(APIControllerBaseTest):
                 
         self.assertEqual(cm.exception.getHttpStatus(), 404)
         self.assertEqual(cm.exception.getMessage(), "Not Found")
-        self.assertEqual(cm.exception.getErrorCode(), None)
+        self.assertEqual(cm.exception.getReasonCode(), None)
 
         response.status_code = 405
         with self.assertRaises(APIException) as cm:
@@ -425,7 +425,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         self.assertEqual(cm.exception.getHttpStatus(), 405)
         self.assertEqual(cm.exception.getMessage(), "Method Not Allowed")
-        self.assertEqual(cm.exception.getErrorCode(), None)
+        self.assertEqual(cm.exception.getReasonCode(), None)
         
         response.status_code = 500
         with self.assertRaises(APIException) as cm:
@@ -433,7 +433,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         self.assertEqual(cm.exception.getHttpStatus(), 500)
         self.assertEqual(cm.exception.getMessage(), "Internal Server Error")
-        self.assertEqual(cm.exception.getErrorCode(), None)
+        self.assertEqual(cm.exception.getReasonCode(), None)
         self.assertEqual(cm.exception.getRawErrorData().get("Errors.Error.message"), "Some error")
 
 
