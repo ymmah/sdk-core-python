@@ -41,6 +41,8 @@ class Constants:
 class Environment:
     PRODUCTION  = "production"
     SANDBOX     = "sandbox" 
+    SANDBOX_MTF     = "sandbox_mtf"
+    SANDBOX_ITF     = "sandbox_itf"
     STAGE       = "stage"
     DEV         = "dev"
     PRODUCTION_MTF         = "production_mtf"
@@ -53,6 +55,8 @@ class Environment:
     mapping     = {  
         "production": ["https://api.mastercard.com", None], 
         "sandbox": ["https://sandbox.api.mastercard.com", None],
+        "sandbox_mtf": ["https://sandbox.api.mastercard.com", "mtf"],
+        "sandbox_itf": ["https://sandbox.api.mastercard.com", "itf"],
         "stage": ["https://stage.api.mastercard.com", None],
         "dev": ["https://dev.api.mastercard.com", None],
         "production_mtf": ["https://api.mastercard.com", "mtf"],

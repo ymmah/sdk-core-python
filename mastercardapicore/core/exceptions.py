@@ -48,19 +48,20 @@ class APIException(Exception):
         else:
             self._message = message
         
+        self._reason_code = None
+        self._reference = None
+        self._source = None
         
-        case_insensitive_error_data = None
+        #If error_data is not None set the appropriate message
         if error_data:
+            
+            #set the smartmap as the raw_error_data
             smartMap = RequestMap()
             smartMap.setAll(error_data)
             self._raw_error_data = smartMap
+            
+            #get a case insensitive map to do the case-insenstivie lookup
             case_insensitive_error_data = self.parseMap(error_data)
-        
-        self._reason_code = None
-        self._reference = None
-        
-        #If error_data is not None set the appropriate message
-        if case_insensitive_error_data is not None:
             error_dict = {}
             # If error_data is of type dict and has Key 'Errors' which has a key 'Error'
             if isinstance(case_insensitive_error_data, dict) and 'error' in case_insensitive_error_data.get("errors",{}):
@@ -85,6 +86,7 @@ class APIException(Exception):
     def __initErrorDataFromDict(self,error_dict):
         self._reason_code = error_dict.get("reasoncode",None)
         self._description    = error_dict.get("description",None)
+        self._source    = error_dict.get("source",None)
         
         
     def parseMap(self,aMap):
@@ -120,6 +122,9 @@ class APIException(Exception):
 
     def getReasonCode(self):
         return self._reason_code
+    
+    def getSource(self):
+        return self._source
 
     def getRawErrorData(self):
         return self._raw_error_data
@@ -129,9 +134,9 @@ class APIException(Exception):
         exception_data.append(self.__class__.__name__)
         exception_data.append(": \"")
         exception_data.append(self.getMessage())
-        exception_data.append("\" (status: ")
+        exception_data.append("\" (http_status: ")
         exception_data.append("{}".format(self.getStatus()))
-        exception_data.append(", reason code: ")
+        exception_data.append(", reason_code: ")
         exception_data.append("{}".format(self.getReasonCode()))
         exception_data.append(")")
         return ''.join(exception_data)
