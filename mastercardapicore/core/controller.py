@@ -25,11 +25,11 @@
 # SUCH DAMAGE.
 #
 from requests import Request, Session
-from mastercardapicore.core import Config
-from mastercardapicore.core import Constants
+from mastercardapicore.core.config import Config
+from mastercardapicore.core.constants import Constants
 from mastercardapicore.security import Authentication
-from mastercardapicore.core.exceptions import APIException, ObjectNotFoundException, InvalidRequestException, SystemException
-import mastercardapicore.core.util as util
+from mastercardapicore.core.exceptions import APIException
+from mastercardapicore.core import util
 import json
 
 class APIController(object):
@@ -254,17 +254,5 @@ class APIController(object):
 
         if 200 <= status <= 299:
             return content
-        elif 300 <= status <= 399:
-            raise InvalidRequestException("Unexpected response code returned from the API causing redirect",status,content)
-        elif status == 400:
-            raise InvalidRequestException("Bad request",status,content)
-        elif status == 401:
-            raise APIException("You are not authorized to make this request",status,content)
-        elif status == 403:
-            raise APIException("You are not authorized to make this request",status,content)
-        elif status == 404:
-            raise ObjectNotFoundException("Object not found",status,content)
-        elif status == 405:
-            raise APIException("Operation not allowed",status,content)
         else:
-            raise SystemException("Internal Server Error",status,content)
+            raise APIException("Internal Server Error",status,content)

@@ -24,12 +24,13 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-from mastercardapicore.security import Authentication
-import mastercardapicore.core.util as util
-from mastercardapicore.core import Config
-import mastercardapicore.security.util as SecurityUtil
-import collections
+from mastercardapicore.core.config import Config
+from authentication import Authentication
 from OpenSSL import crypto
+
+import util as SecurityUtil
+import mastercardapicore.core.util as util
+import collections
 
 
 class OAuthAuthentication(Authentication):
