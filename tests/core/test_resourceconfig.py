@@ -27,8 +27,8 @@
 
 import unittest
 
-from mastercardapicore.core import Environment 
-from mastercardapicore.core import Config
+from mastercardapicore import Environment 
+from mastercardapicore import Config
 
 
 class ResourceConfig(object):

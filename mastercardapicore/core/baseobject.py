@@ -25,57 +25,38 @@
 # SUCH DAMAGE.
 #
 
-import unittest
-from mastercardapicore import RequestMap
-from mastercardapicore import Config
-from mastercardapicore import OAuthAuthentication
-from os.path import dirname, realpath, join
-import time
-from base_test import BaseTest
-from userpostpath import UserPostPath
+
+from mastercardapicore.core.controller import APIController
+from mastercardapicore.core.model import RequestMap
+
+################################################################################
+# BaseObject
+################################################################################
+
+class BaseObject(RequestMap):
 
 
+    def __init__(self,requestMap = None):
 
-class UserPostPathTest(BaseTest):
+        #Call the base class constructor
+        super(BaseObject, self).__init__()
 
-    def setUp(self):
-        Config.setDebug(True)
-        self.resetAuthentication()
+        if requestMap is not None:
+            self.setAll(requestMap.getObject())
 
-    
-        
-        
-        
-                
-    def test_get_user_posts_with_path(self):
-        
+    def getOperationConfig(self,operationUUID):
+        raise NotImplementedError("Child class must define __getOperationConfig method to use this class")
 
-        
-    
-        map = RequestMap()
-        map.set("user_id", "1")
-        
-        
-        response = UserPostPath.listByCriteria(map)
+    def getOperationMetadata(self):
+        raise NotImplementedError("Child class must define __getOperationMetadata method to use this class")
 
-        ignoreAsserts = []
-        
-        self.customAssertEqual(ignoreAsserts, "id", response.get("list[0].id"),"1")
-        self.customAssertEqual(ignoreAsserts, "title", response.get("list[0].title"),"My Title")
-        self.customAssertEqual(ignoreAsserts, "body", response.get("list[0].body"),"some body text")
-        self.customAssertEqual(ignoreAsserts, "userId", response.get("list[0].userId"),"1")
-        
 
-        BaseTest.putResponse("get_user_posts_with_path", response.get("list[0]"))
-        
+    @classmethod
+    def execute(cls,operationUUID,inputObject):
 
-    
-        
-        
-        
-        
-    
+        response   = APIController().execute(inputObject.getOperationConfig(operationUUID),inputObject.getOperationMetadata(),inputObject.getObject())
+        returnObjClass = inputObject.__class__
 
-if __name__ == '__main__':
-    unittest.main()
-
+        requestMap  = RequestMap()
+        requestMap.setAll(response)
+        return returnObjClass(requestMap)

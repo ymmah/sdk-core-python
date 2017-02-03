@@ -25,7 +25,6 @@
 # SUCH DAMAGE.
 #
 import re
-from mastercardapicore.core.controller import APIController
 from collections import OrderedDict
 
 ################################################################################
@@ -303,7 +302,7 @@ class OperationConfig:
     
     def getQueryParams(self):
         return self.queryParams
-    
+
 ################################################################################
 # OperationMetadata
 ################################################################################
@@ -323,35 +322,4 @@ class OperationMetadata:
     def getEnvironment(self):
         return self.environment
 
-################################################################################
-# BaseObject
-################################################################################
 
-
-class BaseObject(RequestMap):
-
-
-    def __init__(self,requestMap = None):
-
-        #Call the base class constructor
-        super(BaseObject, self).__init__()
-
-        if requestMap is not None:
-            self.setAll(requestMap.getObject())
-
-    def getOperationConfig(self,operationUUID):
-        raise NotImplementedError("Child class must define __getOperationConfig method to use this class")
-
-    def getOperationMetadata(self):
-        raise NotImplementedError("Child class must define __getOperationMetadata method to use this class")
-
-
-    @classmethod
-    def execute(cls,operationUUID,inputObject):
-
-        response   = APIController().execute(inputObject.getOperationConfig(operationUUID),inputObject.getOperationMetadata(),inputObject.getObject())
-        returnObjClass = inputObject.__class__
-
-        requestMap  = RequestMap()
-        requestMap.setAll(response)
-        return returnObjClass(requestMap)

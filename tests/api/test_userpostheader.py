@@ -26,7 +26,9 @@
 #
 
 import unittest
-from mastercardapicore import RequestMap, Config, OAuthAuthentication
+from mastercardapicore import RequestMap
+from mastercardapicore import Config
+from mastercardapicore import OAuthAuthentication
 from os.path import dirname, realpath, join
 import time
 from base_test import BaseTest

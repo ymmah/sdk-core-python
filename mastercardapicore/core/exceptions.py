@@ -24,31 +24,48 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-"""
-Global MasterCard core exceptions file
-"""
 
 ################################################################################
 # APIException
 ################################################################################
 
+from mastercardapicore.core.model import RequestMap
+import itertools
+
 class APIException(Exception):
     """Base Class for all the API exceptions"""
+    
+    httpMapping = {100: "Continue", 101: "Switching Protocols", 102: "Processing", 200: "OK", 201: "Created", 202: "Accepted", 203: "Non-Authoritative Information", 204: "No Content", 205: "Reset Content", 206: "Partial Content", 207: "Multi-Status", 300: "Multiple Choices", 301: "Moved Permanently", 302: "Found", 303: "See Other", 304: "Not Modified", 305: "Use Proxy", 306: "(Unused)", 307: "Temporary Redirect", 308: "Permanent Redirect", 400: "Bad Request", 401: "Unauthorized", 402: "Payment Required", 403: "Forbidden", 404: "Not Found", 405: "Method Not Allowed", 406: "Not Acceptable", 407: "Proxy Authentication Required", 408: "Request Timeout", 409: "Conflict", 410: "Gone", 411: "Length Required", 412: "Precondition Failed", 413: "Request Entity Too Large", 414: "Request-URI Too Long", 415: "Unsupported Media Type", 416: "Requested Range Not Satisfiable", 417: "Expectation Failed", 418: "I'm a teapot", 419: "Authentication Timeout", 420: "Enhance Your Calm", 422: "Unprocessable Entity", 423: "Locked", 424: "Failed Dependency", 424: "Method Failure", 425: "Unordered Collection", 426: "Upgrade Required", 428: "Precondition Required", 429: "Too Many Requests", 431: "Request Header Fields Too Large", 444: "No Response", 449: "Retry With", 450: "Blocked by Windows Parental Controls", 451: "Unavailable For Legal Reasons", 494: "Request Header Too Large", 495: "Cert Error", 496: "No Cert", 497: "HTTP to HTTPS", 499: "Client Closed Request", 500: "Internal Server Error", 501: "Not Implemented", 502: "Bad Gateway", 503: "Service Unavailable", 504: "Gateway Timeout", 505: "HTTP Version Not Supported", 506: "Variant Also Negotiates", 507: "Insufficient Storage", 508: "Loop Detected", 509: "Bandwidth Limit Exceeded", 510: "Not Extended", 511: "Network Authentication Required", 598: "Network read timeout error", 599: "Network connect timeout error"}
 
-    def __init__(self,message,status=None,error_data=None):
+    def __init__(self,message,http_status=None,error_data=None):
         #Call the base class constructor
-        super(APIException, self).__init__(message,status,error_data)
-        self._message    = message
-        self._status     = status
-        self._error_data = error_data
-        self._error_code = None
+        super(APIException, self).__init__(message,http_status,error_data)
+        
+        self._http_status = http_status
+        
+        if http_status and http_status in self.httpMapping:
+            self._message = self.httpMapping[http_status]
+        else:
+            self._message = message
+        
+        self._reason_code = None
+        self._reference = None
+        self._source = None
         
         #If error_data is not None set the appropriate message
-        if error_data is not None:
+        if error_data:
+            
+            #set the smartmap as the raw_error_data
+            smartMap = RequestMap()
+            smartMap.setAll(error_data)
+            self._raw_error_data = smartMap
+            
+            #get a case insensitive map to do the case-insenstivie lookup
+            case_insensitive_error_data = self.parseMap(error_data)
             error_dict = {}
             # If error_data is of type dict and has Key 'Errors' which has a key 'Error'
-            if isinstance(error_data, dict) and 'Error' in error_data.get("Errors",{}):
-                error_dict = error_data['Errors']['Error']
+            if isinstance(case_insensitive_error_data, dict) and 'error' in case_insensitive_error_data.get("errors",{}):
+                error_dict = case_insensitive_error_data['errors']['error']
 
                 #Case of multiple errors take the first one
                 if isinstance(error_dict, list):
@@ -67,206 +84,63 @@ class APIException(Exception):
 
 
     def __initErrorDataFromDict(self,error_dict):
-        self._error_code = error_dict.get("ReasonCode","")
-        self._message    = error_dict.get("Message",self._message)
+        self._reason_code = error_dict.get("reasoncode",None)
+        self._description    = error_dict.get("description",None)
+        self._source    = error_dict.get("source",None)
+        
+        
+    def parseMap(self,aMap):
+        result = {}
+        for key, value in aMap.iteritems():
+            if (isinstance(value, dict)):
+                result[key.lower()] = self.parseMap(value)
+            elif (isinstance(value, list)):
+                result[key.lower()] = self.parseList(value)
+            else:
+                result[key.lower()] = value
+        return result
+    
+    def parseList(self,aList):
+        result = []
+        for value in aList:
+            if (isinstance(value, dict)):
+                result.append(self.parseMap(value))
+            elif (isinstance(value, list)):
+                result.append(self.parseList(value))
+            else:
+                result.append(value)
+        return result
 
     def getMessage(self):
-        return self._message
+        if (self._description):
+            return self._description
+        else:
+            return self._message
 
-    def getStatus(self):
-        return self._status
+    def getHttpStatus(self):
+        return self._http_status
 
-    def getErrorCode(self):
-        return self._error_code
+    def getReasonCode(self):
+        return self._reason_code
+    
+    def getSource(self):
+        return self._source
 
-    def getErrorData(self):
-        return self._error_data
+    def getRawErrorData(self):
+        return self._raw_error_data
 
     def describe(self):
         exception_data = []
         exception_data.append(self.__class__.__name__)
         exception_data.append(": \"")
         exception_data.append(self.getMessage())
-        exception_data.append("\" (status: ")
+        exception_data.append("\" (http_status: ")
         exception_data.append("{}".format(self.getStatus()))
-        exception_data.append(", error code: ")
-        exception_data.append("{}".format(self.getErrorCode()))
+        exception_data.append(", reason_code: ")
+        exception_data.append("{}".format(self.getReasonCode()))
         exception_data.append(")")
         return ''.join(exception_data)
 
     def __str__(self):
         return '%s' % self.describe()
 
-
-
-################################################################################
-# ApiConnectionException
-################################################################################
-
-class APIConnectionException(APIException):
-    """
-    Exception raised when there are communication problems contacting the API.
-    """
-    def __init__(self,message=None,status=None,error_data=None):
-
-        if status is None:
-            status = 500
-
-        #Call the base class constructor
-        super(APIConnectionException, self).__init__(message,status,error_data)
-
-
-
-################################################################################
-# AuthenticationException
-################################################################################
-
-class AuthenticationException(APIException):
-    """
-    Exception raised where there are problems authenticating a request.
-    """
-    def __init__(self,message=None,status=None,error_data=None):
-
-        if status is None:
-            status = 401
-
-        #Call the base class constructor
-        super(AuthenticationException, self).__init__(message,status,error_data)
-
-
-################################################################################
-# InvalidRequestException
-################################################################################
-
-class InvalidRequestException(APIException):
-    """
-    Exception raised when the API request contains errors.
-    """
-    def __init__(self,message=None,status=None,error_data=None):
-
-        if status is None:
-            status = 400
-
-        #Call the base class constructor
-        super(InvalidRequestException, self).__init__(message,status,error_data)
-
-        self._field_errors = []
-
-        #If error_data is not None set the appropriate message
-        if error_data is not None:
-            error_dict = {}
-            # If error_data is of type dict and has Key 'Errors' which has a key 'Error'
-            if isinstance(error_data, dict) and 'Error' in error_data.get("Errors",{}):
-                error_dict = error_data['Errors']['Error']
-
-                #Case of multiple errors take the first one
-                if isinstance(error_data, list):
-                    error_dict = error_data[0]
-
-                self.__initFieldErrorsFromDict(error_dict)
-
-            #If error Data is of Type List
-            elif isinstance(error_data,list):
-                #Take the first error
-                error_dict = error_data[0]
-
-                self.__initFieldErrorsFromDict(error_dict)
-
-
-    def __initFieldErrorsFromDict(self,error_dict):
-        if "FieldErrors" in error_dict:
-            for field_error in error_dict.get("FieldErrors"):
-                self._field_errors.append(FieldError(field_error))
-
-
-    def hasFieldErrors(self):
-        return hasattr(self,"_field_errors") and len(self._field_errors) > 0
-
-    def getFieldErrors(self):
-        return self._field_errors
-
-    def describe(self):
-        des = super(InvalidRequestException, self).describe()
-        if self.hasFieldErrors():
-            for field_error in self._field_errors:
-                des += "\n {}".format(field_error)
-        return des
-
-    def __str__(self):
-        return '%s' % self.describe()
-
-
-
-
-
-
-################################################################################
-# NotAllowedException
-################################################################################
-
-class NotAllowedException(APIException):
-    """
-    Exception when a request was not allowed.
-    """
-    def __init__(message=None,status=None,error_data=None):
-
-        if status is None:
-            status = 403
-        #Call the base class constructor
-        super(NotAllowedException, self).__init__(message,status,error_data)
-
-################################################################################
-# ObjectNotFoundException
-################################################################################
-
-class ObjectNotFoundException(APIException):
-    """
-    Exception when a requested object cannot be found.
-    """
-    def __init__(self,message=None,status=None,error_data=None):
-
-        if status is None:
-            status = 404
-        #Call the base class constructor
-        super(ObjectNotFoundException, self).__init__(message,status,error_data)
-
-
-################################################################################
-# SystemException
-################################################################################
-
-class SystemException(APIException):
-    """
-    Exception when there was a system error processing a request.
-    """
-    def __init__(self,message=None,status=None,error_data=None):
-
-        if status is None:
-            status = 500
-        #Call the base class constructor
-        super(SystemException, self).__init__(message,status,error_data)
-
-
-################################################################################
-# FieldError
-################################################################################
-
-class FieldError(object):
-
-    def __init__(self,params):
-
-        self._name    = params['field']
-        self._message = params['message']
-        self._code    = params['code']
-
-    def getFieldName(self):
-        return self._name
-
-    def getErrorMessage(self):
-        return self._message
-
-    def getErrorCode(self):
-        return self._code
-
-    def __str__(self):
-        return "Field Error: {self._name} \"{self._message}\" ({self._code}) ".format(self=self)

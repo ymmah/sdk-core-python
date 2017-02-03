@@ -24,9 +24,9 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-from mastercardapicore.core.model import BaseObject
-from mastercardapicore.core.model import OperationConfig
-from mastercardapicore.core.model import OperationMetadata
+from mastercardapicore import BaseObject
+from mastercardapicore import OperationConfig
+from mastercardapicore import OperationMetadata
 
 class Insights(BaseObject):
     
