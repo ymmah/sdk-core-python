@@ -48,6 +48,7 @@ class APIException(Exception):
         else:
             self._message = message
         
+        self._description = None
         self._reason_code = None
         self._reference = None
         self._source = None
@@ -139,7 +140,7 @@ class APIException(Exception):
         exception_data.append(": \"")
         exception_data.append(self.getMessage())
         exception_data.append("\" (http_status: ")
-        exception_data.append("{}".format(self.getStatus()))
+        exception_data.append("{}".format(self.getHttpStatus()))
         exception_data.append(", reason_code: ")
         exception_data.append("{}".format(self.getReasonCode()))
         exception_data.append(")")
