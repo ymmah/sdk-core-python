@@ -451,6 +451,16 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getReasonCode(), None)
         self.assertEqual(cm.exception.getSource(), None)
         self.assertEqual(cm.exception.getRawErrorData().get("Errors.Error.message"), "Some error")
+        
+        response.status_code = 500
+        with self.assertRaises(APIException) as cm:
+                content = self.controller.handleResponse(response, {"errors":[{"source":"OpenAPIClientId","reasonCode":"AUTHORIZATION_FAILED","key":"050007","description":"Unauthorized Access","recoverable":False,"requestId":None,"details":{"details":[{"name":"ErrorDetailCode","value":"050007"}]}}]})
+
+        self.assertEqual(cm.exception.getHttpStatus(), 500)
+        self.assertEqual(cm.exception.getMessage(), "Unauthorized Access")
+        self.assertEqual(cm.exception.getReasonCode(), "AUTHORIZATION_FAILED")
+        self.assertEqual(cm.exception.getSource(), "OpenAPIClientId")
+        self.assertEqual(cm.exception.getRawErrorData().get("errors[0].source"), "OpenAPIClientId")
 
 
 if __name__ == '__main__':

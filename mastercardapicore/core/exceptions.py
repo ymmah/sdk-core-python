@@ -64,13 +64,17 @@ class APIException(Exception):
             case_insensitive_error_data = self.parseMap(error_data)
             error_dict = {}
             # If error_data is of type dict and has Key 'Errors' which has a key 'Error'
-            if isinstance(case_insensitive_error_data, dict) and 'error' in case_insensitive_error_data.get("errors",{}):
-                error_dict = case_insensitive_error_data['errors']['error']
+            if 'errors' in case_insensitive_error_data:
+                
+                error_dict = case_insensitive_error_data['errors']
+                if 'error' in error_dict:
+                    error_dict = case_insensitive_error_data['errors']['error']
 
                 #Case of multiple errors take the first one
                 if isinstance(error_dict, list):
                     error_dict = error_dict[0]
 
+                
                 self.__initErrorDataFromDict(error_dict)
 
 
