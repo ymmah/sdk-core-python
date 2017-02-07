@@ -74,13 +74,10 @@ class APIControllerTests(APIControllerBaseTest):
         
     def test_ResourceConfig(self):
         
-        resourceConfig1 = ResourceConfig()
-        resourceConfig2 = ResourceConfig()
-        
-        resourceConfig1.setEnvironment(Environment.SANDBOX)
-        self.assertEqual(resourceConfig1.getVersion(), resourceConfig2.getVersion())
-        self.assertEqual(resourceConfig1.getHost(), resourceConfig2.getHost())
-        self.assertEqual(resourceConfig1.getContext(), resourceConfig2.getContext())
+        ResourceConfig.getInstance().setEnvironment(Environment.SANDBOX)
+        self.assertEqual(ResourceConfig.getInstance().getVersion(), ResourceConfig.getInstance().getVersion())
+        self.assertEqual(ResourceConfig.getInstance().getHost(), ResourceConfig.getInstance().getHost())
+        self.assertEqual(ResourceConfig.getInstance().getContext(), ResourceConfig.getInstance().getContext())
 
 
     def test_removeForwareSlashFromTail(self):
@@ -105,7 +102,6 @@ class APIControllerTests(APIControllerBaseTest):
             'five':5
         }
         
-        resourceConfig = ResourceConfig()
         config = OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", [], [])
         metadata = OperationMetadata("0.0.1", "https://sandbox.api.mastercard.com")
 
@@ -273,40 +269,38 @@ class APIControllerTests(APIControllerBaseTest):
         
         
         Config.setEnvironment(Environment.SANDBOX);
-        resourceConfig = ResourceConfig()
-        
         
         config = OperationConfig("/fraud/#env/v1/account-inquiry", "create", [], [])
-        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
+        metadata = OperationMetadata("0.0.1", ResourceConfig.getInstance().getHost(), ResourceConfig.getInstance().getContext())
 
         #dafault
-        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
+        metadata = OperationMetadata("0.0.1", ResourceConfig.getInstance().getHost(), ResourceConfig.getInstance().getContext())
         url = self.controller.getURL(config,metadata,inputMap)
         self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/v1/account-inquiry")
         
         #dafault
         Config.setEnvironment(Environment.PRODUCTION_MTF)
-        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
+        metadata = OperationMetadata("0.0.1", ResourceConfig.getInstance().getHost(), ResourceConfig.getInstance().getContext())
         self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://api.mastercard.com/fraud/mtf/v1/account-inquiry")
         
         Config.setEnvironment(Environment.PRODUCTION_ITF)
-        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
+        metadata = OperationMetadata("0.0.1", ResourceConfig.getInstance().getHost(), ResourceConfig.getInstance().getContext())
         self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://api.mastercard.com/fraud/itf/v1/account-inquiry")
         
         Config.setEnvironment(Environment.STAGE)
-        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
+        metadata = OperationMetadata("0.0.1", ResourceConfig.getInstance().getHost(), ResourceConfig.getInstance().getContext())
         self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://stage.api.mastercard.com/fraud/v1/account-inquiry")
         
         Config.setEnvironment("")
-        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
+        metadata = OperationMetadata("0.0.1", ResourceConfig.getInstance().getHost(), ResourceConfig.getInstance().getContext())
         self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://stage.api.mastercard.com/fraud/v1/account-inquiry")
         
         Config.setEnvironment(None)
-        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
+        metadata = OperationMetadata("0.0.1", ResourceConfig.getInstance().getHost(), ResourceConfig.getInstance().getContext())
         self.assertEqual(self.controller.getURL(config,metadata,inputMap),"https://stage.api.mastercard.com/fraud/v1/account-inquiry")
         
         Config.setEnvironment(Environment.LOCALHOST)
-        metadata = OperationMetadata("0.0.1", resourceConfig.getHost(), resourceConfig.getContext())
+        metadata = OperationMetadata("0.0.1", ResourceConfig.getInstance().getHost(), ResourceConfig.getInstance().getContext())
         self.assertEqual(self.controller.getURL(config,metadata,inputMap),"http://localhost:8081/fraud/v1/account-inquiry")
         
         Config.clearResourceConfig()
