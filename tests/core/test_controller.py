@@ -154,8 +154,8 @@ class APIControllerTests(APIControllerBaseTest):
         config = OperationConfig("/fraud/{api}/v{version}/account-inquiry", "delete", [], [])
         
         url = self.controller.getURL(config,metadata, inputMap)
-        self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry/1")
-        self.assertEqual(1,len(inputMap))
+        self.assertEqual(url,"https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry")
+        self.assertEqual(2,len(inputMap))
 
         inputMap = {
             'api' : 'lostandstolen',
