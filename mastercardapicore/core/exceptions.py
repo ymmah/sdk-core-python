@@ -54,7 +54,7 @@ class APIException(Exception):
         self._source = None
         
         #If error_data is not None set the appropriate message
-        if error_data:
+        if error_data and isinstance(error_data, dict):
             
             #set the smartmap as the raw_error_data
             smartMap = RequestMap()
@@ -85,8 +85,8 @@ class APIException(Exception):
                 error_dict = error_data[0]
 
                 self.__initErrorDataFromDict(error_dict)
-
-
+        else:
+            self._raw_error = error_data;
 
     def __initErrorDataFromDict(self,error_dict):
         self._reason_code = error_dict.get("reasoncode",None)

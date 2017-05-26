@@ -41,36 +41,51 @@ class ResourceConfig(object):
     context = None
     version = "0.0.1"
     environmentMap = Environment.mapping
-    initialized = False
+    __initialized = False
+    __instance = None
     
-    
-    def __init__(cls):
-        if cls.initialized == False:
-            Config.registerResourceConfig(cls)
-            cls.setEnvironment(Config.getEnvironment())
-            cls.initialized = True
+    def __init__(self):
+        raise Exception("This is a singleton, you need to call ResourceConfig.getInstance() instead")
+
+    def __new__(cls):
+        bare_instance = object.__new__(cls)
+        # you may want to have some common initialisation code here
+        return bare_instance
+
+    @staticmethod    
+    def getInstance():
+        if ResourceConfig.__initialized == False:
+            print "initilizing.... true"
+            ResourceConfig.__initialized = True
+            
+            print "creating a new instance"
+            tmpInstance = ResourceConfig.__new__(ResourceConfig)
+            
+            print "regestring a new instance"
+            Config.registerResourceConfig(tmpInstance)
+            tmpInstance.setEnvironment(Config.getEnvironment())
+            
+            print "saving instance"
+            ResourceConfig.__instance = tmpInstance
+
+        return ResourceConfig.__instance
         
 
-    @classmethod
     def getContext(cls):
         return cls.context
     
-    @classmethod
     def getHost(cls):
         if cls.override:
             return cls.override
         else:
             return cls.host
     
-    @classmethod
     def getVersion(cls):
         return cls.version
     
-    @classmethod
     def getName(cls):
         return cls.name
         
-    @classmethod
     def setEnvironment(cls,environment):
         if environment in cls.environmentMap.keys():
             tuple = cls.environmentMap[environment]
@@ -78,7 +93,6 @@ class ResourceConfig(object):
             cls.context = tuple[1]
       
       
-    @classmethod
     def setCustomEnvironment(cls,host,context):
         cls.host = host
         cls.context = context

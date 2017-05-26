@@ -112,10 +112,10 @@ class APIController(object):
 
         #This step is if id is in inputMap but was not specified in URL as /{id}
         #If the action is read,update or delete we add this id
-        if APIController.KEY_ID in inputMap:
-            if action.upper() in [APIController.ACTION_READ,APIController.ACTION_UPDATE,APIController.ACTION_DELETE]:
-                fullURL += "/"+str(inputMap[APIController.KEY_ID])
-                del inputMap[APIController.KEY_ID] #Remove from input path otherwise this would get add in query params as well
+        #if APIController.KEY_ID in inputMap:
+            #if action.upper() in [APIController.ACTION_READ,APIController.ACTION_UPDATE,APIController.ACTION_DELETE]:
+                #fullURL += "/"+str(inputMap[APIController.KEY_ID])
+                #del inputMap[APIController.KEY_ID] #Remove from input path otherwise this would get add in query params as well
 
         return fullURL
 
