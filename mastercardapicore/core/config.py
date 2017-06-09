@@ -55,9 +55,10 @@ class Config(object):
     @classmethod
     def setSandbox(cls,sandbox):
         if sandbox :
-            cls.environment = Environment.SANDBOX
+            cls.setEnvironment(Environment.SANDBOX)
         else:
-            cls.environment =  Environment.PRODUCTION
+            cls.setEnvironment(Environment.PRODUCTION)
+
 
     @classmethod
     def isSandbox(cls):
@@ -77,6 +78,7 @@ class Config(object):
             cls.environment = environment
             for registeredInstance in cls.registeredInstances.values():
                 registeredInstance.setEnvironment(environment)
+            
             
     @classmethod
     def getEnvironment(cls):
