@@ -52,8 +52,7 @@ class APIController(object):
     KEY_ACCEPT = "Accept"
     KEY_USER_AGENT = "User-Agent"
     KEY_CONTENT_TYPE = "Content-Type"
-    APPLICATION_JSON = "application/json"
-    PYTHON_SDK       = "Python_SDK"
+    APPLICATION_JSON = "application/json; charset=UTF-8"
     JSON             = "JSON"
 
 
@@ -149,7 +148,7 @@ class APIController(object):
         request.url    = fullURL
         request.headers[APIController.KEY_ACCEPT]       = APIController.APPLICATION_JSON
         request.headers[APIController.KEY_CONTENT_TYPE] = APIController.APPLICATION_JSON
-        request.headers[APIController.KEY_USER_AGENT]   = APIController.PYTHON_SDK+"/"+metadata.getVersion()
+        request.headers[APIController.KEY_USER_AGENT]   = Constants.getCoreVersion()+"/"+metadata.getVersion()
 
         #Add inputMap to params if action in read,delete,list,query
         if action.upper() in [APIController.ACTION_READ,APIController.ACTION_DELETE,APIController.ACTION_LIST,APIController.ACTION_QUERY]:
@@ -158,7 +157,8 @@ class APIController(object):
             request.data = json.dumps(inputMap)
 
         #Set the query parameter Format as JSON
-        request.params[APIController.KEY_FORMAT] = APIController.JSON
+        if metadata.isJsonNative() is False :
+            request.params[APIController.KEY_FORMAT] = APIController.JSON
 
         #Add the query in queryMap
         request.params.update(queryMap)
@@ -173,8 +173,7 @@ class APIController(object):
             Config.getAuthentication().signRequest(fullURL,request)
 
         return request
-
-
+    
     def getMethod(self,action):
 
         actions = {
