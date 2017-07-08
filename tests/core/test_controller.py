@@ -457,7 +457,7 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getMessage(), "Internal Server Error")
         self.assertEqual(cm.exception.getReasonCode(), None)
         self.assertEqual(cm.exception.getSource(), None)
-        self.assertEqual(cm.exception.getRawErrorData().get("Errors.Error.message"), "Some error")
+        self.assertEqual(cm.exception.getRawErrorData().get("errors.error.message"), "Some error")
         
         response.status_code = 500
         with self.assertRaises(APIException) as cm:
@@ -467,9 +467,28 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getMessage(), "Unauthorized Access")
         self.assertEqual(cm.exception.getReasonCode(), "AUTHORIZATION_FAILED")
         self.assertEqual(cm.exception.getSource(), "OpenAPIClientId")
-        self.assertEqual(cm.exception.getRawErrorData().get("errors[0].source"), "OpenAPIClientId")
-        self.assertEqual(cm.exception.getRawErrorData().get("errors[0].key"), "050007")
-        self.assertEqual(cm.exception.getRawErrorData().get("errors[0].requestId"), "11111")
+        self.assertEqual(cm.exception.getRawErrorData().get("source"), "OpenAPIClientId")
+        self.assertEqual(cm.exception.getRawErrorData().get("key"), "050007")
+        self.assertEqual(cm.exception.getRawErrorData().get("requestId"), "11111")
+
+
+        response.status_code = 500
+        with self.assertRaises(APIException) as cm:
+                content = self.controller.handleResponse(response, {"errors":[{"source":"OpenAPIClientId","reasonCode":"AUTHORIZATION_FAILED","key":"050008","requestId":"11111"},{"source":"OpenAPIClientId","reasonCode":"AUTHORIZATION_FAILED","key":"050007","description":"Unauthorized Access"}]})
+
+        self.assertEqual(cm.exception.getHttpStatus(), 500)
+        self.assertEqual(cm.exception.getMessage(), "Internal Server Error")
+        self.assertEqual(cm.exception.getReasonCode(), "AUTHORIZATION_FAILED")
+        self.assertEqual(cm.exception.getSource(), "OpenAPIClientId")
+        self.assertEqual(cm.exception.getRawErrorData().get("source"), "OpenAPIClientId")
+        self.assertEqual(cm.exception.getRawErrorData().get("key"), "050008")
+        self.assertEqual(cm.exception.getRawErrorData().get("requestId"), "11111")
+        cm.exception.parseError(1)
+        self.assertEqual(cm.exception.getErrorSize(), 2)
+        self.assertEqual(cm.exception.getRawErrorData().get("source"), "OpenAPIClientId")
+        self.assertEqual(cm.exception.getRawErrorData().get("key"), "050007")
+        
+
 
 
 if __name__ == '__main__':
