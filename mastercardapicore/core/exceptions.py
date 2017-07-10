@@ -48,20 +48,22 @@ class APIException(Exception):
         else:
             self._message = message
         
-        self._raw_error_data = None
+        
         self._description = None
         self._reason_code = None
         self._reference = None
         self._source = None
-        self._errors = []
-        
 
-        self.__parseError(error_data);
+        self._raw_error_data = error_data
+        self._error = None
+        self._errors = []
+
+        self.__parseErrors(error_data);
         self.parseError(0)
     
     
     
-    def __parseError(self,error_data):
+    def __parseErrors(self,error_data):
         """
         Parse the error dictionary into list of error_items
         """
@@ -88,21 +90,28 @@ class APIException(Exception):
                     self.__addError(map.get("errors"))
                 elif map.containsKey("reasoncode"):
                     self.__addError(map.getObject())
-                else:
-                    self._raw_error_data = map
+                
+                    
 
     def getErrorSize(self) :
         return len(self._errors);
 
     def parseError(self,index) :
+        """
+            parse error by index.
+        """
         if self._errors and index >= 0 and index < self._errors.count :
-            self.__parseErrorFromSmartMap(self._errors[index])
+            self._error = self._errors[index];
+            self.__parseErrorFromSmartMap();
+
+    def getError(self) :
+        return self._error;
+
 
     def __addError(self,error_item) :
         """
-            add a method to the list
+            add error to the list
         """
-
         if isinstance(error_item, list) :
             for item in error_item:
                 map = CaseInsensitiveSmartMap()
@@ -115,15 +124,14 @@ class APIException(Exception):
         else:
             self._errors.append(error_item)
 
-    def __parseErrorFromSmartMap(self,smartMap):
+    def __parseErrorFromSmartMap(self):
         # If error_data is of type dict and has Key 'Errors' which has a key 'Error'
-        self._raw_error_data = smartMap    
-        if (smartMap.containsKey("reasoncode")):
-            self._reason_code = smartMap.get("reasoncode")
-        if (smartMap.containsKey("description")):
-            self._description    = smartMap.get("description")
-        if (smartMap.containsKey("source")):
-            self._source    = smartMap.get("source")
+        if (self._error.containsKey("reasoncode")):
+            self._reason_code = self._error.get("reasoncode")
+        if (self._error.containsKey("description")):
+            self._description    = self._error.get("description")
+        if (self._error.containsKey("source")):
+            self._source    = self._error.get("source")
 
     def getMessage(self):
         if (self._description):
