@@ -29,10 +29,17 @@
 # Constants
 ################################################################################
 
+from mastercardapicore.version import __version__
+
 class Constants:
 
-    API_BASE_LIVE_URL       = "https://api.mastercard.com"
-    API_BASE_SANDBOX_URL    = "https://sandbox.api.mastercard.com"
+    SDK = __version__
+    VERSION       = "Python_SDK"
+ 
+    @classmethod
+    def getCoreVersion(cls):
+        return cls.SDK+":"+cls.VERSION
+
 
 ################################################################################
 # Environment 
