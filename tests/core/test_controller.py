@@ -197,37 +197,35 @@ class APIControllerTests(APIControllerBaseTest):
 
     def test_getRequestObject(self):
 
-        defaultHeaders =  {
-            APIController.KEY_ACCEPT:APIController.APPLICATION_JSON,
-            APIController.KEY_CONTENT_TYPE:APIController.APPLICATION_JSON,
-            APIController.KEY_USER_AGENT:Constants.getCoreVersion()+"/0.0.1"
-        }
+        #TEST POST
      
         inputMap = {
             "param1":1,
             "param2":2,
             "a":"1",
-            APIController.KEY_ACCEPT:APIController.APPLICATION_JSON,
-            APIController.KEY_CONTENT_TYPE:APIController.APPLICATION_JSON,
-            APIController.KEY_USER_AGENT:Constants.getCoreVersion()+"/0.0.1"
         }
         
-        config = OperationConfig("/fraud/api/v1/account-inquiry", "create", ['Accept','Content-Type', 'User-Agent'], ["a"])
-        metadata = OperationMetadata("0.0.1", "https://sandbox.api.mastercard.com")
+        config = OperationConfig("/fraud/api/v1/account-inquiry", "create", [], ["a"])
+        metadata = OperationMetadata("mock:0.0.1", "https://sandbox.api.mastercard.com", None, True)
 
         url = "https://sandbox.api.mastercard.com/fraud/api/v1/account-inquiry"
         
-        Config.setAuthentication(None)
-
         #Create Request with inputMap
         request = self.controller.getRequestObject(config,metadata,inputMap)
 
         self.assertEqual(request.url,url)
-        self.assertEqual(request.params,{APIController.KEY_FORMAT:APIController.JSON,"a":"1"})
+        self.assertEqual(request.params,{"a":"1"})
         self.assertEqual(json.loads(request.data),inputMap)
-        self.assertEqual(request.headers,defaultHeaders)
+        
+        self.assertEqual(request.headers[APIController.KEY_ACCEPT], APIController.APPLICATION_JSON)
+        self.assertEqual(request.headers[APIController.KEY_CONTENT_TYPE], APIController.APPLICATION_JSON)
+        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], Constants.getCoreVersion()+"/mock:0.0.1")
+
+        self.assertTrue("oauth_body_hash" in request.headers["Authorization"]);
         
 
+
+        #TEST GET
 
         inputMap = {
             "param1":1,
@@ -237,31 +235,35 @@ class APIControllerTests(APIControllerBaseTest):
         }
 
 
-        config = OperationConfig("/fraud/api/v1/account-inquiry", "list", ['Accept','Content-Type', 'User-Agent'], ["a", "b"])
+        config = OperationConfig("/fraud/api/v1/account-inquiry", "list", [], ["a", "b"])
 
         #List Request with inputMap
         request = self.controller.getRequestObject(config,metadata,inputMap)
 
-        self.assertEqual(request.params,{"param1":1,"param2":2,"a":"1","b":2,"Format":"JSON"})
+        self.assertEqual(request.params,{"param1":1,"param2":2,"a":"1","b":2})
         self.assertEqual(request.data,[])
-        self.assertEqual(request.headers,defaultHeaders)
         self.assertEqual(request.url,url)
 
+        self.assertEqual(request.headers[APIController.KEY_ACCEPT], APIController.APPLICATION_JSON)
+        self.assertFalse( APIController.KEY_CONTENT_TYPE in request.headers )
+        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], Constants.getCoreVersion()+"/mock:0.0.1")
+        self.assertTrue("oauth_body_hash" not in request.headers["Authorization"]);
 
         inputMap = {
             "a":"1",
             "b":2
         }
 
-
-
         #List Request with no inputMap
         request = self.controller.getRequestObject(config,metadata,inputMap)
 
-        self.assertEqual(request.params,{"a":"1","b":2,"Format":"JSON"})
+        self.assertEqual(request.params,{"a":"1","b":2})
         self.assertEqual(request.data,[])
-        self.assertEqual(request.headers,defaultHeaders)
         self.assertEqual(request.url,url)
+
+        self.assertEqual(request.headers[APIController.KEY_ACCEPT], APIController.APPLICATION_JSON)
+        self.assertFalse( APIController.KEY_CONTENT_TYPE in request.headers )
+        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], Constants.getCoreVersion()+"/mock:0.0.1")
 
        
     def test_environment(self):

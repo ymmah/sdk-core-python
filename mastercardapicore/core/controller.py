@@ -143,18 +143,23 @@ class APIController(object):
 
         #Create the request object
         request = Request()
-        #set the request parameters
+
+        #set the Method and URL
         request.method = method
         request.url    = fullURL
-        request.headers[APIController.KEY_ACCEPT]       = APIController.APPLICATION_JSON
-        request.headers[APIController.KEY_CONTENT_TYPE] = APIController.APPLICATION_JSON
-        request.headers[APIController.KEY_USER_AGENT]   = Constants.getCoreVersion()+"/"+metadata.getVersion()
 
         #Add inputMap to params if action in read,delete,list,query
         if action.upper() in [APIController.ACTION_READ,APIController.ACTION_DELETE,APIController.ACTION_LIST,APIController.ACTION_QUERY]:
             request.params = inputMap
+        # else is is a body if not null
         elif action.upper() in [APIController.ACTION_CREATE,APIController.ACTION_UPDATE]:
-            request.data = json.dumps(inputMap)
+            if inputMap:
+                request.data = json.dumps(inputMap)
+
+        request.headers[APIController.KEY_ACCEPT]       = APIController.APPLICATION_JSON
+        if request.data: 
+            request.headers[APIController.KEY_CONTENT_TYPE] = APIController.APPLICATION_JSON
+        request.headers[APIController.KEY_USER_AGENT]   = Constants.getCoreVersion()+"/"+metadata.getVersion()
 
         #Set the query parameter Format as JSON
         if metadata.isJsonNative() is False :
