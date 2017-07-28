@@ -65,7 +65,7 @@ class OAuthAuthentication(Authentication):
         oAuthParameters.setOAuthTimestamp(SecurityUtil.getTimestamp())
         oAuthParameters.setOAuthSignatureMethod("RSA-SHA256")
         oAuthParameters.setOAuthVersion("1.0")
-        if body is not None:
+        if body:
             encodedHash = util.base64Encode(util.sha256Encode(body))
             oAuthParameters.setOAuthBodyHash(encodedHash)
 

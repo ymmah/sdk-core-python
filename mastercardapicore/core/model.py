@@ -28,10 +28,10 @@ import re
 from collections import OrderedDict
 
 ################################################################################
-# RequestMap
+# SmartMap
 ################################################################################
 
-class RequestMap(object):
+class SmartMap(object):
 
     KEY_LIST = "list"
 
@@ -255,6 +255,7 @@ class RequestMap(object):
         """
         return len(self.__properties)
 
+
     def setAll(self,map):
         """
         Uses the map object to create the base map object
@@ -279,6 +280,56 @@ class RequestMap(object):
         if self.get(key) is not None:
             return True
         return False
+
+################################################################################
+# CaseInsensitiveSmartMap
+################################################################################
+
+class CaseInsensitiveSmartMap(SmartMap):
+
+    def containsKey(self,key):
+        return super(CaseInsensitiveSmartMap, self).containsKey(key.lower())
+
+    def get(self,key):
+        return super(CaseInsensitiveSmartMap, self).get(key.lower())
+
+    def setAll(self,map):
+        properties = self._parseMap(map)
+        super(CaseInsensitiveSmartMap, self).setAll(properties)
+
+    def set(self,key,value):
+        super(CaseInsensitiveSmartMap, self).set(key.lower(),value)
+
+    def _parseMap(self,aMap):
+        result = {}
+        for key, value in aMap.iteritems():
+            if (isinstance(value, dict)):
+                result[key.lower()] = self._parseMap(value)
+            elif (isinstance(value, list)):
+                result[key.lower()] = self._parseList(value)
+            else:
+                result[key.lower()] = value
+        return result
+    
+    def _parseList(self,aList):
+        result = []
+        for value in aList:
+            if (isinstance(value, dict)):
+                result.append(self._parseMap(value))
+            elif (isinstance(value, list)):
+                result.append(self._parseList(value))
+            else:
+                result.append(value)
+        return result
+
+    
+
+################################################################################
+# RequestMap (Alias to SmartMap)
+################################################################################
+
+RequestMap = SmartMap
+
 
 ################################################################################
 # OperationConfig
@@ -308,10 +359,11 @@ class OperationConfig:
 ################################################################################
 
 class OperationMetadata:
-    def __init__(self,version,host,environment=None):
+    def __init__(self,version,host,environment=None,jsonNative=False):
         self.version = version
         self.host = host
         self.environment = environment
+        self.jsonNative = jsonNative
         
     def getVersion(self):
         return self.version
@@ -321,5 +373,8 @@ class OperationMetadata:
     
     def getEnvironment(self):
         return self.environment
+    
+    def isJsonNative(self):
+        return self.jsonNative
 
 
