@@ -33,7 +33,7 @@ from mastercardapicore.version import __version__
 
 class Constants:
 
-    SDK             = "Python_SDK"
+    SDK             = "mastercard-api-core(python)"
     VERSION         = __version__
  
     @classmethod
