@@ -40,6 +40,8 @@ class Config(object):
     debug           = False
     authentication  = None
     registeredInstances = {}
+    proxy           = {}
+    timeout         = 30
 
     def __init__(self):
         pass
@@ -53,12 +55,27 @@ class Config(object):
         return cls.debug
 
     @classmethod
-    def setSandbox(cls,sandbox):
+    def setSandbox(cls, sandbox):
         if sandbox :
             cls.setEnvironment(Environment.SANDBOX)
         else:
             cls.setEnvironment(Environment.PRODUCTION)
 
+    @classmethod
+    def setProxy(cls, proxy):
+        cls.proxy = proxy
+
+    @classmethod
+    def getProxy(cls):
+        return cls.proxy
+
+    @classmethod
+    def setTimeout(cls, timeout):
+        cls.timeout = timeout
+
+    @classmethod
+    def getTimeout(cls):
+        return cls.timeout
 
     @classmethod
     def isSandbox(cls):
