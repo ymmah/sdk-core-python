@@ -41,7 +41,8 @@ class Config(object):
     authentication  = None
     registeredInstances = {}
     proxy           = {}
-    timeout         = 30
+    connection_timeout   = 5
+    read_timeout         = 30
 
     def __init__(self):
         pass
@@ -70,12 +71,26 @@ class Config(object):
         return cls.proxy
 
     @classmethod
-    def setTimeout(cls, timeout):
-        cls.timeout = timeout
+    def getReadTimeout(cls):
+        return cls.read_timeout
 
     @classmethod
-    def getTimeout(cls):
-        return cls.timeout
+    def setReadTimeout(cls, timeout):
+        if timeout :
+            cls.read_timeout = timeout
+        else:
+            cls.read_timeout = 30
+
+    @classmethod
+    def getConnectionTimeout(cls):
+        return cls.connection_timeout
+
+    @classmethod
+    def setConnectionTimeout(cls, timeout):
+        if timeout :
+            cls.connection_timeout = timeout
+        else:
+            cls.connection_timeout = 5
 
     @classmethod
     def isSandbox(cls):

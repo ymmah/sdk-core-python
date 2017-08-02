@@ -217,7 +217,7 @@ class APIController(object):
 
         #Make the request
         sess = Session()
-        response = sess.send(prepreq, proxies=Config.getProxy(), timeout=Config.getTimeout())
+        response = sess.send(prepreq, proxies=Config.getProxy(), timeout=(Config.getConnectionTimeout(), Config.getReadTimeout()))
         sess.close()
 
         ##Log the response parameters if Debug is on
