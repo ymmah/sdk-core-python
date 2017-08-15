@@ -82,7 +82,7 @@ class APIController(object):
         resourcePath = config.getResourcePath()
         action= config.getAction()
         baseURL = metadata.getHost()
-
+      
         if baseURL: 
             if not util.validateURL(baseURL):
                 raise APIException("URL: '" + baseURL + "' is not a valid url")
@@ -198,7 +198,6 @@ class APIController(object):
         self.__check()
 
         request = self.getRequestObject(config,metadata,inputMap)
-
         prepreq = request.prepare()
 
         ##Log the request parameters if Debug is on
@@ -218,7 +217,7 @@ class APIController(object):
 
         #Make the request
         sess = Session()
-        response = sess.send(prepreq)
+        response = sess.send(prepreq, proxies=Config.getProxy(), timeout=(Config.getConnectionTimeout(), Config.getReadTimeout()))
         sess.close()
 
         ##Log the response parameters if Debug is on
