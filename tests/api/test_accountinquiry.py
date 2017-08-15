@@ -59,20 +59,20 @@ class AccountInquiryTest(BaseTest):
         self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.ReasonCode"),"S")
         self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.Reason"),"STOLEN")
 
-    def test_account_inquiry_with_proxy(self):
+    # def test_account_inquiry_with_proxy(self):
 
-        Config.setProxy({'http': 'http://127.0.0.1:9999', 'https': 'http://127.0.0.1:9999'})
+    #     Config.setProxy({'http': 'http://127.0.0.1:9999', 'https': 'http://127.0.0.1:9999'})
 
-        mapObj = RequestMap()
-        mapObj.set("AccountInquiry.AccountNumber","5343434343434343")
+    #     mapObj = RequestMap()
+    #     mapObj.set("AccountInquiry.AccountNumber","5343434343434343")
 
-        response = AccountInquiry.update(mapObj)
+    #     response = AccountInquiry.update(mapObj)
         
-        ignoreAsserts = []
+    #     ignoreAsserts = []
         
-        self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.Listed"),"True")
-        self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.ReasonCode"),"S")
-        self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.Reason"),"STOLEN")
+    #     self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.Listed"),"True")
+    #     self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.ReasonCode"),"S")
+    #     self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.Reason"),"STOLEN")
         
 
 
