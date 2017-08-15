@@ -52,8 +52,7 @@ class APIController(object):
     KEY_ACCEPT = "Accept"
     KEY_USER_AGENT = "User-Agent"
     KEY_CONTENT_TYPE = "Content-Type"
-    APPLICATION_JSON = "application/json"
-    PYTHON_SDK       = "Python_SDK"
+    APPLICATION_JSON = "application/json; charset=UTF-8"
     JSON             = "JSON"
 
 
@@ -83,7 +82,7 @@ class APIController(object):
         resourcePath = config.getResourcePath()
         action= config.getAction()
         baseURL = metadata.getHost()
-
+      
         if baseURL: 
             if not util.validateURL(baseURL):
                 raise APIException("URL: '" + baseURL + "' is not a valid url")
@@ -144,21 +143,27 @@ class APIController(object):
 
         #Create the request object
         request = Request()
-        #set the request parameters
+
+        #set the Method and URL
         request.method = method
         request.url    = fullURL
-        request.headers[APIController.KEY_ACCEPT]       = APIController.APPLICATION_JSON
-        request.headers[APIController.KEY_CONTENT_TYPE] = APIController.APPLICATION_JSON
-        request.headers[APIController.KEY_USER_AGENT]   = APIController.PYTHON_SDK+"/"+metadata.getVersion()
 
         #Add inputMap to params if action in read,delete,list,query
         if action.upper() in [APIController.ACTION_READ,APIController.ACTION_DELETE,APIController.ACTION_LIST,APIController.ACTION_QUERY]:
             request.params = inputMap
+        # else is is a body if not null
         elif action.upper() in [APIController.ACTION_CREATE,APIController.ACTION_UPDATE]:
-            request.data = json.dumps(inputMap)
+            if inputMap:
+                request.data = json.dumps(inputMap)
+
+        request.headers[APIController.KEY_ACCEPT]       = APIController.APPLICATION_JSON
+        if request.data: 
+            request.headers[APIController.KEY_CONTENT_TYPE] = APIController.APPLICATION_JSON
+        request.headers[APIController.KEY_USER_AGENT]   = Constants.getCoreVersion()+"/"+metadata.getVersion()
 
         #Set the query parameter Format as JSON
-        request.params[APIController.KEY_FORMAT] = APIController.JSON
+        if metadata.isJsonNative() is False :
+            request.params[APIController.KEY_FORMAT] = APIController.JSON
 
         #Add the query in queryMap
         request.params.update(queryMap)
@@ -173,8 +178,7 @@ class APIController(object):
             Config.getAuthentication().signRequest(fullURL,request)
 
         return request
-
-
+    
     def getMethod(self,action):
 
         actions = {
@@ -194,7 +198,6 @@ class APIController(object):
         self.__check()
 
         request = self.getRequestObject(config,metadata,inputMap)
-
         prepreq = request.prepare()
 
         ##Log the request parameters if Debug is on
@@ -214,7 +217,7 @@ class APIController(object):
 
         #Make the request
         sess = Session()
-        response = sess.send(prepreq)
+        response = sess.send(prepreq, proxies=Config.getProxy(), timeout=(Config.getConnectionTimeout(), Config.getReadTimeout()))
         sess.close()
 
         ##Log the response parameters if Debug is on
