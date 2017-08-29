@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
 #
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
@@ -26,6 +28,7 @@
 #
 import re
 from collections import OrderedDict
+import json
 
 ################################################################################
 # SmartMap
@@ -211,7 +214,10 @@ class SmartMap(object):
             else: # Move in the map
                 if isinstance(self.__subProperty,dict) and part_key in self.__subProperty:
                     if count == keys_len:
-                        return self.__subProperty[part_key]
+                        if isinstance(self.__subProperty[part_key], basestring) :
+                            return self.__subProperty[part_key].encode('utf-8')
+                        else: 
+                            return self.__subProperty[part_key]
                     else:
                         self.__subProperty = self.__subProperty[part_key]
                 else:
@@ -254,6 +260,13 @@ class SmartMap(object):
         Returns the number of keys at the first level of the object
         """
         return len(self.__properties)
+
+    def parseJson(self,jsonString):
+        """
+        Uses the Json String to create the base map object
+        """
+        map = json.loads(jsonString, encoding="utf-8")
+        self.setAll(map)
 
 
     def setAll(self,map):

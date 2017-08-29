@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
 #
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
@@ -154,7 +156,7 @@ class APIController(object):
         # else is is a body if not null
         elif action.upper() in [APIController.ACTION_CREATE,APIController.ACTION_UPDATE]:
             if inputMap:
-                request.data = json.dumps(inputMap)
+                request.data = json.dumps(inputMap, encoding='utf-8')
 
         request.headers[APIController.KEY_ACCEPT]       = APIController.APPLICATION_JSON
         if request.data: 
@@ -248,7 +250,7 @@ class APIController(object):
             try:
                 if isinstance(content,bytes):
                     content = content.decode("utf-8")
-                content= json.loads(content)
+                content= json.loads(content, encoding='utf-8')
             except (ValueError, TypeError):
                 pass
 

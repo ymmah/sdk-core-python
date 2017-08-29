@@ -36,7 +36,7 @@ class Insights(BaseObject):
     
     def getOperationConfig(self,operationUUID):
         if operationUUID not in self.__config:
-            raise Exception("Invalid operationUUID: "+operationUUI)
+            raise Exception("Invalid operationUUID: "+operationUUID)
         
         return self.__config[operationUUID]
     

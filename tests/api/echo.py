@@ -26,8 +26,25 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
+from mastercardapicore import BaseObject
+from mastercardapicore import OperationConfig
+from mastercardapicore import OperationMetadata
 
-class Authentication(object):
+class Echo(BaseObject):
+    
+    __config = {
+       "25cf4d3e-3606-433c-8fcc-1df3813d28d5" : OperationConfig("/mcapitest/JsonNativePost", "create", [], []),
+    }
+    
+    def getOperationConfig(self,operationUUID):
+        if operationUUID not in self.__config:
+            raise Exception("Invalid operationUUID: "+operationUUID)
+        
+        return self.__config[operationUUID]
+    
+    def getOperationMetadata(self):
+        return OperationMetadata("0.0.1", "http://echo.jpillora.com/")
 
-    def signRequest(self,uri,request):
-        raise NotImplementedError("User must define sign method to use this class")
+    @classmethod
+    def create(cls,mapObj):
+        return BaseObject.execute("25cf4d3e-3606-433c-8fcc-1df3813d28d5", Echo(mapObj))
