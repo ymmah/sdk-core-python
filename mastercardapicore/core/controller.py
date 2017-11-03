@@ -157,6 +157,8 @@ class APIController(object):
         elif action.upper() in [APIController.ACTION_CREATE,APIController.ACTION_UPDATE]:
             if inputMap:
                 request.data = json.dumps(inputMap, encoding='utf-8')
+            else: 
+                request.data = ""
 
         request.headers[APIController.KEY_ACCEPT]       = APIController.APPLICATION_JSON
         if request.data: 
