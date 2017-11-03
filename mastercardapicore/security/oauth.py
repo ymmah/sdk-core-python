@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
 #
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
@@ -65,7 +67,7 @@ class OAuthAuthentication(Authentication):
         oAuthParameters.setOAuthTimestamp(SecurityUtil.getTimestamp())
         oAuthParameters.setOAuthSignatureMethod("RSA-SHA256")
         oAuthParameters.setOAuthVersion("1.0")
-        if body:
+        if method != "GET" and method != "DELETE" and method != "HEAD"  :
             encodedHash = util.base64Encode(util.sha256Encode(body))
             oAuthParameters.setOAuthBodyHash(encodedHash)
 

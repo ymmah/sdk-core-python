@@ -27,7 +27,45 @@
 # SUCH DAMAGE.
 #
 
-class Authentication(object):
+import unittest
+from mastercardapicore import RequestMap
+from mastercardapicore import Config
+from mastercardapicore import OAuthAuthentication
+from os.path import dirname, realpath, join
+import time
+from base_test import BaseTest
+from echo import Echo
+import json
 
-    def signRequest(self,uri,request):
-        raise NotImplementedError("User must define sign method to use this class")
+
+
+class EchoTest(BaseTest):
+
+    def setUp(self):
+        Config.setDebug(True)
+        self.resetAuthentication()
+
+
+    def test_utf_8(self):
+        
+        utf8String = "мảŝťễřÇāŕď Ľẵвš ạאָđ мãśţēяĈẫřđ ĀקÏ ŕồçҝş..."
+        
+
+        mapObj = RequestMap()
+        mapObj.set("Name",utf8String)
+        
+        
+        response = Echo.create(mapObj)#
+
+        responseMap = RequestMap()
+        responseMap.parseJson(response.get("body"))  
+
+        self.assertEqual(utf8String, responseMap.get("Name"))
+
+        #self.assertEqual(response2.get("Name"), utf8String)
+        
+    
+
+if __name__ == '__main__':
+    unittest.main()
+
