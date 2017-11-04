@@ -120,6 +120,15 @@ class APIController(object):
 
         return fullURL
 
+    def addQueryParamter(self, inputDic, outputDic):
+
+        for key, value in inputDic.items():
+            if (isinstance(value, list) or isinstance(value, dict)): 
+                value = json.dumps(value, encoding='utf-8')
+            outputDic[key] = value;  
+
+
+
     def getRequestObject(self,config,metadata,inputMap):
         """
         Gets the Request Object with URL and
@@ -152,7 +161,8 @@ class APIController(object):
 
         #Add inputMap to params if action in read,delete,list,query
         if action.upper() in [APIController.ACTION_READ,APIController.ACTION_DELETE,APIController.ACTION_LIST,APIController.ACTION_QUERY]:
-            request.params = inputMap
+            self.addQueryParamter(inputMap, queryMap)
+            
         # else is is a body if not null
         elif action.upper() in [APIController.ACTION_CREATE,APIController.ACTION_UPDATE]:
             if inputMap:
