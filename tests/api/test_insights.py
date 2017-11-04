@@ -30,6 +30,7 @@ from mastercardapicore import RequestMap
 from insights import Insights
 from mastercardapicore.security import OAuthAuthentication
 from os.path import dirname, realpath, join
+from nose.tools import nottest
 
 class InsightsTest(unittest.TestCase):
 
@@ -40,7 +41,7 @@ class InsightsTest(unittest.TestCase):
         Config.setAuthentication(auth)
         Config.setDebug(False)
 
-
+    @nottest
     def test_example_Insights(self):
 
         mapObj = RequestMap()

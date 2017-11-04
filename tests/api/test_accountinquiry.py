@@ -31,6 +31,7 @@ from accountinquiry import AccountInquiry
 from base_test import BaseTest
 from mastercardapicore import OAuthAuthentication
 from os.path import dirname, realpath, join
+from nose.tools import nottest
 
 class AccountInquiryTest(BaseTest):
 
@@ -45,7 +46,7 @@ class AccountInquiryTest(BaseTest):
     def tearDown(self):
         Config.setProxy(None)
 
-
+    @nottest
     def test_account_inquiry(self):
 
         mapObj = RequestMap()
