@@ -1,4 +1,3 @@
-#
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
 #
@@ -24,58 +23,43 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
+
 import unittest
 from mastercardapicore import Config
 from mastercardapicore import RequestMap
+from combinationctrlsalertresource import Combinationctrlsalertresource
+from mastercardapicore import APIException
 from accountinquiry import AccountInquiry
 from base_test import BaseTest
 from mastercardapicore import OAuthAuthentication
 from os.path import dirname, realpath, join
-from nose.tools import nottest
-
-class AccountInquiryTest(BaseTest):
 
 
-    def setUp(self):
-        keyFile = join(dirname(dirname(realpath(__file__))),"resources","mcapi_sandbox_key.p12")
-        auth = OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", keyFile, "test", "password")
-        Config.setAuthentication(auth)
-        Config.setDebug(False)
 
+class AllTest(BaseTest):
 
-    def tearDown(self):
-        Config.setProxy(None)
+            def setUp(self):
+                keyFile = join(dirname(dirname(realpath(__file__))),"resources","sandbox9_sandbox.p12")
+                auth = OAuthAuthentication("rJWlVy-B-8Tfa5k0raxXy_BgKIfUx41sYT9CMdBod8885a33!50383044ee074864822d99b0a0295aa30000000000000000", keyFile, "sandbox9", "keystorepassword")
+                Config.setAuthentication(auth)
+                Config.setDebug(False)
+    
+            def test_181_example_filter_controls_alert_get_request(self):
+                # 
+                true = True
 
-    @nottest
-    def test_account_inquiry(self):
+                map = RequestMap()
+                map.set("uuid", "5tcTMLIqEg88gN6ClBGqH2TYDQuBDLT4ey5zjQQ7alg")
+                #map.set("uuid", BaseTest.resolveResponseValue("example_cardregister_postrequest.uuid"));
+                map.set("filters[0].filterId", "5555");
 
-        mapObj = RequestMap()
-        mapObj.set("AccountInquiry.AccountNumber","5343434343434343")
+                try:
+                    response = Combinationctrlsalertresource.query(map)
+                except APIException as e:
+                    self.assertEqual(e.getHttpStatus(), 404)
+                    self.assertEqual(e.getMessage(), "No cards provisioned for the UUID.")
+                    self.assertEqual(e.getReasonCode(), "card.invalid")
+                    self.assertEqual(e.getSource(), "Validation")
 
-        response = AccountInquiry.update(mapObj)
-        
-        ignoreAsserts = []
-        
-        self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.Listed"),"True")
-        self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.ReasonCode"),"S")
-        self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.Reason"),"STOLEN")
-
-    # def test_account_inquiry_with_proxy(self):
-
-    #     Config.setProxy({'http': 'http://127.0.0.1:9999', 'https': 'http://127.0.0.1:9999'})
-
-    #     mapObj = RequestMap()
-    #     mapObj.set("AccountInquiry.AccountNumber","5343434343434343")
-
-    #     response = AccountInquiry.update(mapObj)
-        
-    #     ignoreAsserts = []
-        
-    #     self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.Listed"),"True")
-    #     self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.ReasonCode"),"S")
-    #     self.customAssertEqual(ignoreAsserts, "Listed", response.get("Account.Reason"),"STOLEN")
-        
-
-
-if __name__ == '__main__':
-    unittest.main()
+                #BaseTest.putResponse("example_filter_controls_alert_get_request", response)
+                #self.resetAuthentication()
