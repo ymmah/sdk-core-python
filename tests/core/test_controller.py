@@ -197,6 +197,33 @@ class APIControllerTests(APIControllerBaseTest):
 
     def test_getRequestObject(self):
 
+        #TEST POST with jsonNative and ContentTypeOverride
+     
+        inputMap = {
+            "param1":1,
+            "param2":2,
+            "a":"1",
+        }
+        
+        config = OperationConfig("/fraud/api/v1/account-inquiry", "create", [], ["a"])
+        metadata = OperationMetadata("mock:0.0.1", "https://sandbox.api.mastercard.com", None, True, "text/json")
+
+        url = "https://sandbox.api.mastercard.com/fraud/api/v1/account-inquiry"
+        
+        #Create Request with inputMap
+        request = self.controller.getRequestObject(config,metadata,inputMap)
+
+        self.assertEqual(request.url,url)
+        self.assertEqual(request.params,{"a":"1"})
+        self.assertEqual(json.loads(request.data),inputMap)
+        
+        self.assertEqual(request.headers[APIController.KEY_ACCEPT], "text/json; charset=UTF-8")
+        self.assertEqual(request.headers[APIController.KEY_CONTENT_TYPE], "text/json; charset=UTF-8")
+        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], Constants.getCoreVersion()+"/mock:0.0.1")
+
+        self.assertTrue("oauth_body_hash" in request.headers["Authorization"]);     
+
+
         #TEST POST
      
         inputMap = {
@@ -222,7 +249,6 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(request.headers[APIController.KEY_USER_AGENT], Constants.getCoreVersion()+"/mock:0.0.1")
 
         self.assertTrue("oauth_body_hash" in request.headers["Authorization"]);
-        
 
 
         #TEST GET
