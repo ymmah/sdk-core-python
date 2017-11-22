@@ -372,11 +372,12 @@ class OperationConfig:
 ################################################################################
 
 class OperationMetadata:
-    def __init__(self,version,host,environment=None,jsonNative=False):
+    def __init__(self,version,host,environment=None,jsonNative=False,contentTypeOverride=False):
         self.version = version
         self.host = host
         self.environment = environment
         self.jsonNative = jsonNative
+        self.contentTypeOverride = contentTypeOverride
         
     def getVersion(self):
         return self.version
@@ -389,5 +390,8 @@ class OperationMetadata:
     
     def isJsonNative(self):
         return self.jsonNative
+
+    def getContentTypeOverride(self):
+        return self.contentTypeOverride
 
 

@@ -155,6 +155,12 @@ class APIController(object):
         #Create the request object
         request = Request()
 
+        #calculate the contentTypeOverride
+        contentType = APIController.APPLICATION_JSON
+        if (metadata.getContentTypeOverride()):
+            contentType = metadata.getContentTypeOverride() + "; charset=UTF-8"
+
+
         #set the Method and URL
         request.method = method
         request.url    = fullURL
@@ -170,9 +176,9 @@ class APIController(object):
             else: 
                 request.data = ""
 
-        request.headers[APIController.KEY_ACCEPT]       = APIController.APPLICATION_JSON
+        request.headers[APIController.KEY_ACCEPT]       = contentType
         if request.data: 
-            request.headers[APIController.KEY_CONTENT_TYPE] = APIController.APPLICATION_JSON
+            request.headers[APIController.KEY_CONTENT_TYPE] = contentType
         request.headers[APIController.KEY_USER_AGENT]   = Constants.getCoreVersion()+"/"+metadata.getVersion()
 
         #Set the query parameter Format as JSON
