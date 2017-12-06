@@ -31,9 +31,10 @@
 # Constants
 ################################################################################
 
+from builtins import object
 from mastercardapicore.version import __version__
 
-class Constants:
+class Constants(object):
 
     SDK             = "mastercard-api-core(python)"
     VERSION         = __version__
@@ -47,7 +48,7 @@ class Constants:
 # Environment 
 ################################################################################
 
-class Environment:
+class Environment(object):
     PRODUCTION  = "production"
     SANDBOX     = "sandbox" 
     SANDBOX_MTF     = "sandbox_mtf"

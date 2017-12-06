@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
@@ -31,8 +32,8 @@ from mastercardapicore import Config
 from mastercardapicore import OAuthAuthentication
 from os.path import dirname, realpath, join
 import time
-from base_test import BaseTest
-from userpostpath import UserPostPath
+from .base_test import BaseTest
+from .userpostpath import UserPostPath
 
 
 

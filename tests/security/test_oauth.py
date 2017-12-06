@@ -24,6 +24,7 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
+from builtins import str
 import unittest
 from mastercardapicore.security.oauth import OAuthAuthentication, OAuthParameters
 from mastercardapicore import Config

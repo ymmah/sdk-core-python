@@ -30,6 +30,9 @@
 Utility file having common functions for MasterCard Core SDK
 """
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 import re
 import hashlib
 import base64
@@ -37,8 +40,8 @@ import string
 
 
 try:
-    from urlparse import urlparse, parse_qsl #Python 2.x
-    from urllib import quote,quote_plus
+    from urllib.parse import urlparse, parse_qsl #Python 2.x
+    from urllib.parse import quote, quote_plus
 except ImportError: #Python 3
     from urllib.parse import urlparse, quote, quote_plus, parse_qsl
 def validateURL(url):

@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 #
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
@@ -25,7 +27,7 @@
 # SUCH DAMAGE.
 #
 import unittest
-from test_resourceconfig import ResourceConfig
+from .test_resourceconfig import ResourceConfig
 from mastercardapicore.core.controller import APIController
 from mastercardapicore import OperationConfig
 from mastercardapicore import OperationMetadata
