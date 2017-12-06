@@ -26,6 +26,9 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 import re
 from collections import OrderedDict
 import json
@@ -236,7 +239,7 @@ class SmartMap(object):
 
         #Check if it object is  a dict
         if isinstance(map,dict):
-            for key,value in map.items():
+            for key,value in list(map.items()):
                 #if last combined is not empty then append current key to it else use current key
                 tempKey = combKey +"."+key if combKey != "" else key
                 #call the function again with one level down and combined key
@@ -315,7 +318,7 @@ class CaseInsensitiveSmartMap(SmartMap):
 
     def _parseMap(self,aMap):
         result = {}
-        for key, value in aMap.iteritems():
+        for key, value in list(aMap.items()):
             if (isinstance(value, dict)):
                 result[key.lower()] = self._parseMap(value)
             elif (isinstance(value, list)):
@@ -348,7 +351,7 @@ RequestMap = SmartMap
 # OperationConfig
 ################################################################################
 
-class OperationConfig:
+class OperationConfig(object):
     def __init__(self,resourcePath,action,headerParams,queryParams):
         self.resourcePath = resourcePath
         self.action = action
@@ -371,7 +374,7 @@ class OperationConfig:
 # OperationMetadata
 ################################################################################
 
-class OperationMetadata:
+class OperationMetadata(object):
     def __init__(self,version,host,environment=None,jsonNative=False,contentTypeOverride=False):
         self.version = version
         self.host = host

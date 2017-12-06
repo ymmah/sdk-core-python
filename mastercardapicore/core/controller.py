@@ -26,6 +26,8 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
+from __future__ import print_function
+from builtins import object
 from requests import Request, Session
 from mastercardapicore.core.config import Config
 from mastercardapicore.core.constants import Constants
@@ -122,7 +124,7 @@ class APIController(object):
 
     def addQueryParamter(self, inputDic, outputDic):
 
-        for key, value in inputDic.items():
+        for key, value in list(inputDic.items()):
             if (isinstance(value, list) or isinstance(value, dict)): 
                 value = json.dumps(value, encoding='utf-8')
             outputDic[key] = value;  
@@ -189,7 +191,7 @@ class APIController(object):
         request.params.update(queryMap)
         
         #Add headers
-        for key, value in headerMap.items():
+        for key, value in list(headerMap.items()):
             request.headers[key] = value
 
         #Sign the request
@@ -222,17 +224,17 @@ class APIController(object):
 
         ##Log the request parameters if Debug is on
         if Config.isDebug():
-            print "------ Request ----"
-            print ""
-            print "URL"
-            print prepreq.url
-            print ""
-            print "Headers"
-            print prepreq.headers
-            print ""
-            print "Body"
-            print prepreq.body
-            print " "
+            print("------ Request ----")
+            print("")
+            print("URL")
+            print(prepreq.url)
+            print("")
+            print("Headers")
+            print(prepreq.headers)
+            print("")
+            print("Body")
+            print(prepreq.body)
+            print(" ")
 
 
         #Make the request
@@ -242,17 +244,17 @@ class APIController(object):
 
         ##Log the response parameters if Debug is on
         if Config.isDebug():
-            print "------ Response ----"
-            print ""
-            print "Status Code"
-            print response.status_code
-            print ""
-            print "Headers"
-            print response.headers
-            print ""
-            print "Body"
-            print response.content
-            print " "
+            print("------ Response ----")
+            print("")
+            print("Status Code")
+            print(response.status_code)
+            print("")
+            print("Headers")
+            print(response.headers)
+            print("")
+            print("Body")
+            print(response.content)
+            print(" ")
 
         content = response.content
 

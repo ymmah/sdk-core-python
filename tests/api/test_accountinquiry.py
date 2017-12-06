@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
@@ -27,8 +28,8 @@
 import unittest
 from mastercardapicore import Config
 from mastercardapicore import RequestMap
-from accountinquiry import AccountInquiry
-from base_test import BaseTest
+from .accountinquiry import AccountInquiry
+from .base_test import BaseTest
 from mastercardapicore import OAuthAuthentication
 from os.path import dirname, realpath, join
 from nose.tools import nottest
