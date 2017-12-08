@@ -274,7 +274,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         self.assertEqual(request.headers[APIController.KEY_ACCEPT], APIController.APPLICATION_JSON)
         self.assertFalse( APIController.KEY_CONTENT_TYPE in request.headers )
-        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], "mastercard-api-core(python):1.4.9/mock:0.0.1")
+        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], "mastercard-api-core(python):1.4.10/mock:0.0.1")
         self.assertTrue("oauth_body_hash" not in request.headers["Authorization"]);
 
         inputMap = {
@@ -291,7 +291,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         self.assertEqual(request.headers[APIController.KEY_ACCEPT], APIController.APPLICATION_JSON)
         self.assertFalse( APIController.KEY_CONTENT_TYPE in request.headers )
-        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], "mastercard-api-core(python):1.4.9/mock:0.0.1")
+        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], "mastercard-api-core(python):1.4.10/mock:0.0.1")
 
        
     def test_environment(self):
