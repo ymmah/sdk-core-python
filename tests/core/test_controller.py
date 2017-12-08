@@ -1,5 +1,6 @@
-from __future__ import print_function
-from __future__ import absolute_import
+
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-#
 #
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
@@ -26,6 +27,9 @@ from __future__ import absolute_import
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
+
+from __future__ import print_function
+from __future__ import absolute_import
 import unittest
 from .test_resourceconfig import ResourceConfig
 from mastercardapicore.core.controller import APIController

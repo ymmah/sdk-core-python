@@ -1,4 +1,6 @@
-from __future__ import print_function
+
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-#
 #
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
@@ -26,6 +28,7 @@ from __future__ import print_function
 # SUCH DAMAGE.
 #
 
+from __future__ import print_function
 from builtins import object
 import unittest
 

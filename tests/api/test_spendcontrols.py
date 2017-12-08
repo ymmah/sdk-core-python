@@ -1,4 +1,6 @@
-from __future__ import absolute_import
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
 #
@@ -25,6 +27,7 @@ from __future__ import absolute_import
 # SUCH DAMAGE.
 #
 
+from __future__ import absolute_import
 import unittest
 from mastercardapicore import Config
 from mastercardapicore import RequestMap

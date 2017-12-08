@@ -239,7 +239,7 @@ class SmartMap(object):
 
         #Check if it object is  a dict
         if isinstance(map,dict):
-            for key,value in list(map.items()):
+            for (key,value) in map.items():
                 #if last combined is not empty then append current key to it else use current key
                 tempKey = combKey +"."+key if combKey != "" else key
                 #call the function again with one level down and combined key
@@ -318,7 +318,7 @@ class CaseInsensitiveSmartMap(SmartMap):
 
     def _parseMap(self,aMap):
         result = {}
-        for key, value in list(aMap.items()):
+        for (key, value) in aMap.items():
             if (isinstance(value, dict)):
                 result[key.lower()] = self._parseMap(value)
             elif (isinstance(value, list)):

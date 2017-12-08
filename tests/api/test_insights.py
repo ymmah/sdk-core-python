@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 #
 # Copyright (c) 2016 MasterCard International Incorporated
@@ -42,7 +44,6 @@ class InsightsTest(unittest.TestCase):
         Config.setAuthentication(auth)
         Config.setDebug(False)
 
-    @nottest
     def test_example_Insights(self):
 
         mapObj = RequestMap()

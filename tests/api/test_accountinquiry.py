@@ -1,4 +1,5 @@
-from __future__ import absolute_import
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
@@ -25,6 +26,8 @@ from __future__ import absolute_import
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
+
+from __future__ import absolute_import
 import unittest
 from mastercardapicore import Config
 from mastercardapicore import RequestMap
@@ -47,7 +50,6 @@ class AccountInquiryTest(BaseTest):
     def tearDown(self):
         Config.setProxy(None)
 
-    @nottest
     def test_account_inquiry(self):
 
         mapObj = RequestMap()

@@ -124,7 +124,7 @@ class APIController(object):
 
     def addQueryParamter(self, inputDic, outputDic):
 
-        for key, value in list(inputDic.items()):
+        for (key, value) in inputDic.items():
             if (isinstance(value, list) or isinstance(value, dict)): 
                 value = json.dumps(value, encoding='utf-8')
             outputDic[key] = value;  
@@ -191,7 +191,7 @@ class APIController(object):
         request.params.update(queryMap)
         
         #Add headers
-        for key, value in list(headerMap.items()):
+        for (key, value) in headerMap.items():
             request.headers[key] = value
 
         #Sign the request

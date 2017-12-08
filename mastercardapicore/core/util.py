@@ -78,7 +78,7 @@ def normalizeParams(url,params):
         combined_dict = qs_dict.copy()
         combined_dict.update(params)
     #,quote(value if isinstance(value,bytes) else str(value)) -- This part means that for bytes we pass as it is else we convert to string
-    return "&".join(['%s=%s' % (uriRfc3986Encode(key),uriRfc3986Encode(value if isinstance(value,bytes) else str(value))) for key,value in sorted(combined_dict.items())])
+    return "&".join(['%s=%s' % (uriRfc3986Encode(key),uriRfc3986Encode(value if isinstance(value,bytes) else str(value))) for (key,value) in sorted(combined_dict.items())])
 
 def normalizeUrl(url):
     """
@@ -115,7 +115,11 @@ def base64Encode(text):
     Base64 encodes the given input
     """
     #text = text.encode('ascii')
-    return base64.b64encode(text)
+    encode = base64.b64encode(text)
+    if isinstance(encode, (bytearray, bytes)):
+        return encode.decode('ascii')
+    else:
+        return encode
 
 def subMap(inputMap,keyList):
     """
