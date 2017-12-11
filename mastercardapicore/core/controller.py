@@ -126,7 +126,8 @@ class APIController(object):
 
         for (key, value) in inputDic.items():
             if (isinstance(value, list) or isinstance(value, dict)): 
-                value = json.dumps(value, encoding='utf-8')
+                #value = json.dumps(value, encoding='utf-8')
+                value = json.dumps(value)
             outputDic[key] = value;  
 
 
@@ -174,7 +175,8 @@ class APIController(object):
         # else is is a body if not null
         elif action.upper() in [APIController.ACTION_CREATE,APIController.ACTION_UPDATE]:
             if inputMap:
-                request.data = json.dumps(inputMap, encoding='utf-8')
+                #request.data = json.dumps(inputMap, encoding='utf-8')
+                request.data = json.dumps(inputMap)
             else: 
                 request.data = ""
 

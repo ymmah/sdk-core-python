@@ -218,7 +218,7 @@ class SmartMap(object):
                 if isinstance(self.__subProperty,dict) and part_key in self.__subProperty:
                     if count == keys_len:
                         if isinstance(self.__subProperty[part_key], basestring) :
-                            return self.__subProperty[part_key].encode('utf-8')
+                            return self.__subProperty[part_key]
                         else: 
                             return self.__subProperty[part_key]
                     else:
@@ -268,7 +268,7 @@ class SmartMap(object):
         """
         Uses the Json String to create the base map object
         """
-        map = json.loads(jsonString, encoding="utf-8")
+        map = json.loads(jsonString, encoding='utf-8')
         self.setAll(map)
 
 

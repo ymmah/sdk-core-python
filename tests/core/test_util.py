@@ -60,16 +60,16 @@ class UtilTests(unittest.TestCase):
     def test_base64encode(self):
 
         #string
-        self.assertEqual(util.base64Encode(b"mastercard"),b"bWFzdGVyY2FyZA==")
+        self.assertEqual(util.base64Encode(b"mastercard"),"bWFzdGVyY2FyZA==")
 
         #string
-        self.assertEqual(util.base64Encode(b"naman"),b"bmFtYW4=")
+        self.assertEqual(util.base64Encode(b"naman"),"bmFtYW4=")
 
         #string with special characters
-        self.assertEqual(util.base64Encode(b"naman@3476@$%%^*%&^#mastercard"),b"bmFtYW5AMzQ3NkAkJSVeKiUmXiNtYXN0ZXJjYXJk")
+        self.assertEqual(util.base64Encode(b"naman@3476@$%%^*%&^#mastercard"),"bmFtYW5AMzQ3NkAkJSVeKiUmXiNtYXN0ZXJjYXJk")
 
         #blank
-        self.assertEqual(util.base64Encode(b""),b"")
+        self.assertEqual(util.base64Encode(b""),"")
 
     def test_sha1encode(self):
 

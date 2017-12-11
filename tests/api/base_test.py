@@ -53,10 +53,16 @@ class BaseTest(unittest.TestCase):
 			self.customAssertValue(expectedValue,actualValue)
 
 	def customAssertValue(self,expected,actual):
-		if (isinstance(actual,float)):
+		if isinstance(actual,float):
 			self.assertEqual(float(expected), actual)
+		elif isinstance(actual,bool):
+			self.assertEqual(bool(expected), actual)
+		elif isinstance(actual,int):
+			self.assertEqual(int(expected), actual)
+		elif isinstance(actual,bytes):
+			self.assertEqual(bytes(expected), actual)
 		else:
-			self.assertEqual(expected.lower(), str(actual).lower())
+			self.assertEqual(str(expected).lower(), str(actual).lower())
 
 	def setAuthentication(self, keyId):
 		authentication = self.authentications[keyId]

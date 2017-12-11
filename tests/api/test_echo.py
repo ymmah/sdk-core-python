@@ -49,7 +49,7 @@ class EchoTest(BaseTest):
 
     def test_utf_8(self):
         
-        utf8String = "мảŝťễřÇāŕď Ľẵвš ạאָđ мãśţēяĈẫřđ ĀקÏ ŕồçҝş..."
+        utf8String = u"мảŝťễřÇāŕď Ľẵвš ạאָđ мãśţēяĈẫřđ ĀקÏ ŕồçҝş..."
         
 
         mapObj = RequestMap()
