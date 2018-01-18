@@ -30,15 +30,17 @@
 Utility file having common functions for MasterCard Core SDK
 """
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 import re
 import hashlib
 import base64
-import string
 
 
 try:
-    from urlparse import urlparse, parse_qsl #Python 2.x
-    from urllib import quote,quote_plus
+    from urllib.parse import urlparse, parse_qsl #Python 2.x
+    from urllib.parse import quote, quote_plus
 except ImportError: #Python 3
     from urllib.parse import urlparse, quote, quote_plus, parse_qsl
 def validateURL(url):
@@ -76,7 +78,7 @@ def normalizeParams(url,params):
         combined_dict = qs_dict.copy()
         combined_dict.update(params)
     #,quote(value if isinstance(value,bytes) else str(value)) -- This part means that for bytes we pass as it is else we convert to string
-    return "&".join(['%s=%s' % (uriRfc3986Encode(key),uriRfc3986Encode(value if isinstance(value,bytes) else str(value))) for key,value in sorted(combined_dict.items())])
+    return "&".join(['%s=%s' % (uriRfc3986Encode(key),uriRfc3986Encode(value if isinstance(value,bytes) else str(value))) for (key,value) in sorted(combined_dict.items())])
 
 def normalizeUrl(url):
     """
@@ -90,9 +92,9 @@ def uriRfc3986Encode(value):
     RFC 3986 encodes the value
     """
     encoded = quote_plus(value)
-    encoded = string.replace(encoded, '+', '%20')
-    encoded = string.replace(encoded, '*', '%2A')
-    encoded = string.replace(encoded, '~', '%7E')
+    encoded = str.replace(encoded, '+', '%20')
+    encoded = str.replace(encoded, '*', '%2A')
+    encoded = str.replace(encoded, '~', '%7E')
     return encoded
 
 
@@ -113,7 +115,11 @@ def base64Encode(text):
     Base64 encodes the given input
     """
     #text = text.encode('ascii')
-    return base64.b64encode(text)
+    encode = base64.b64encode(text)
+    if isinstance(encode, (bytearray, bytes)):
+        return encode.decode('ascii')
+    else:
+        return encode
 
 def subMap(inputMap,keyList):
     """

@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
+from __future__ import print_function
+from builtins import str
 import unittest
 from mastercardapicore import RequestMap
 from mastercardapicore import Config
@@ -36,9 +42,9 @@ class BaseTest(unittest.TestCase):
                             if response.containsKey(key) == True:
                                     return str(response.get(key))
                             else:
-                                    print "Key:'%s' is not found in the response" % key
+                                    print("Key:'%s' is not found in the response" % key)
                     else:
-                            print "Example:'%s' is not found in the response" % name
+                            print("Example:'%s' is not found in the response" % name)
 
                     return None
 
@@ -47,10 +53,16 @@ class BaseTest(unittest.TestCase):
 			self.customAssertValue(expectedValue,actualValue)
 
 	def customAssertValue(self,expected,actual):
-		if (isinstance(actual,float)):
+		if isinstance(actual,float):
 			self.assertEqual(float(expected), actual)
+		elif isinstance(actual,bool):
+			self.assertEqual(bool(expected), actual)
+		elif isinstance(actual,int):
+			self.assertEqual(int(expected), actual)
+		elif isinstance(actual,bytes):
+			self.assertEqual(bytes(expected), actual)
 		else:
-			self.assertEqual(expected.lower(), str(actual).lower())
+			self.assertEqual(str(expected).lower(), str(actual).lower())
 
 	def setAuthentication(self, keyId):
 		authentication = self.authentications[keyId]

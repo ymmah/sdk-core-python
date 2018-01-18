@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
 #
@@ -24,13 +27,14 @@
 # SUCH DAMAGE.
 #
 
+from __future__ import absolute_import
 import unittest
 from mastercardapicore import Config
 from mastercardapicore import RequestMap
-from combinationctrlsalertresource import Combinationctrlsalertresource
+from .combinationctrlsalertresource import Combinationctrlsalertresource
 from mastercardapicore import APIException
-from accountinquiry import AccountInquiry
-from base_test import BaseTest
+from .accountinquiry import AccountInquiry
+from .base_test import BaseTest
 from mastercardapicore import OAuthAuthentication
 from os.path import dirname, realpath, join
 

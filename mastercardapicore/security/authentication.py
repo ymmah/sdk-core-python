@@ -27,6 +27,7 @@
 # SUCH DAMAGE.
 #
 
+from builtins import object
 class Authentication(object):
 
     def signRequest(self,uri,request):

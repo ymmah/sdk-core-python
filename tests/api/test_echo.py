@@ -27,14 +27,15 @@
 # SUCH DAMAGE.
 #
 
+from __future__ import absolute_import
 import unittest
 from mastercardapicore import RequestMap
 from mastercardapicore import Config
 from mastercardapicore import OAuthAuthentication
 from os.path import dirname, realpath, join
 import time
-from base_test import BaseTest
-from echo import Echo
+from .base_test import BaseTest
+from .echo import Echo
 import json
 
 
@@ -48,7 +49,7 @@ class EchoTest(BaseTest):
 
     def test_utf_8(self):
         
-        utf8String = "мảŝťễřÇāŕď Ľẵвš ạאָđ мãśţēяĈẫřđ ĀקÏ ŕồçҝş..."
+        utf8String = u"мảŝťễřÇāŕď Ľẵвš ạאָđ мãśţēяĈẫřđ ĀקÏ ŕồçҝş..."
         
 
         mapObj = RequestMap()

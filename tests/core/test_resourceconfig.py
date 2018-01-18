@@ -1,3 +1,6 @@
+
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-#
 #
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
@@ -25,6 +28,8 @@
 # SUCH DAMAGE.
 #
 
+from __future__ import print_function
+from builtins import object
 import unittest
 
 from mastercardapicore import Environment 
@@ -55,17 +60,17 @@ class ResourceConfig(object):
     @staticmethod    
     def getInstance():
         if ResourceConfig.__initialized == False:
-            print "initilizing.... true"
+            print("initilizing.... true")
             ResourceConfig.__initialized = True
             
-            print "creating a new instance"
+            print("creating a new instance")
             tmpInstance = ResourceConfig.__new__(ResourceConfig)
             
-            print "regestring a new instance"
+            print("regestring a new instance")
             Config.registerResourceConfig(tmpInstance)
             tmpInstance.setEnvironment(Config.getEnvironment())
             
-            print "saving instance"
+            print("saving instance")
             ResourceConfig.__instance = tmpInstance
 
         return ResourceConfig.__instance
@@ -87,7 +92,7 @@ class ResourceConfig(object):
         return cls.name
         
     def setEnvironment(cls,environment):
-        if environment in cls.environmentMap.keys():
+        if environment in list(cls.environmentMap.keys()):
             tuple = cls.environmentMap[environment]
             cls.host = tuple[0]
             cls.context = tuple[1]

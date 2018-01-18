@@ -1,3 +1,6 @@
+
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-#
 #
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
@@ -24,8 +27,11 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
+
+from __future__ import print_function
+from __future__ import absolute_import
 import unittest
-from test_resourceconfig import ResourceConfig
+from .test_resourceconfig import ResourceConfig
 from mastercardapicore.core.controller import APIController
 from mastercardapicore import OperationConfig
 from mastercardapicore import OperationMetadata
@@ -272,7 +278,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         self.assertEqual(request.headers[APIController.KEY_ACCEPT], APIController.APPLICATION_JSON)
         self.assertFalse( APIController.KEY_CONTENT_TYPE in request.headers )
-        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], "mastercard-api-core(python):1.4.9/mock:0.0.1")
+        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], "mastercard-api-core(python):1.4.10/mock:0.0.1")
         self.assertTrue("oauth_body_hash" not in request.headers["Authorization"]);
 
         inputMap = {
@@ -289,7 +295,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         self.assertEqual(request.headers[APIController.KEY_ACCEPT], APIController.APPLICATION_JSON)
         self.assertFalse( APIController.KEY_CONTENT_TYPE in request.headers )
-        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], "mastercard-api-core(python):1.4.9/mock:0.0.1")
+        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], "mastercard-api-core(python):1.4.10/mock:0.0.1")
 
        
     def test_environment(self):

@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
 #
 # Copyright (c) 2016 MasterCard International Incorporated
 # All rights reserved.
@@ -27,7 +30,7 @@
 import unittest
 from mastercardapicore import Config
 from mastercardapicore import RequestMap
-from insights import Insights
+from .insights import Insights
 from mastercardapicore.security import OAuthAuthentication
 from os.path import dirname, realpath, join
 from nose.tools import nottest
@@ -41,7 +44,6 @@ class InsightsTest(unittest.TestCase):
         Config.setAuthentication(auth)
         Config.setDebug(False)
 
-    @nottest
     def test_example_Insights(self):
 
         mapObj = RequestMap()

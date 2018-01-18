@@ -31,6 +31,7 @@
 Config File for MasterCard APIs Core SDK
 """
 
+from builtins import object
 from mastercardapicore.core.constants import Environment
 
 class Config(object):
@@ -110,7 +111,7 @@ class Config(object):
     def setEnvironment(cls,environment):
         if environment:
             cls.environment = environment
-            for registeredInstance in cls.registeredInstances.values():
+            for registeredInstance in list(cls.registeredInstances.values()):
                 registeredInstance.setEnvironment(environment)
             
             
@@ -121,7 +122,7 @@ class Config(object):
     @classmethod
     def registerResourceConfig(cls,resourceConfig):
         className = resourceConfig.getName()
-        if not className in cls.registeredInstances.keys():
+        if not className in list(cls.registeredInstances.keys()):
             cls.registeredInstances[className] = resourceConfig
 
     @classmethod
