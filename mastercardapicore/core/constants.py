@@ -50,28 +50,36 @@ class Constants(object):
 
 class Environment(object):
     PRODUCTION  = "production"
+    PRODUCTION_MTF         = "production_mtf"
+    PRODUCTION_ITF         = "production_itf"
     SANDBOX     = "sandbox" 
+    SANDBOX_STATIC     = "sandbox_static" 
     SANDBOX_MTF     = "sandbox_mtf"
     SANDBOX_ITF     = "sandbox_itf"
     STAGE       = "stage"
-    DEV         = "dev"
-    PRODUCTION_MTF         = "production_mtf"
-    PRODUCTION_ITF         = "production_itf"
     STAGE_MTF       = "stage_mtf"
     STAGE_ITF       = "stage_itf"
+    DEV         = "dev"
     LOCALHOST   = "localhost"
     OTHER      = "other"
+    ITF = "itf"
+    PERF = "perf"
+
+
     
     mapping     = {  
         "production": ["https://api.mastercard.com", None], 
+        "production_mtf": ["https://api.mastercard.com", "mtf"],
+        "production_itf": ["https://api.mastercard.com", "itf"],
         "sandbox": ["https://sandbox.api.mastercard.com", None],
+        "sandbox_static": ["https://sandbox.api.mastercard.com", "static"],
         "sandbox_mtf": ["https://sandbox.api.mastercard.com", "mtf"],
         "sandbox_itf": ["https://sandbox.api.mastercard.com", "itf"],
         "stage": ["https://stage.api.mastercard.com", None],
-        "dev": ["https://dev.api.mastercard.com", None],
-        "production_mtf": ["https://api.mastercard.com", "mtf"],
-        "production_itf": ["https://api.mastercard.com", "itf"],
         "stage_mtf": ["https://stage.api.mastercard.com", "mtf"],
         "stage_itf": ["https://stage.api.mastercard.com", "itf"],
-        "localhost": ["http://localhost:8081", None] 
+        "dev": ["https://dev.api.mastercard.com", None],
+        "localhost": ["http://localhost:8081", None],
+        "itf": ["https://itf.api.mastercard.com", None],
+        "perf": ["https://perf.api.mastercard.com", None]
     }
