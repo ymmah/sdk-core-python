@@ -203,10 +203,12 @@ class APIControllerTests(APIControllerBaseTest):
 
     def test_getRequestObject(self):
 
-        defaultHeaders =  {
-            APIController.KEY_ACCEPT:APIController.APPLICATION_JSON,
-            APIController.KEY_CONTENT_TYPE:APIController.APPLICATION_JSON,
-            APIController.KEY_USER_AGENT:Constants.getCoreVersion()+"/0.0.1"
+        #TEST POST with jsonNative and ContentTypeOverride
+     
+        inputMap = {
+            "param1":1,
+            "param2":2,
+            "a":"1",
         }
         
         config = OperationConfig("/fraud/api/v1/account-inquiry", "create", [], ["a"])
@@ -234,9 +236,6 @@ class APIControllerTests(APIControllerBaseTest):
             "param1":1,
             "param2":2,
             "a":"1",
-            APIController.KEY_ACCEPT:APIController.APPLICATION_JSON,
-            APIController.KEY_CONTENT_TYPE:APIController.APPLICATION_JSON,
-            APIController.KEY_USER_AGENT:Constants.getCoreVersion()+"/0.0.1"
         }
         
         config = OperationConfig("/fraud/api/v1/account-inquiry", "create", [], ["a"])
@@ -401,7 +400,6 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getSource(), None)
         
 
-
         #test errors.error.reasoncode
         with self.assertRaises(APIException) as cm:
             content = self.controller.handleResponse(response,{"Errors" :{"Error":{"Source":"System", "ReasonCode":"SYSTEM_ERROR1", "Description":"Unknown Error1", "Recoverable":"false"}}})
@@ -410,6 +408,7 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
         self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
         self.assertEqual(cm.exception.getSource(), "System")
+        self.assertEqual(cm.exception.getRawErrorData().get("errors.error.Source"), "System")
         
         #test errors.error.reasoncode case insentive
         with self.assertRaises(APIException) as cm:
@@ -419,6 +418,7 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
         self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
         self.assertEqual(cm.exception.getSource(), "System")
+        self.assertEqual(cm.exception.getRawErrorData().get("errors.error.Source"), "System")
 
         #test errors.error[0].reasoncode case insensitive
         with self.assertRaises(APIException) as cm:
@@ -428,25 +428,38 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
         self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
         self.assertEqual(cm.exception.getSource(), "System")
+        self.assertEqual(cm.exception.getRawErrorData().get("errors.error[0].Source"), "System")
 
         #test errors[0].reasoncode case insensitive
-        response.status_code = 400
         with self.assertRaises(APIException) as cm:
             content = self.controller.handleResponse(response,{"errors" :[{"source":"System", "reasoncode":"SYSTEM_ERROR1", "description":"Unknown Error1", "recoverable":"false"}]})
-                
-        self.assertEqual(cm.exception.getHttpStatus(), 400)
+            
+        self.assertEqual(cm.exception.getHttpStatus(), 301)
         self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
         self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
         self.assertEqual(cm.exception.getSource(), "System")
+        self.assertEqual(cm.exception.getRawErrorData().get("errors[0].Source"), "System")
+
+        #test [].readonCode 
+        with self.assertRaises(APIException) as cm:
+            content = self.controller.handleResponse(response,[ {"source":"System", "reasoncode":"SYSTEM_ERROR1", "description":"Unknown Error1", "recoverable":"false"}])
+            
+        self.assertEqual(cm.exception.getHttpStatus(), 301)
+        self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
+        self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
+        self.assertEqual(cm.exception.getSource(), "System")
+        self.assertEqual(cm.exception.getRawErrorData().get("source"), "System")
+        
+
 
         response.status_code = 400
         with self.assertRaises(APIException) as cm:
-            content = self.controller.handleResponse(response,{"source":"System", "reasoncode":"SYSTEM_ERROR1", "description":"Unknown Error1", "recoverable":"false"})
+                content = self.controller.handleResponse(response,{"Errors" :{"Error":{"message":"Some error"}}})
                 
         self.assertEqual(cm.exception.getHttpStatus(), 400)
-        self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
-        self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
-        self.assertEqual(cm.exception.getSource(), "System")
+        self.assertEqual(cm.exception.getMessage(), "Bad Request")
+        self.assertEqual(cm.exception.getReasonCode(), None)
+        self.assertEqual(cm.exception.getSource(), None)
         
 
         response.status_code = 401
@@ -492,38 +505,18 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getMessage(), "Internal Server Error")
         self.assertEqual(cm.exception.getReasonCode(), None)
         self.assertEqual(cm.exception.getSource(), None)
-        self.assertEqual(cm.exception.getRawErrorData()['Errors']['Error']['message'], "Some error")
+        
         
         response.status_code = 500
         with self.assertRaises(APIException) as cm:
-                content = self.controller.handleResponse(response, {"errors":[{"source":"OpenAPIClientId","reasonCode":"AUTHORIZATION_FAILED","key":"050007","description":"Unauthorized Access","recoverable":False,"requestId":"11111","details":{"details":[{"name":"ErrorDetailCode","value":"050007"}]}}]})
+                content = self.controller.handleResponse(response, {"errors":[{"source":"OpenAPIClientId","reasonCode":"AUTHORIZATION_FAILED","key":"050007","description":"Unauthorized Access","recoverable":False,"requestId":None,"details":{"details":[{"name":"ErrorDetailCode","value":"050007"}]}}]})
 
         self.assertEqual(cm.exception.getHttpStatus(), 500)
         self.assertEqual(cm.exception.getMessage(), "Unauthorized Access")
         self.assertEqual(cm.exception.getReasonCode(), "AUTHORIZATION_FAILED")
         self.assertEqual(cm.exception.getSource(), "OpenAPIClientId")
-        self.assertEqual(cm.exception.getError().get("source"), "OpenAPIClientId")
-        self.assertEqual(cm.exception.getError().get("key"), "050007")
-        self.assertEqual(cm.exception.getError().get("requestId"), "11111")
-
-
-        response.status_code = 500
-        with self.assertRaises(APIException) as cm:
-                content = self.controller.handleResponse(response, {"errors":[{"source":"OpenAPIClientId","reasonCode":"AUTHORIZATION_FAILED","key":"050008","requestId":"11111"},{"source":"OpenAPIClientId","reasonCode":"AUTHORIZATION_FAILED","key":"050007","description":"Unauthorized Access"}]})
-
-        self.assertEqual(cm.exception.getHttpStatus(), 500)
-        self.assertEqual(cm.exception.getMessage(), "Internal Server Error")
-        self.assertEqual(cm.exception.getReasonCode(), "AUTHORIZATION_FAILED")
-        self.assertEqual(cm.exception.getSource(), "OpenAPIClientId")
-        self.assertEqual(cm.exception.getError().get("source"), "OpenAPIClientId")
-        self.assertEqual(cm.exception.getError().get("key"), "050008")
-        self.assertEqual(cm.exception.getError().get("requestId"), "11111")
-        cm.exception.parseError(1)
-        self.assertEqual(cm.exception.getErrorSize(), 2)
-        self.assertEqual(cm.exception.getError().get("source"), "OpenAPIClientId")
-        self.assertEqual(cm.exception.getError().get("key"), "050007")
-        
-
+        self.assertEqual(cm.exception.getRawErrorData().get("errors[0].source"), "OpenAPIClientId")
+        self.assertEqual(cm.exception.getRawErrorData().get("Errors[0].Source"), "OpenAPIClientId")
 
 
 if __name__ == '__main__':

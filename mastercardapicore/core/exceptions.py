@@ -85,7 +85,7 @@ class APIException(Exception):
             errors = []
             if isinstance(error_data, list) :
                 errors.extend(error_data)   
-            elif isinstance(error_data, dict) :
+            else:
                 errors.append(error_data)
             
             for error in errors:
