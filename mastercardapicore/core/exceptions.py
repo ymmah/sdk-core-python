@@ -31,7 +31,7 @@
 # APIException
 ################################################################################
 
-from mastercardapicore.core.model import RequestMap
+from mastercardapicore.core.model import CaseInsensitiveSmartMap
 import itertools
 
 class APIException(Exception):
@@ -50,73 +50,90 @@ class APIException(Exception):
         else:
             self._message = message
         
+        
         self._description = None
         self._reason_code = None
         self._reference = None
         self._source = None
-        
-        #If error_data is not None set the appropriate message
-        if error_data and isinstance(error_data, dict):
-            
-            #set the smartmap as the raw_error_data
-            smartMap = RequestMap()
-            smartMap.setAll(error_data)
-            self._raw_error_data = smartMap
-            
-            #get a case insensitive map to do the case-insenstivie lookup
-            case_insensitive_error_data = self.parseMap(error_data)
-            error_dict = {}
-            # If error_data is of type dict and has Key 'Errors' which has a key 'Error'
-            if 'errors' in case_insensitive_error_data:
-                
-                error_dict = case_insensitive_error_data['errors']
-                if 'error' in error_dict:
-                    error_dict = case_insensitive_error_data['errors']['error']
 
-                #Case of multiple errors take the first one
-                if isinstance(error_dict, list):
-                    error_dict = error_dict[0]
+        self._raw_error_data = error_data
+        self._error = None
+        self._errors = []
 
-                
-                self.__initErrorDataFromDict(error_dict)
-
-
-            #If error Data is of Type List
-            elif isinstance(error_data,list):
-                #Take the first error
-                error_dict = error_data[0]
-
-                self.__initErrorDataFromDict(error_dict)
-        else:
-            self._raw_error = error_data;
-
-    def __initErrorDataFromDict(self,error_dict):
-        self._reason_code = error_dict.get("reasoncode",None)
-        self._description    = error_dict.get("description",None)
-        self._source    = error_dict.get("source",None)
-        
-        
-    def parseMap(self,aMap):
-        result = {}
-        for (key, value) in aMap.items():
-            if (isinstance(value, dict)):
-                result[key.lower()] = self.parseMap(value)
-            elif (isinstance(value, list)):
-                result[key.lower()] = self.parseList(value)
-            else:
-                result[key.lower()] = value
-        return result
+        self.__parseErrors(error_data);
+        self.parseError(0)
     
-    def parseList(self,aList):
-        result = []
-        for value in aList:
-            if (isinstance(value, dict)):
-                result.append(self.parseMap(value))
-            elif (isinstance(value, list)):
-                result.append(self.parseList(value))
+    
+    
+    def __parseErrors(self,error_data):
+        """
+        Parse the error dictionary into list of error_items
+        """
+  
+        #If error_data is not None set the appropriate message
+        if error_data :
+
+            errors = []
+            if isinstance(error_data, list) :
+                errors.extend(error_data)   
             else:
-                result.append(value)
-        return result
+                errors.append(error_data)
+            
+            for error in errors:
+                #set the smartmap as the raw_error_data
+                map = CaseInsensitiveSmartMap()
+                map.setAll(error)
+
+                if map.containsKey("errors.error.reasoncode") :
+                    self.__addError(map.get("errors.error"))
+                elif map.containsKey("errors.error[0].reasoncode"):
+                    self.__addError(map.get("errors.error"))
+                elif map.containsKey("errors[0].reasoncode"):
+                    self.__addError(map.get("errors"))
+                elif map.containsKey("reasoncode"):
+                    self.__addError(map.getObject())
+                
+                    
+
+    def getErrorSize(self) :
+        return len(self._errors);
+
+    def parseError(self,index) :
+        """
+            parse error by index.
+        """
+        if self._errors and index >= 0 and index < self._errors.count :
+            self._error = self._errors[index];
+            self.__parseErrorFromSmartMap();
+
+    def getError(self) :
+        return self._error;
+
+
+    def __addError(self,error_item) :
+        """
+            add error to the list
+        """
+        if isinstance(error_item, list) :
+            for item in error_item:
+                map = CaseInsensitiveSmartMap()
+                map.setAll(item)
+                self._errors.append(map)   
+        elif isinstance(error_item, dict) :
+            map = CaseInsensitiveSmartMap()
+            map.setAll(error_item)
+            self._errors.append(map)
+        else:
+            self._errors.append(error_item)
+
+    def __parseErrorFromSmartMap(self):
+        # If error_data is of type dict and has Key 'Errors' which has a key 'Error'
+        if (self._error.containsKey("reasoncode")):
+            self._reason_code = self._error.get("reasoncode")
+        if (self._error.containsKey("description")):
+            self._description    = self._error.get("description")
+        if (self._error.containsKey("source")):
+            self._source    = self._error.get("source")
 
     def getMessage(self):
         if (self._description):
