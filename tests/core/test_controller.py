@@ -517,6 +517,8 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getSource(), "OpenAPIClientId")
         self.assertEqual(cm.exception.getRawErrorData().get("errors[0].source"), "OpenAPIClientId")
         self.assertEqual(cm.exception.getRawErrorData().get("Errors[0].Source"), "OpenAPIClientId")
+        self.assertEqual(cm.exception.getError().get("details.details[0].name"), "ErrorDetailCode")
+
 
 
 if __name__ == '__main__':
