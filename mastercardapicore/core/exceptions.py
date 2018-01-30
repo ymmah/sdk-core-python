@@ -55,15 +55,24 @@ class APIException(Exception):
         self._reason_code = None
         self._reference = None
         self._source = None
-
-        self._raw_error_data = error_data
+        self._raw_error_data = None
         self._error = None
         self._errors = []
 
+        self.__parseRawErrorData(error_data);
         self.__parseErrors(error_data);
         self.parseError(0)
     
-    
+    def __parseRawErrorData(self,error_data):
+            if isinstance(error_data, list) and isinstance(error_data[0],  dict) :
+                map = CaseInsensitiveSmartMap()
+                map.setAll(error_data[0])
+                self._raw_error_data = map
+            elif isinstance(error_data, dict) :
+                map = CaseInsensitiveSmartMap()
+                map.setAll(error_data)
+                self._raw_error_data = map
+
     
     def __parseErrors(self,error_data):
         """
@@ -76,7 +85,7 @@ class APIException(Exception):
             errors = []
             if isinstance(error_data, list) :
                 errors.extend(error_data)   
-            else:
+            elif isinstance(error_data, dict) :
                 errors.append(error_data)
             
             for error in errors:
