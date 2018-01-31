@@ -111,7 +111,7 @@ class APIException(Exception):
         """
             parse error by index.
         """
-        if self._errors and index >= 0 and index < self._errors.count :
+        if self._errors and index >= 0 and index < len(self._errors) :
             self._error = self._errors[index];
             self.__parseErrorFromSmartMap();
 

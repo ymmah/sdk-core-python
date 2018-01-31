@@ -319,7 +319,7 @@ class CaseInsensitiveSmartMap(SmartMap):
 
     def _parseMap(self,aMap):
         result = {}
-        for key, value in aMap.iteritems():
+        for (key, value) in aMap.items(): 
             if (isinstance(value, dict)):
                 result[key.lower()] = self._parseMap(value)
             elif (isinstance(value, list)):
