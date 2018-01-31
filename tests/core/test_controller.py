@@ -278,7 +278,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         self.assertEqual(request.headers[APIController.KEY_ACCEPT], APIController.APPLICATION_JSON)
         self.assertFalse( APIController.KEY_CONTENT_TYPE in request.headers )
-        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], "mastercard-api-core(python):1.4.11/mock:0.0.1")
+        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], "mastercard-api-core(python):1.4.12/mock:0.0.1")
         self.assertTrue("oauth_body_hash" not in request.headers["Authorization"]);
 
         inputMap = {
@@ -295,7 +295,7 @@ class APIControllerTests(APIControllerBaseTest):
 
         self.assertEqual(request.headers[APIController.KEY_ACCEPT], APIController.APPLICATION_JSON)
         self.assertFalse( APIController.KEY_CONTENT_TYPE in request.headers )
-        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], "mastercard-api-core(python):1.4.11/mock:0.0.1")
+        self.assertEqual(request.headers[APIController.KEY_USER_AGENT], "mastercard-api-core(python):1.4.12/mock:0.0.1")
 
        
     def test_environment(self):
@@ -400,7 +400,6 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getSource(), None)
         
 
-
         #test errors.error.reasoncode
         with self.assertRaises(APIException) as cm:
             content = self.controller.handleResponse(response,{"Errors" :{"Error":{"Source":"System", "ReasonCode":"SYSTEM_ERROR1", "Description":"Unknown Error1", "Recoverable":"false"}}})
@@ -409,6 +408,7 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
         self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
         self.assertEqual(cm.exception.getSource(), "System")
+        self.assertEqual(cm.exception.getRawErrorData().get("errors.error.Source"), "System")
         
         #test errors.error.reasoncode case insentive
         with self.assertRaises(APIException) as cm:
@@ -418,6 +418,7 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
         self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
         self.assertEqual(cm.exception.getSource(), "System")
+        self.assertEqual(cm.exception.getRawErrorData().get("errors.error.Source"), "System")
 
         #test errors.error[0].reasoncode case insensitive
         with self.assertRaises(APIException) as cm:
@@ -427,6 +428,28 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
         self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
         self.assertEqual(cm.exception.getSource(), "System")
+        self.assertEqual(cm.exception.getRawErrorData().get("errors.error[0].Source"), "System")
+
+        #test errors[0].reasoncode case insensitive
+        with self.assertRaises(APIException) as cm:
+            content = self.controller.handleResponse(response,{"errors" :[{"source":"System", "reasoncode":"SYSTEM_ERROR1", "description":"Unknown Error1", "recoverable":"false"}]})
+            
+        self.assertEqual(cm.exception.getHttpStatus(), 301)
+        self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
+        self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
+        self.assertEqual(cm.exception.getSource(), "System")
+        self.assertEqual(cm.exception.getRawErrorData().get("errors[0].Source"), "System")
+
+        #test [].readonCode 
+        with self.assertRaises(APIException) as cm:
+            content = self.controller.handleResponse(response,[ {"source":"System", "reasoncode":"SYSTEM_ERROR1", "description":"Unknown Error1", "recoverable":"false"}])
+            
+        self.assertEqual(cm.exception.getHttpStatus(), 301)
+        self.assertEqual(cm.exception.getMessage(), "Unknown Error1")
+        self.assertEqual(cm.exception.getReasonCode(), "SYSTEM_ERROR1")
+        self.assertEqual(cm.exception.getSource(), "System")
+        self.assertEqual(cm.exception.getRawErrorData().get("source"), "System")
+        
 
 
         response.status_code = 400
@@ -482,7 +505,7 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getMessage(), "Internal Server Error")
         self.assertEqual(cm.exception.getReasonCode(), None)
         self.assertEqual(cm.exception.getSource(), None)
-        self.assertEqual(cm.exception.getRawErrorData().get("Errors.Error.message"), "Some error")
+        
         
         response.status_code = 500
         with self.assertRaises(APIException) as cm:
@@ -493,6 +516,9 @@ class APIControllerTests(APIControllerBaseTest):
         self.assertEqual(cm.exception.getReasonCode(), "AUTHORIZATION_FAILED")
         self.assertEqual(cm.exception.getSource(), "OpenAPIClientId")
         self.assertEqual(cm.exception.getRawErrorData().get("errors[0].source"), "OpenAPIClientId")
+        self.assertEqual(cm.exception.getRawErrorData().get("Errors[0].Source"), "OpenAPIClientId")
+        self.assertEqual(cm.exception.getError().get("details.details[0].name"), "ErrorDetailCode")
+
 
 
 if __name__ == '__main__':
